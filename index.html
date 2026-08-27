@@ -3,42 +3,59 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#eef8f7">
 <title>NurseTrack Clinical</title>
-<style>html,body{margin:0;min-height:100%;background:#eef8f7;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}.loading{min-height:100dvh;display:grid;place-items:center;color:#35636b;font-weight:700}</style>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#eef8f7;color:#23464f}body{overflow:hidden}
+#cover{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) 16px max(12px,env(safe-area-inset-bottom));background:linear-gradient(180deg,#eaf7f5 0%,#f8fbf7 58%,#fff7e9 100%);z-index:20}
+.card{width:min(520px,100%);height:min(900px,100%);display:flex;flex-direction:column;justify-content:center;gap:clamp(8px,1.25vh,13px);padding:clamp(10px,2vh,22px) clamp(16px,4vw,28px);overflow:hidden}
+.brand{text-align:center}.emblem{position:relative;width:clamp(64px,9.5vh,86px);height:clamp(64px,9.5vh,86px);margin:0 auto 7px;border-radius:50%;border:2px solid #91cec8;background:#e6f6f3;display:grid;place-items:center;color:#168d94;font-size:clamp(32px,4.5vh,42px);font-weight:800;line-height:1}.leaf{position:absolute;width:20px;height:11px;border-radius:100% 0 100% 0;background:#7fb89c;bottom:7px}.leaf.l{left:16px;transform:rotate(24deg)}.leaf.r{right:16px;transform:scaleX(-1) rotate(24deg)}
+h1{margin:0;font-size:clamp(29px,4.5vh,43px);line-height:1.02;letter-spacing:-.03em;color:#0d4c61}.teal{color:#168e97}.subtitle{margin-top:5px;font-size:clamp(12px,1.8vh,16px);font-weight:600;color:#657c83}
+.service{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px;padding:clamp(8px,1.25vh,12px) 14px;border:1px solid #cfe4e2;border-radius:16px;background:rgba(255,255,255,.76)}.pin{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e7f6f3;border:1px solid #badeda;color:#168e97;font-size:21px}.service strong{display:block;font-size:13px;color:#29515a}.service small{display:block;margin-top:2px;font-size:11px;color:#788b90}
+.login{padding:clamp(11px,1.7vh,15px);border:1px solid #d6e6e5;border-radius:18px;background:rgba(255,255,255,.9)}label{display:block;font-size:12px;font-weight:800;margin:0 0 5px;color:#2d5059}.field{margin-bottom:9px}input{width:100%;height:clamp(43px,5.7vh,50px);border:1px solid #cbdcde;border-radius:12px;background:#fff;padding:0 13px;color:#23474f;font-size:16px;outline:none;-webkit-appearance:none;appearance:none}input:focus{border-color:#2d98a0;box-shadow:0 0 0 3px rgba(45,152,160,.12)}button{width:100%;height:clamp(43px,5.7vh,50px);border-radius:12px;font-size:15px;font-weight:800;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.enter{border:1px solid #178f9a;background:#178f9a;color:#fff}.recover{margin-top:8px;border:1px solid #79bbc0;background:transparent;color:#197f87}.footer{display:flex;align-items:center;justify-content:center;gap:9px;padding:3px 8px;color:#557178}.heart{font-size:24px;color:#188f91}.footer strong{display:block;font-size:12px;color:#31535c}.footer small{display:block;font-size:10px;color:#7a8c90}
+#appFrame{position:fixed;inset:0;width:100%;height:100%;border:0;background:#f3f7f8;display:none;z-index:10}
+#msg{text-align:center;min-height:16px;font-size:11px;color:#7c6a2f}
+@media(max-height:650px){.card{gap:5px;padding-top:6px;padding-bottom:6px}.emblem{width:52px;height:52px;font-size:27px;margin-bottom:2px}.leaf{width:15px;height:8px;bottom:4px}.leaf.l{left:11px}.leaf.r{right:11px}h1{font-size:27px}.subtitle{font-size:11px}.service{padding:6px 10px}.pin{width:32px;height:32px}.login{padding:9px}.field{margin-bottom:6px}.footer{padding:0}}
+</style>
 </head>
-<body><div class="loading">Abriendo NurseTrack…</div>
+<body>
+<div id="cover">
+  <div class="card">
+    <div class="brand">
+      <div class="emblem" aria-hidden="true">✚<span class="leaf l"></span><span class="leaf r"></span></div>
+      <h1>NurseTrack <span class="teal">Clinical</span></h1>
+      <div class="subtitle">Censo · enfermería · seguimiento clínico</div>
+    </div>
+    <div class="service">
+      <div class="pin">⌖</div>
+      <div><strong>Dirección del servicio</strong><small>Información del servicio o unidad clínica</small></div>
+    </div>
+    <div class="login">
+      <div class="field"><label for="user">Usuario</label><input id="user" autocomplete="username" autocapitalize="none" placeholder="Usuario"></div>
+      <div class="field"><label for="pass">Passcode</label><input id="pass" type="password" autocomplete="current-password" placeholder="Letras, números y símbolos"></div>
+      <button id="enter" class="enter" type="button">Entrar</button>
+      <button id="recover" class="recover" type="button">Restablecer contraseña</button>
+      <div id="msg"></div>
+    </div>
+    <div class="footer"><div class="heart">♡✚</div><div><strong>Cuidamos lo más importante</strong><small>Información segura · atención de calidad · mejores resultados</small></div></div>
+  </div>
+</div>
+<iframe id="appFrame" src="index%20(3).html?v=292" title="NurseTrack Clinical"></iframe>
 <script>
-(async function(){
-  try{
-    let h=await (await fetch('index%20(3).html?v=291',{cache:'no-store'})).text();
-    const css=`<style id="nt291FlatCover">
-html,body{margin:0!important;min-height:100%!important}
-#loginScreen.nt-exact-login{height:100dvh!important;min-height:100dvh!important;overflow:hidden!important;padding:0!important;background:linear-gradient(180deg,#eef8f7 0%,#f9fbf7 58%,#fff9ee 100%)!important;display:grid!important;place-items:center!important;perspective:none!important;transform:none!important}
-#loginScreen.nt-exact-login .loginbox{position:relative!important;width:min(520px,100vw)!important;height:100dvh!important;max-height:920px!important;aspect-ratio:auto!important;padding:clamp(10px,2vh,20px) clamp(16px,4vw,28px)!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:none!important;background-image:none!important;box-shadow:none!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:clamp(7px,1.25vh,13px)!important;transform:none!important;filter:none!important}
-#loginScreen.nt-exact-login .nt-cover-original-content{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;margin:0!important;padding:0!important}
-#loginScreen.nt-exact-login .nt-cover-original-content>.logo,#loginScreen.nt-exact-login .loginhero{display:none!important}
-.nt291-emblem{width:clamp(58px,9vh,82px);height:clamp(58px,9vh,82px);border-radius:50%;display:grid;place-items:center;background:#e9f7f5;border:2px solid #90cec9;color:#197e82;font-size:clamp(27px,4.3vh,38px);line-height:1;box-shadow:none;margin:0 auto clamp(4px,.8vh,8px);transform:none!important}
-.nt291-title{font-size:clamp(27px,4.2vh,40px);line-height:1.02;margin:0;color:#0b4860;letter-spacing:-.025em;font-weight:800}.nt291-title span{color:#168e97}.nt291-sub{margin-top:clamp(4px,.7vh,7px);font-size:clamp(12px,1.7vh,15px);color:#627982;font-weight:600}
-.nt291-service{width:100%;padding:clamp(8px,1.3vh,12px) clamp(12px,3vw,17px);border:1px solid #cfe5e4;border-radius:16px;background:rgba(255,255,255,.82);display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;text-align:left;box-shadow:none}.nt291-service .ico{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#e8f7f4;color:#168e97;font-size:19px;border:1px solid #b9deda}.nt291-service strong{display:block;color:#173f50;font-size:clamp(13px,1.8vh,16px);margin-bottom:2px}.nt291-service small{display:block;color:#6b8087;font-size:clamp(10px,1.4vh,13px);line-height:1.25}
-#loginScreen.nt-exact-login #setupBox{display:none!important}
-#loginScreen.nt-exact-login #unlockBox{display:block!important;position:static!important;inset:auto!important;width:100%!important;margin:0!important;z-index:8!important;pointer-events:auto!important;background:rgba(255,255,255,.90)!important;border:1px solid #d5e6e6!important;border-radius:18px!important;padding:clamp(11px,1.7vh,15px)!important;box-shadow:none!important;transform:none!important}
-#loginScreen.nt-exact-login #loginNotice{display:none!important}
-#loginScreen.nt-exact-login #unlockBox .field{margin:0 0 clamp(8px,1.1vh,11px)!important;text-align:left!important;pointer-events:auto!important}
-#loginScreen.nt-exact-login #unlockBox .field label{display:block!important;font-size:clamp(11px,1.5vh,13px)!important;font-weight:800!important;color:#274d59!important;margin:0 0 5px!important}
-#loginScreen.nt-exact-login #loginName,#loginScreen.nt-exact-login #loginPin{position:static!important;display:block!important;left:auto!important;top:auto!important;width:100%!important;height:clamp(42px,5.5vh,49px)!important;margin:0!important;padding:0 13px!important;border:1px solid #cbdcde!important;border-radius:12px!important;background:#fff!important;color:#24474f!important;box-shadow:none!important;font-size:16px!important;outline:none!important;opacity:1!important;z-index:12!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-user-select:text!important;user-select:text!important;-webkit-appearance:none!important;appearance:none!important;caret-color:#245f68!important;transform:none!important}
-#loginScreen.nt-exact-login #loginName:focus,#loginScreen.nt-exact-login #loginPin:focus{border-color:#2d98a0!important;box-shadow:0 0 0 3px rgba(45,152,160,.12)!important}
-#loginScreen.nt-exact-login #loginBtn,#loginScreen.nt-exact-login #recoverBtn{position:static!important;left:auto!important;top:auto!important;width:100%!important;height:clamp(42px,5.5vh,49px)!important;margin:0!important;border-radius:12px!important;font-size:clamp(13px,1.9vh,16px)!important;opacity:1!important;z-index:15!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;box-shadow:none!important;transform:none!important}
-#loginScreen.nt-exact-login #loginBtn{background:#178f9a!important;color:#fff!important;border:1px solid #178f9a!important;margin-top:2px!important}
-#loginScreen.nt-exact-login #recoverBtn{background:transparent!important;color:#197f87!important;border:1px solid #79bbc0!important;margin-top:8px!important}
-.nt291-footer{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:clamp(6px,.9vh,9px) 10px;color:#4f6e75;text-align:left}.nt291-footer .heart{font-size:clamp(19px,2.6vh,24px);color:#188f91}.nt291-footer strong{display:block;font-size:clamp(11px,1.45vh,13px);color:#294e59}.nt291-footer small{display:block;font-size:clamp(9px,1.2vh,11px);line-height:1.2;color:#74878c}
-#loginScreen.nt-exact-login #recoveryBox{position:absolute!important;inset:clamp(10px,2.5vh,24px) clamp(10px,3vw,22px)!important;z-index:30!important;background:#fff!important;border:1px solid #d9e8ea!important;border-radius:18px!important;padding:18px!important;box-shadow:none!important;overflow:auto!important}#loginScreen.nt-exact-login #recoveryBox.hidden{display:none!important}#loginScreen.nt-exact-login #recoveryBox .field label{display:block!important}#loginScreen.nt-exact-login #recoveryBox input{position:static!important;width:100%!important;height:44px!important;background:#fff!important;border:1px solid #dbe6ea!important;border-radius:10px!important;padding:10px 11px!important;font-size:16px!important}#loginScreen.nt-exact-login #recoveryBox .btn{position:static!important;width:100%!important;height:auto!important;margin-top:10px!important;opacity:1!important;font-size:14px!important;transform:none!important}
-@media(max-height:700px){#loginScreen.nt-exact-login .loginbox{gap:5px!important;padding-top:7px!important;padding-bottom:7px!important}.nt291-emblem{width:52px!important;height:52px!important;font-size:25px!important}.nt291-service{padding:6px 10px!important}#loginScreen.nt-exact-login #unlockBox{padding:9px!important}.nt291-footer{padding:3px 7px!important}}
-</style>`;
-    const js=`<script id="nt291FlatCoverJS">document.addEventListener('DOMContentLoaded',function(){try{var s=document.getElementById('loginScreen'),box=s&&s.querySelector('.loginbox'),top=s&&s.querySelector('.nt-cover-original-content'),unlock=document.getElementById('unlockBox');if(!s||!box||!top||!unlock)return;top.innerHTML='<div class="nt291-emblem" aria-hidden="true">✚🌿</div><div class="nt291-title">NurseTrack <span>Clinical</span></div><div class="nt291-sub">Censo · enfermería · seguimiento clínico</div>';if(!box.querySelector('.nt291-service')){var svc=document.createElement('div');svc.className='nt291-service';svc.innerHTML='<div class="ico">⌖</div><div><strong>Dirección del servicio</strong><small>Información del servicio o unidad clínica</small></div>';box.insertBefore(svc,unlock)}if(!box.querySelector('.nt291-footer')){var f=document.createElement('div');f.className='nt291-footer';f.innerHTML='<div class="heart">♡✚</div><div><strong>Cuidamos lo más importante</strong><small>Información segura · atención de calidad · mejores resultados</small></div>';box.appendChild(f)}var bh=document.querySelector('.brand h1');if(bh)bh.textContent='NurseTrack Clinical v2.9.1 Flat Cover';}catch(e){console.error(e)}});<\/script>`;
-    h=h.replace(/<title>[\s\S]*?<\/title>/i,'<title>NurseTrack Clinical v2.9.1 Flat Cover</title>');
-    h=h.replace('</head>',css+'</head>');
-    h=h.replace('</body>',js+'</body>');
-    document.open();document.write(h);document.close();
-  }catch(e){document.body.innerHTML='<div class="loading">No se pudo abrir NurseTrack. Recargue la página.</div>';}
+(function(){
+  var cover=document.getElementById('cover'),frame=document.getElementById('appFrame'),user=document.getElementById('user'),pass=document.getElementById('pass'),enter=document.getElementById('enter'),recover=document.getElementById('recover'),msg=document.getElementById('msg');
+  var ready=false;
+  frame.addEventListener('load',function(){ready=true;});
+  function doc(){try{return frame.contentDocument||frame.contentWindow.document}catch(e){return null}}
+  function waitReady(cb){if(ready&&doc()){cb();return}msg.textContent='Abriendo NurseTrack…';var tries=0,t=setInterval(function(){tries++;if((ready&&doc())||tries>30){clearInterval(t);msg.textContent='';if(ready&&doc())cb();else alert('NurseTrack todavía está cargando. Intente nuevamente.')}},100)}
+  function showAppWhenOpen(d){setTimeout(function(){var a=d.getElementById('appScreen'),l=d.getElementById('loginScreen');if(a&&!a.classList.contains('hidden')){cover.style.display='none';frame.style.display='block';msg.textContent='';}else{frame.style.display='none';cover.style.display='flex';}},220)}
+  function doLogin(){var u=user.value.trim(),p=pass.value;if(!u){alert('Escriba el usuario.');user.focus();return}if(!p){alert('Escriba el passcode.');pass.focus();return}waitReady(function(){var d=doc(),iu=d&&d.getElementById('loginName'),ip=d&&d.getElementById('loginPin'),b=d&&d.getElementById('loginBtn');if(!iu||!ip||!b){alert('No se pudo abrir el acceso de NurseTrack.');return}iu.value=u;ip.value=p;b.click();showAppWhenOpen(d);});}
+  enter.addEventListener('click',doLogin);
+  pass.addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+  recover.addEventListener('click',function(){waitReady(function(){var d=doc(),b=d&&d.getElementById('recoverBtn');frame.style.display='block';cover.style.display='none';if(b)b.click();});});
+  setInterval(function(){if(frame.style.display!=='block')return;var d=doc();if(!d)return;var a=d.getElementById('appScreen'),l=d.getElementById('loginScreen');if(l&&!l.classList.contains('hidden')&&(!a||a.classList.contains('hidden'))){frame.style.display='none';cover.style.display='flex';pass.value='';}},700);
 })();
-</script></body></html>
+</script>
+</body>
+</html>
