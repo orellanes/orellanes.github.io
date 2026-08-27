@@ -41,16 +41,30 @@ h1{margin:0;font-size:clamp(29px,4.5vh,43px);line-height:1.02;letter-spacing:-.0
     <div class="footer"><div class="heart">♡✚</div><div><strong>Cuidamos lo más importante</strong><small>Información segura · atención de calidad · mejores resultados</small></div></div>
   </div>
 </div>
-<iframe id="appFrame" src="index%20(3).html?v=292" title="NurseTrack Clinical"></iframe>
+<iframe id="appFrame" src="index%20(3).html?v=293" title="NurseTrack Clinical"></iframe>
 <script>
 (function(){
+  var AUTH='nursetrack_clinical_auth_v21';
   var cover=document.getElementById('cover'),frame=document.getElementById('appFrame'),user=document.getElementById('user'),pass=document.getElementById('pass'),enter=document.getElementById('enter'),recover=document.getElementById('recover'),msg=document.getElementById('msg');
   var ready=false;
   frame.addEventListener('load',function(){ready=true;});
   function doc(){try{return frame.contentDocument||frame.contentWindow.document}catch(e){return null}}
   function waitReady(cb){if(ready&&doc()){cb();return}msg.textContent='Abriendo NurseTrack…';var tries=0,t=setInterval(function(){tries++;if((ready&&doc())||tries>30){clearInterval(t);msg.textContent='';if(ready&&doc())cb();else alert('NurseTrack todavía está cargando. Intente nuevamente.')}},100)}
   function showAppWhenOpen(d){setTimeout(function(){var a=d.getElementById('appScreen'),l=d.getElementById('loginScreen');if(a&&!a.classList.contains('hidden')){cover.style.display='none';frame.style.display='block';msg.textContent='';}else{frame.style.display='none';cover.style.display='flex';}},220)}
-  function doLogin(){var u=user.value.trim(),p=pass.value;if(!u){alert('Escriba el usuario.');user.focus();return}if(!p){alert('Escriba el passcode.');pass.focus();return}waitReady(function(){var d=doc(),iu=d&&d.getElementById('loginName'),ip=d&&d.getElementById('loginPin'),b=d&&d.getElementById('loginBtn');if(!iu||!ip||!b){alert('No se pudo abrir el acceso de NurseTrack.');return}iu.value=u;ip.value=p;b.click();showAppWhenOpen(d);});}
+  function resolveAdminAlias(entered){
+    var low=String(entered||'').trim().toLowerCase();
+    if(low!=='admin'&&low!=='administrador')return entered;
+    try{
+      var raw=localStorage.getItem(AUTH),a=raw?JSON.parse(raw):null;
+      if(a&&a.name){
+        if(!a.role){a.role='Administrador principal';localStorage.setItem(AUTH,JSON.stringify(a));}
+        try{if(frame.contentWindow&&frame.contentWindow.auth&&!frame.contentWindow.auth.role)frame.contentWindow.auth.role='Administrador principal';}catch(e){}
+        return a.name;
+      }
+    }catch(e){}
+    return entered;
+  }
+  function doLogin(){var u=user.value.trim(),p=pass.value;if(!u){alert('Escriba el usuario.');user.focus();return}if(!p){alert('Escriba el passcode.');pass.focus();return}waitReady(function(){var d=doc(),iu=d&&d.getElementById('loginName'),ip=d&&d.getElementById('loginPin'),b=d&&d.getElementById('loginBtn');if(!iu||!ip||!b){alert('No se pudo abrir el acceso de NurseTrack.');return}iu.value=resolveAdminAlias(u);ip.value=p;b.click();showAppWhenOpen(d);});}
   enter.addEventListener('click',doLogin);
   pass.addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
   recover.addEventListener('click',function(){waitReady(function(){var d=doc(),b=d&&d.getElementById('recoverBtn');frame.style.display='block';cover.style.display='none';if(b)b.click();});});
