@@ -8,7 +8,7 @@ function cleanError(err,data){
   var msg='No se pudo enviar el texto.';
   if(data&&data.error)msg=data.error;
   else if(err&&err.message)msg=err.message;
-  if(/SMS provider not configured/i.test(msg))return 'Falta conectar la cuenta de Twilio para activar el envío real de SMS.';
+  if(/SMS provider not configured/i.test(msg))return 'Falta conectar la clave segura de Telnyx para activar el envío real de SMS.';
   return msg;
 }
 async function send(btn){
