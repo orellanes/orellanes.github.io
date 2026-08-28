@@ -11,6 +11,16 @@ function cleanError(err,data){
   if(/SMS provider not configured/i.test(msg))return 'Falta conectar la clave segura de Telnyx para activar el envío real de SMS.';
   return msg;
 }
+async function activeCloud(){
+  var cloud=window.nt28Cloud;
+  if(!cloud||!cloud.functions||typeof cloud.functions.invoke!=='function')return null;
+  var user=window.nt28CloudUser||null;
+  try{
+    var s=await cloud.auth.getSession();
+    if(s&&s.data&&s.data.session&&s.data.session.user){user=s.data.session.user;window.nt28CloudUser=user}
+  }catch(e){}
+  return user?cloud:null;
+}
 async function send(btn){
   var i=Number(btn.dataset.i),a=read(),x=a[i];if(!x)return;
   var ta=document.querySelector('.ntaMessage[data-i="'+i+'"]');
@@ -21,11 +31,10 @@ async function send(btn){
   x.phone=phone;
   var body=String(x.message||'').trim()||defaultMessage(x);
   x.message=body;save(a);
-  var cloud=window.nt28Cloud,user=window.nt28CloudUser;
-  if(!cloud||!user||!cloud.functions||typeof cloud.functions.invoke!=='function'){
-    alert('La cuenta de nube no está conectada. Conecte Supabase antes de enviar el texto.');return;
-  }
-  var old=btn.textContent;btn.disabled=true;btn.textContent='Enviando…';
+  var old=btn.textContent;btn.disabled=true;btn.textContent='Verificando nube…';
+  var cloud=await activeCloud();
+  if(!cloud){btn.disabled=false;btn.textContent=old||'📱 Texto';alert('La sesión de nube no está activa. Entre a Configuración y pulse Conectar nube.');return}
+  btn.textContent='Enviando…';
   try{
     var r=await cloud.functions.invoke('send-sms',{body:{to:phone,body:body}});
     if(r.error||!r.data||r.data.ok!==true)throw {error:r.error,data:r.data};
