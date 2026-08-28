@@ -9,7 +9,8 @@ var KEYS=[
   'nursetrack_clinical_safety_v296',
   'nursetrack_provider_handoff_v297',
   'nursetrack_billing_v1',
-  'nursetrack_medication_safety_v1'
+  'nursetrack_medication_safety_v1',
+  'nursetrack_fund_routing_v1'
 ];
 var lastLocal={},applying=false,initializing=false,activeUser='',pushTimer=null,lastRemoteCheck=0;
 function now(){return new Date().toISOString()}
