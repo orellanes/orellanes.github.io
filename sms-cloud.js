@@ -1,6 +1,8 @@
 (function(){
 'use strict';
 var KEY='nursetrack_visit_agenda_v295';
+var CLOUD_URL='https://ummubyacvgdobgbwvwmf.supabase.co';
+var CLOUD_KEY='sb_publishable_KQOrfgQCG35W_sQIYDvbvw_tow1VFn1';
 function read(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}}
 function save(x){try{localStorage.setItem(KEY,JSON.stringify(x));return true}catch(e){return false}}
 function defaultMessage(x){return 'Recordatorio de cita de NurseTrack Clinical: su cita está programada para '+(x.date||'')+' a las '+(x.time||'')+'. Tipo de visita: '+(x.type||'')+'. Si necesita cambiar su cita, comuníquese con la clínica.'}
@@ -12,12 +14,21 @@ function cleanError(err,data){
   return msg;
 }
 async function activeCloud(){
-  var cloud=window.nt28Cloud;
-  if(!cloud||!cloud.functions||typeof cloud.functions.invoke!=='function')return null;
+  var cloud=window.nt28Cloud||null;
+  if((!cloud||!cloud.auth||!cloud.functions)&&window.supabase&&window.supabase.createClient){
+    try{
+      cloud=window.supabase.createClient(CLOUD_URL,CLOUD_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+      window.nt28Cloud=cloud;
+    }catch(e){cloud=null}
+  }
+  if(!cloud||!cloud.auth||!cloud.functions||typeof cloud.functions.invoke!=='function')return null;
   var user=window.nt28CloudUser||null;
   try{
     var s=await cloud.auth.getSession();
-    if(s&&s.data&&s.data.session&&s.data.session.user){user=s.data.session.user;window.nt28CloudUser=user}
+    if(s&&s.data&&s.data.session&&s.data.session.user){
+      user=s.data.session.user;
+      window.nt28CloudUser=user;
+    }
   }catch(e){}
   return user?cloud:null;
 }
@@ -33,7 +44,7 @@ async function send(btn){
   x.message=body;save(a);
   var old=btn.textContent;btn.disabled=true;btn.textContent='Verificando nube…';
   var cloud=await activeCloud();
-  if(!cloud){btn.disabled=false;btn.textContent=old||'📱 Texto';alert('La sesión de nube no está activa. Entre a Configuración y pulse Conectar nube.');return}
+  if(!cloud){btn.disabled=false;btn.textContent=old||'📱 Texto';alert('No encuentro una sesión de nube guardada en este navegador. Vuelva a Configuración y pulse Conectar nube una vez.');return}
   btn.textContent='Enviando…';
   try{
     var r=await cloud.functions.invoke('send-sms',{body:{to:phone,body:body}});
