@@ -2,57 +2,72 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef8f7">
 <title>NurseTrack Clinical</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#eef8f7;color:#23464f}body{min-height:100vh;overflow:auto}.page{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;background:linear-gradient(180deg,#eaf7f5,#f8fbf7 58%,#fff7e9)}.card{width:min(520px,100%);display:flex;flex-direction:column;gap:12px;padding:20px}.brand{text-align:center}.emblem{width:78px;height:78px;margin:auto;border-radius:50%;border:2px solid #91cec8;background:#e6f6f3;display:grid;place-items:center;color:#168d94;font-size:38px}h1{margin:8px 0 0;color:#0d4c61}.teal{color:#168e97}.subtitle{text-align:center;color:#657c83}.service,.login,.membership,.resetbox{padding:14px;border:1px solid #cfe4e2;border-radius:16px;background:#fff}.field{margin-bottom:9px}label{display:block;font-size:12px;font-weight:800;margin-bottom:5px}input,select,button{width:100%;height:48px;border-radius:12px;font-size:16px}input,select{border:1px solid #cbdcde;padding:0 13px;background:#fff;color:#23464f;position:relative;z-index:2;pointer-events:auto!important;touch-action:auto}button{font-size:15px;font-weight:800;cursor:pointer;position:relative;z-index:2;pointer-events:auto!important;touch-action:manipulation}.enter{border:1px solid #178f9a;background:#178f9a;color:#fff}.recover{margin-top:8px;border:1px solid #79bbc0;background:transparent;color:#197f87}.join{border:1px solid #3b8e75;background:#eef8f3;color:#286650}.join strong{display:block}.join small{display:block;font-size:11px;font-weight:600;margin-top:2px}.membership{display:none}.membership.open{display:block}.membership h3{margin:0 0 4px;color:#245861}.membership p{margin:0 0 12px;font-size:12px;color:#6c8085}.actions{display:flex;gap:8px}.actions button{width:50%}.cancel{border:1px solid #cbdcde;background:#fff;color:#557178}.create{border:1px solid #178f9a;background:#178f9a;color:#fff}.note{font-size:10px;color:#7a8c90;line-height:1.35;margin-top:8px}#appFrame{position:fixed;inset:0;width:100%;height:100%;border:0;display:none;background:white;z-index:100}#msg,#memberMsg,#cloudResetMsg{text-align:center;font-size:12px;color:#7c6a2f;min-height:18px}#cloudReset{display:none;min-height:100vh;align-items:flex-start;justify-content:center;padding:24px 16px;background:#eef8f7}.resetbox h2{margin:0 0 6px;color:#0d4c61}.resetbox p{margin:0 0 14px;color:#657c83;font-size:13px;line-height:1.45}.success{color:#287a4b!important;font-weight:700}@media(max-height:760px){.card{padding:10px;gap:8px}.emblem{width:58px;height:58px;font-size:28px}.service{display:none}input,select,button{height:43px}}
+body{font-family:Arial,sans-serif;background:#eef8f7;margin:0;padding:32px 18px;color:#23464f}
+main{max-width:440px;margin:auto;background:white;padding:24px;border-radius:16px;border:1px solid #cfe4e2;box-shadow:0 8px 30px rgba(0,0,0,.05)}
+.brand{text-align:center;margin-bottom:20px}.emblem{width:70px;height:70px;margin:0 auto 8px;border-radius:50%;border:2px solid #91cec8;background:#e6f6f3;display:grid;place-items:center;color:#168d94;font-size:34px}h1{font-size:28px;margin:0;color:#0d4c61}.teal{color:#168e97}.subtitle{margin-top:5px;color:#657c83;font-size:14px}
+label{display:block;font-weight:700;margin:16px 0 6px}input{width:100%;box-sizing:border-box;height:48px;font-size:18px;padding:0 12px;border:1px solid #9fb8bb;border-radius:10px;background:white;color:#111}button{width:100%;height:48px;margin-top:14px;font-size:16px;border-radius:10px;font-weight:700;cursor:pointer}.enter{border:0;background:#178f9a;color:white}.recover{border:1px solid #79bbc0;background:white;color:#197f87}.join{border:1px solid #3b8e75;background:#eef8f3;color:#286650}.join small{display:block;font-size:11px;margin-top:2px}.service{margin:18px 0 8px;padding:12px;border:1px solid #dcebea;border-radius:12px;background:#f9fcfb;font-size:14px}.msg{text-align:center;min-height:18px;margin-top:10px;font-size:13px;color:#7c6a2f}#appFrame{position:fixed;inset:0;width:100%;height:100%;border:0;display:none;background:white;z-index:1000}
 </style>
 </head>
 <body>
-<div id="cover" class="page">
-  <div class="card">
-    <div class="brand"><div class="emblem">✚</div><h1>NurseTrack <span class="teal">Clinical</span></h1><div class="subtitle">Censo · enfermería · seguimiento clínico</div></div>
-    <div class="service"><strong>Dirección del servicio</strong><br><small>Información del servicio o unidad clínica</small></div>
-    <button id="join" class="join" type="button"><strong>Crear membresía / Registrarme</strong><small>Nuevo usuario u organización</small></button>
-    <div id="membership" class="membership">
-      <h3>Registro de membresía</h3><p>Cree el acceso inicial de su organización.</p>
-      <div class="field"><label>Nombre completo</label><input id="mName" autocomplete="name"></div>
-      <div class="field"><label>Compañía / Organización</label><input id="mOrg"></div>
-      <div class="field"><label>Correo electrónico</label><input id="mEmail" type="email" autocomplete="email"></div>
-      <div class="field"><label>Plan</label><select id="mPlan"><option>Prueba</option><option>Individual</option><option>Professional</option><option>Clinic</option><option>Enterprise</option></select></div>
-      <div class="field"><label>Usuario</label><input id="mUser" autocomplete="username" autocapitalize="none"></div>
-      <div class="field"><label>Passcode</label><input id="mPass" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres, letras y números"></div>
-      <div class="actions"><button id="mCancel" class="cancel" type="button">Cancelar</button><button id="mCreate" class="create" type="button">Crear membresía</button></div>
-      <div id="memberMsg"></div>
-    </div>
-    <div class="login">
-      <div class="field"><label for="user">Usuario</label><input id="user" name="user" autocomplete="username" autocapitalize="none" inputmode="text"></div>
-      <div class="field"><label for="pass">Passcode</label><input id="pass" name="pass" type="password" autocomplete="current-password"></div>
-      <button id="enter" class="enter" type="button">Entrar</button>
-      <button id="recover" class="recover" type="button">Restablecer contraseña</button>
-      <div id="msg"></div>
-    </div>
-  </div>
-</div>
-<div id="cloudReset"><div class="card"><div class="brand"><div class="emblem">✚</div><h1>NurseTrack <span class="teal">Clinical</span></h1></div><div class="resetbox"><h2>Crear nueva contraseña</h2><p>Escriba la nueva contraseña de su cuenta de nube.</p><div class="field"><label>Nueva contraseña</label><input id="cloudNewPass" type="password" autocomplete="new-password"></div><div class="field"><label>Confirmar nueva contraseña</label><input id="cloudNewPass2" type="password" autocomplete="new-password"></div><button id="cloudResetBtn" class="enter" type="button">Guardar nueva contraseña</button><div id="cloudResetMsg"></div></div></div></div>
-<iframe id="appFrame" src="index%20(3).html?v=303"></iframe>
+<main id="cover">
+  <div class="brand"><div class="emblem">✚</div><h1>NurseTrack <span class="teal">Clinical</span></h1><div class="subtitle">Censo · enfermería · seguimiento clínico</div></div>
+  <div class="service"><strong>Dirección del servicio</strong><br><small>Información del servicio o unidad clínica</small></div>
+  <button id="join" class="join" type="button">Crear membresía / Registrarme<small>Nuevo usuario u organización</small></button>
+  <label for="user">Usuario</label>
+  <input id="user" name="user" type="text" autocomplete="username" autocapitalize="none">
+  <label for="pass">Passcode</label>
+  <input id="pass" name="pass" type="password" autocomplete="current-password">
+  <button id="enter" class="enter" type="button">Entrar</button>
+  <button id="recover" class="recover" type="button">Restablecer contraseña</button>
+  <div id="msg" class="msg"></div>
+</main>
+<iframe id="appFrame" src="index%20(3).html?v=304"></iframe>
 <script>
 (function(){
-var AUTH='nursetrack_clinical_auth_v21',cover=document.getElementById('cover'),frame=document.getElementById('appFrame'),user=document.getElementById('user'),pass=document.getElementById('pass'),msg=document.getElementById('msg'),ready=false;
+var AUTH='nursetrack_clinical_auth_v21';
+var cover=document.getElementById('cover'),frame=document.getElementById('appFrame'),user=document.getElementById('user'),pass=document.getElementById('pass'),msg=document.getElementById('msg'),ready=false;
 function doc(){try{return frame.contentDocument||frame.contentWindow.document}catch(e){return null}}
-frame.addEventListener('load',function(){ready=true;try{var d=doc();[['ntAdminCenterLoader','admin-center.js?v=293'],['ntTemplateDesignLoader','template-design.js?v=294'],['ntVisitAgendaLoader','visit-agenda.js?v=304'],['ntClinicalSafetyLoader','clinical-safety.js?v=296'],['ntProviderHandoffLoader','provider-handoff.js?v=297'],['ntPatientAppointmentLoader','patient-appointment.js?v=303'],['ntModuleSyncLoader','module-sync.js?v=304']].forEach(function(a){if(!d.getElementById(a[0])){var s=d.createElement('script');s.id=a[0];s.src=a[1];d.head.appendChild(s)}})}catch(e){}});
-function wait(cb){if(ready&&doc())return cb();msg.textContent='Abriendo NurseTrack…';setTimeout(function(){if(ready&&doc()){msg.textContent='';cb()}else alert('NurseTrack todavía está cargando.')},700)}
-function alias(u){var l=u.toLowerCase();if(l!=='admin'&&l!=='administrador')return u;try{var a=JSON.parse(localStorage.getItem(AUTH)||'null');return a&&a.name?a.name:u}catch(e){return u}}
-function login(){var u=user.value.trim(),p=pass.value;if(!u||!p){alert('Escriba usuario y passcode.');return}wait(function(){var d=doc(),iu=d.getElementById('loginName'),ip=d.getElementById('loginPin'),b=d.getElementById('loginBtn');if(!iu||!ip||!b)return alert('No se pudo abrir el acceso de NurseTrack.');iu.value=alias(u);ip.value=p;b.click();setTimeout(function(){var a=d.getElementById('appScreen');if(a&&!a.classList.contains('hidden')){cover.style.display='none';frame.style.display='block'}},220)})}
-document.getElementById('enter').addEventListener('click',login);pass.addEventListener('keydown',function(e){if(e.key==='Enter')login()});
-document.getElementById('recover').addEventListener('click',function(){wait(function(){var d=doc(),b=d.getElementById('recoverBtn');frame.style.display='block';cover.style.display='none';if(b)b.click()})});
-var join=document.getElementById('join'),membership=document.getElementById('membership'),cancel=document.getElementById('mCancel');if(join)join.addEventListener('click',function(){membership.classList.add('open')});if(cancel)cancel.addEventListener('click',function(){membership.classList.remove('open')});
+frame.addEventListener('load',function(){
+  ready=true;
+  try{
+    var d=doc();
+    [['ntAdminCenterLoader','admin-center.js?v=293'],['ntTemplateDesignLoader','template-design.js?v=294'],['ntVisitAgendaLoader','visit-agenda.js?v=304'],['ntClinicalSafetyLoader','clinical-safety.js?v=296'],['ntProviderHandoffLoader','provider-handoff.js?v=297'],['ntPatientAppointmentLoader','patient-appointment.js?v=304'],['ntModuleSyncLoader','module-sync.js?v=304']].forEach(function(a){if(!d.getElementById(a[0])){var s=d.createElement('script');s.id=a[0];s.src=a[1];d.head.appendChild(s)}});
+  }catch(e){}
+});
+function wait(cb){
+  if(ready&&doc())return cb();
+  msg.textContent='Abriendo NurseTrack…';
+  setTimeout(function(){if(ready&&doc()){msg.textContent='';cb()}else msg.textContent='NurseTrack todavía está cargando. Intente nuevamente.'},900);
+}
+function alias(u){
+  var l=u.toLowerCase();
+  if(l!=='admin'&&l!=='administrador')return u;
+  try{var a=JSON.parse(localStorage.getItem(AUTH)||'null');return a&&a.name?a.name:u}catch(e){return u}
+}
+function login(){
+  var u=user.value.trim(),p=pass.value;
+  if(!u||!p){msg.textContent='Escriba usuario y passcode.';return}
+  wait(function(){
+    var d=doc(),iu=d.getElementById('loginName'),ip=d.getElementById('loginPin'),b=d.getElementById('loginBtn');
+    if(!iu||!ip||!b){msg.textContent='No se pudo abrir el acceso de NurseTrack.';return}
+    iu.value=alias(u);ip.value=p;b.click();
+    setTimeout(function(){
+      var a=d.getElementById('appScreen');
+      if(a&&!a.classList.contains('hidden')){cover.style.display='none';document.body.style.padding='0';frame.style.display='block'}
+      else{msg.textContent='Usuario o passcode no reconocido.'}
+    },300);
+  });
+}
+document.getElementById('enter').addEventListener('click',login);
+pass.addEventListener('keydown',function(e){if(e.key==='Enter')login()});
+document.getElementById('recover').addEventListener('click',function(){wait(function(){var d=doc(),b=d.getElementById('recoverBtn');cover.style.display='none';document.body.style.padding='0';frame.style.display='block';if(b)b.click()})});
+document.getElementById('join').addEventListener('click',function(){msg.textContent='La creación de membresía se abrirá desde NurseTrack.';});
 })();
-(function(){
-var CLOUD_URL='https://ummubyacvgdobgbwvwmf.supabase.co',CLOUD_KEY='sb_publishable_KQOrfgQCG35W_sQIYDvbvw_tow1VFn1',panel=document.getElementById('cloudReset'),cover=document.getElementById('cover'),frame=document.getElementById('appFrame'),message=document.getElementById('cloudResetMsg');if(!window.supabase)return;var sb=window.supabase.createClient(CLOUD_URL,CLOUD_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});function showReset(){panel.style.display='flex';cover.style.display='none';frame.style.display='none'}var hp=new URLSearchParams((location.hash||'').replace(/^#/,'')),qp=new URLSearchParams(location.search||'');if(hp.get('type')==='recovery'||qp.get('type')==='recovery')showReset();sb.auth.onAuthStateChange(function(event){if(event==='PASSWORD_RECOVERY')showReset()});document.getElementById('cloudResetBtn').onclick=async function(){var p1=document.getElementById('cloudNewPass').value,p2=document.getElementById('cloudNewPass2').value;if(p1.length<8||!/[A-Za-z]/.test(p1)||!/\d/.test(p1)){message.textContent='Use al menos 8 caracteres e incluya letras y números.';return}if(p1!==p2){message.textContent='Las contraseñas no coinciden.';return}message.textContent='Guardando…';var r=await sb.auth.updateUser({password:p1});if(r.error){message.textContent='No se pudo cambiar la contraseña: '+r.error.message;return}message.className='success';message.textContent='Contraseña actualizada correctamente.';try{history.replaceState(null,'',location.pathname)}catch(e){}setTimeout(function(){panel.style.display='none';cover.style.display='flex'},1200)}})();
 </script>
 </body>
 </html>
