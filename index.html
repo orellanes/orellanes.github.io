@@ -27,6 +27,17 @@
 (function(){
 var frame=document.getElementById('appFrame'),cover=document.getElementById('cover'),user=document.getElementById('user'),pass=document.getElementById('pass'),msg=document.getElementById('msg');
 var loading=false;
+function innerDoc(){try{return frame.contentDocument||frame.contentWindow.document}catch(e){return null}}
+function loadScript(d,id,src,delay){setTimeout(function(){try{if(!d.getElementById(id)){var s=d.createElement('script');s.id=id;s.src=src;s.async=true;(d.head||d.documentElement).appendChild(s)}}catch(e){}},delay||0)}
+function loadEnhancements(d){
+  loadScript(d,'ntAdminCenterLoader','admin-center.js?v=307',0);
+  loadScript(d,'ntTemplateDesignLoader','template-design.js?v=307',250);
+  loadScript(d,'ntVisitAgendaLoader','visit-agenda.js?v=307',500);
+  loadScript(d,'ntClinicalSafetyLoader','clinical-safety.js?v=307',750);
+  loadScript(d,'ntProviderHandoffLoader','provider-handoff.js?v=307',1000);
+  loadScript(d,'ntPatientAppointmentLoader','patient-appointment.js?v=307',1250);
+  loadScript(d,'ntModuleSyncLoader','module-sync.js?v=307',1500);
+}
 function openInner(mode){
   if(loading)return;
   var u=user.value.trim(),p=pass.value;
@@ -34,7 +45,7 @@ function openInner(mode){
   loading=true;msg.textContent='Abriendo NurseTrack…';
   frame.onload=function(){
     try{
-      var d=frame.contentDocument||frame.contentWindow.document;
+      var d=innerDoc();
       if(mode==='recover'){
         cover.style.display='none';document.body.style.padding='0';frame.style.display='block';
         var rb=d.getElementById('recoverBtn');if(rb)rb.click();
@@ -45,12 +56,14 @@ function openInner(mode){
       iu.value=u;ip.value=p;b.click();
       setTimeout(function(){
         var a=d.getElementById('appScreen');
-        if(a&&!a.classList.contains('hidden')){cover.style.display='none';document.body.style.padding='0';frame.style.display='block';msg.textContent='';}
-        else{msg.textContent='Usuario o passcode no reconocido.';frame.removeAttribute('src');loading=false;}
-      },350);
+        if(a&&!a.classList.contains('hidden')){
+          cover.style.display='none';document.body.style.padding='0';frame.style.display='block';msg.textContent='';loading=false;
+          loadEnhancements(d);
+        }else{msg.textContent='Usuario o passcode no reconocido.';frame.removeAttribute('src');loading=false;}
+      },400);
     }catch(e){msg.textContent='No se pudo completar el acceso.';loading=false;}
   };
-  frame.src='index%20(3).html?v=305';
+  frame.src='index%20(3).html?v=307';
 }
 document.getElementById('enter').addEventListener('click',function(){openInner('login')});
 pass.addEventListener('keydown',function(e){if(e.key==='Enter')openInner('login')});
