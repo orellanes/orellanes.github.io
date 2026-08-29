@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#397f88">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>NurseTrack Clinical v3.0</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f3f8f8;color:#17343c}.wrap{min-height:100vh;display:grid;place-items:center;padding:18px;background:linear-gradient(180deg,#eaf4f6,#f8fbfb)}.card{width:min(460px,100%);background:#fff;border:1px solid #d8e6e8;border-radius:24px;padding:26px;box-shadow:0 18px 55px rgba(35,74,82,.12)}.logo{width:68px;height:68px;border-radius:20px;display:grid;place-items:center;margin:auto;background:linear-gradient(145deg,#4f9298,#2f727b);color:#fff;font-size:25px;font-weight:900;box-shadow:0 8px 22px rgba(47,114,123,.22)}h1{text-align:center;margin:14px 0 4px;font-size:25px}.sub{text-align:center;color:#6a8187;font-size:13px;line-height:1.45;margin-bottom:18px}.badge{display:block;width:max-content;max-width:100%;margin:0 auto 18px;padding:7px 11px;border-radius:999px;background:#edf7f5;border:1px solid #cfe4df;color:#2f6971;font-size:12px;font-weight:800}.field{margin-top:13px}.field label{display:block;font-size:13px;font-weight:800;margin-bottom:6px}input{width:100%;height:48px;border:1px solid #d7e3e5;border-radius:12px;padding:0 13px;font-size:16px;color:#17343c;background:#fff}input:focus{outline:3px solid rgba(57,127,136,.14);border-color:#397f88}.btn{width:100%;height:50px;border:0;border-radius:13px;margin-top:18px;background:#397f88;color:#fff;font-weight:800;font-size:16px}.btn:active{transform:translateY(1px)}.note{margin-top:14px;text-align:center;color:#74898e;font-size:11px;line-height:1.45}.error{display:none;margin-top:12px;padding:10px 12px;border-radius:10px;background:#fff3d6;color:#76520b;font-size:12px}.app{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff;display:none;z-index:20}.loading{display:none;margin-top:12px;text-align:center;color:#397f88;font-size:13px;font-weight:700}@media(max-width:520px){.wrap{padding:12px;align-items:start;padding-top:max(22px,env(safe-area-inset-top))}.card{padding:22px 18px;border-radius:20px}.logo{width:62px;height:62px}.field{margin-top:11px}input{height:47px}.btn{height:49px}}
@@ -16,14 +19,14 @@
     <div class="logo">NT</div>
     <h1>NurseTrack Clinical</h1>
     <div class="sub">Acceso seguro · versión clínica móvil y escritorio</div>
-    <div class="badge">v3.0 · Portal oficial</div>
+    <div class="badge">v3.0 · OFICIAL COMPLETA</div>
     <form id="portalForm">
       <div class="field"><label for="membership">Membresía</label><input id="membership" autocomplete="organization" placeholder="Membresía / compañía"></div>
       <div class="field"><label for="user">Usuario</label><input id="user" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Usuario"></div>
       <div class="field"><label for="pin">Passcode</label><input id="pin" type="password" autocomplete="current-password" enterkeyhint="go" placeholder="Passcode"></div>
       <button class="btn" id="enterBtn" type="submit">Entrar</button>
-      <div class="loading" id="loading">Abriendo NurseTrack…</div>
-      <div class="error" id="err">No se pudo abrir automáticamente. Se abrirá la pantalla interna de acceso.</div>
+      <div class="loading" id="loading">Abriendo NurseTrack v3.0 completa…</div>
+      <div class="error" id="err">Usuario o passcode no reconocido.</div>
     </form>
     <div class="note">Compatible con iPhone, iPad y computadora. El botón Entrar y la tecla Enter usan la misma acción.</div>
   </div>
@@ -32,6 +35,13 @@
 <script>
 (function(){
   var form=document.getElementById('portalForm'),frame=document.getElementById('appFrame'),portal=document.getElementById('portal'),loading=document.getElementById('loading'),err=document.getElementById('err');
+  var VERSION='20260829-1710';
+  var modules=[
+    'admin-center.js','template-design.js','template-library.js','visit-agenda.js','clinical-safety.js','provider-handoff.js','patient-appointment.js','module-sync.js','platform-enhancements.js','integrated-record.js','medication-safety.js','billing-center.js','billing-review-edit.js','billing-workflow.js','coding-assistant.js','encounter-charges.js','fund-routing.js','lab-billing.js','sms-cloud.js','cloud-sync-fix.js'
+  ];
+  function loadModules(d){
+    modules.forEach(function(src,i){setTimeout(function(){try{var id='nt_'+src.replace(/[^a-z0-9]/gi,'_');if(!d.getElementById(id)){var s=d.createElement('script');s.id=id;s.src=src+'?v='+VERSION;s.async=false;(d.head||d.documentElement).appendChild(s)}}catch(e){}},i*120)});
+  }
   function openApp(){
     var user=document.getElementById('user').value.trim(),pin=document.getElementById('pin').value;
     if(!user){document.getElementById('user').focus();return}
@@ -39,13 +49,24 @@
     loading.style.display='block';err.style.display='none';
     frame.onload=function(){
       try{
-        var d=frame.contentDocument,w=frame.contentWindow;
+        var d=frame.contentDocument||frame.contentWindow.document;
         var u=d.getElementById('loginName'),p=d.getElementById('loginPin'),b=d.getElementById('loginBtn');
-        if(u&&p&&b){u.value=user;p.value=pin;b.click();}
-        setTimeout(function(){frame.style.display='block';portal.style.display='none';},120);
-      }catch(e){err.style.display='block';frame.style.display='block';portal.style.display='none';}
+        if(!u||!p||!b){throw new Error('login controls not found')}
+        u.value=user;p.value=pin;b.click();
+        setTimeout(function(){
+          try{
+            var app=d.getElementById('appScreen');
+            if(app&&!app.classList.contains('hidden')){
+              loadModules(d);
+              frame.style.display='block';portal.style.display='none';loading.style.display='none';
+            }else{
+              loading.style.display='none';err.style.display='block';frame.removeAttribute('src');
+            }
+          }catch(e){loading.style.display='none';err.style.display='block'}
+        },500);
+      }catch(e){loading.style.display='none';err.style.display='block';frame.removeAttribute('src')}
     };
-    frame.src='index%20(3).html?v=310';
+    frame.src='index%20(3).html?v='+VERSION;
   }
   form.addEventListener('submit',function(e){e.preventDefault();openApp()});
   ['membership','user','pin'].forEach(function(id){document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();openApp()}})});
