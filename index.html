@@ -4,71 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#eef8f7">
+<meta name="theme-color" content="#0f6175">
 <title>NurseTrack Clinical</title>
-<style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:#eef8f7;color:#23464f}body{padding:32px 18px}main{max-width:440px;margin:auto;background:#fff;padding:24px;border-radius:16px;border:1px solid #cfe4e2;box-shadow:0 8px 30px rgba(0,0,0,.05)}.brand{text-align:center;margin-bottom:20px}.emblem{width:70px;height:70px;margin:0 auto 8px;border-radius:50%;border:2px solid #91cec8;background:#e6f6f3;display:grid;place-items:center;color:#168d94;font-size:34px}h1{font-size:28px;margin:0;color:#0d4c61}.teal{color:#168e97}.subtitle{margin-top:5px;color:#657c83;font-size:14px}label{display:block;font-weight:700;margin:16px 0 6px}input{width:100%;height:48px;font-size:18px;padding:0 12px;border:1px solid #9fb8bb;border-radius:10px;background:#fff;color:#111;-webkit-appearance:none;appearance:none}button{width:100%;height:48px;margin-top:14px;font-size:16px;border-radius:10px;font-weight:700;touch-action:manipulation}.enter{border:0;background:#178f9a;color:#fff}.recover{border:1px solid #79bbc0;background:#fff;color:#197f87}.service{margin:18px 0 8px;padding:12px;border:1px solid #dcebea;border-radius:12px;background:#f9fcfb;font-size:14px}.msg{text-align:center;min-height:18px;margin-top:10px;font-size:13px;color:#7c6a2f}#appFrame{position:fixed;inset:0;width:100%;height:100%;border:0;display:none;background:#fff;z-index:1000}
-</style>
+<meta http-equiv="refresh" content="0; url=index%20(3).html?v=308">
+<script>
+  window.location.replace('index%20(3).html?v=308');
+</script>
 </head>
 <body>
-<main id="cover">
-  <div class="brand"><div class="emblem">✚</div><h1>NurseTrack <span class="teal">Clinical</span></h1><div class="subtitle">Censo · enfermería · seguimiento clínico</div></div>
-  <div class="service"><strong>Acceso seguro</strong><br><small>NurseTrack Clinical</small></div>
-  <label for="user">Usuario</label>
-  <input id="user" name="user" type="text" autocomplete="username" autocapitalize="none">
-  <label for="pass">Passcode</label>
-  <input id="pass" name="pass" type="password" autocomplete="current-password">
-  <button id="enter" class="enter" type="button">Entrar</button>
-  <button id="recover" class="recover" type="button">Restablecer contraseña</button>
-  <div id="msg" class="msg"></div>
-</main>
-<iframe id="appFrame" title="NurseTrack Clinical"></iframe>
-<script>
-(function(){
-var frame=document.getElementById('appFrame'),cover=document.getElementById('cover'),user=document.getElementById('user'),pass=document.getElementById('pass'),msg=document.getElementById('msg');
-var loading=false;
-function innerDoc(){try{return frame.contentDocument||frame.contentWindow.document}catch(e){return null}}
-function loadScript(d,id,src,delay){setTimeout(function(){try{if(!d.getElementById(id)){var s=d.createElement('script');s.id=id;s.src=src;s.async=true;(d.head||d.documentElement).appendChild(s)}}catch(e){}},delay||0)}
-function loadEnhancements(d){
-  loadScript(d,'ntAdminCenterLoader','admin-center.js?v=307',0);
-  loadScript(d,'ntTemplateDesignLoader','template-design.js?v=307',250);
-  loadScript(d,'ntVisitAgendaLoader','visit-agenda.js?v=307',500);
-  loadScript(d,'ntClinicalSafetyLoader','clinical-safety.js?v=307',750);
-  loadScript(d,'ntProviderHandoffLoader','provider-handoff.js?v=307',1000);
-  loadScript(d,'ntPatientAppointmentLoader','patient-appointment.js?v=307',1250);
-  loadScript(d,'ntModuleSyncLoader','module-sync.js?v=307',1500);
-}
-function openInner(mode){
-  if(loading)return;
-  var u=user.value.trim(),p=pass.value;
-  if(mode==='login'&&(!u||!p)){msg.textContent='Escriba usuario y passcode.';return;}
-  loading=true;msg.textContent='Abriendo NurseTrack…';
-  frame.onload=function(){
-    try{
-      var d=innerDoc();
-      if(mode==='recover'){
-        cover.style.display='none';document.body.style.padding='0';frame.style.display='block';
-        var rb=d.getElementById('recoverBtn');if(rb)rb.click();
-        loading=false;return;
-      }
-      var iu=d.getElementById('loginName'),ip=d.getElementById('loginPin'),b=d.getElementById('loginBtn');
-      if(!iu||!ip||!b){msg.textContent='No se pudo abrir el acceso de NurseTrack.';loading=false;return;}
-      iu.value=u;ip.value=p;b.click();
-      setTimeout(function(){
-        var a=d.getElementById('appScreen');
-        if(a&&!a.classList.contains('hidden')){
-          cover.style.display='none';document.body.style.padding='0';frame.style.display='block';msg.textContent='';loading=false;
-          loadEnhancements(d);
-        }else{msg.textContent='Usuario o passcode no reconocido.';frame.removeAttribute('src');loading=false;}
-      },400);
-    }catch(e){msg.textContent='No se pudo completar el acceso.';loading=false;}
-  };
-  frame.src='index%20(3).html?v=307';
-}
-document.getElementById('enter').addEventListener('click',function(){openInner('login')});
-pass.addEventListener('keydown',function(e){if(e.key==='Enter')openInner('login')});
-document.getElementById('recover').addEventListener('click',function(){openInner('recover')});
-})();
-</script>
+<p>Abriendo NurseTrack Clinical…</p>
+<p><a href="index%20(3).html?v=308">Abrir NurseTrack</a></p>
 </body>
 </html>
