@@ -11,7 +11,6 @@ var KEYS=[
   'nursetrack_v3_users_permissions',
   'nursetrack_v3_patient_assignments',
   'nursetrack_v3_superadmin',
-  'nursetrack_v3_active_user',
   'nursetrack_v3_social_notes',
   'nursetrack_v3_addiction_templates',
   'nursetrack_v3_cpt_diagnosis_catalog',
