@@ -1,0 +1,26 @@
+(function(){
+'use strict';
+if(window.__ntResilienceLoaded)return;window.__ntResilienceLoaded=true;
+var CORE='nursetrack_clinical_v21';
+var SNAP='nursetrack_v3_last_good_snapshot';
+var HEALTH='nursetrack_v3_health_state';
+var BOOT='nursetrack_v3_boot_guard';
+var MAX_ERRORS=3;
+function now(){return new Date().toISOString()}
+function read(k,fb){try{var v=localStorage.getItem(k);return v==null?fb:JSON.parse(v)}catch(e){return fb}}
+function write(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
+function validState(v){return !!v&&typeof v==='object'&&Array.isArray(v.patients)&&Array.isArray(v.audit)&&v.settings&&typeof v.settings==='object'}
+function snapshot(reason){var s=read(CORE,null);if(!validState(s))return false;return write(SNAP,{createdAt:now(),reason:reason||'automatic',state:s})}
+function restore(){var b=read(SNAP,null);if(!b||!validState(b.state))return false;write(CORE,b.state);return true}
+function health(status,detail){var h={status:status||'ok',detail:detail||'',checkedAt:now(),url:location.href};write(HEALTH,h);renderBadge(h);return h}
+function renderBadge(h){try{var host=document.querySelector('.top .row')||document.querySelector('.top .user');if(!host)return;var b=document.getElementById('ntHealthBadge');if(!b){b=document.createElement('span');b.id='ntHealthBadge';b.className='pill';host.insertBefore(b,host.firstChild)}b.textContent=h.status==='ok'?'🛡️ Sistema protegido':h.status==='recovered'?'🛡️ Recuperado':'⚠️ Revisar sistema';b.title=h.detail||''}catch(e){}}
+function selfCheck(){var s=read(CORE,null);if(validState(s)){snapshot('health-check');health('ok','Estado local válido');return true}var ok=restore();if(ok){health('recovered','Se restauró automáticamente el último estado válido');setTimeout(function(){location.reload()},250);return true}health('error','No se encontró un estado local válido para restaurar');return false}
+function bootGuard(){var b=read(BOOT,{count:0,last:''});var t=Date.now();if(b.last&&t-new Date(b.last).getTime()<120000)b.count=(b.count||0)+1;else b.count=1;b.last=now();write(BOOT,b);if(b.count>MAX_ERRORS){if(restore()){write(BOOT,{count:0,last:now()});health('recovered','Arranque seguro activado desde último estado válido');setTimeout(function(){location.reload()},300);return false}}return true}
+function resetBoot(){write(BOOT,{count:0,last:now()})}
+function protectWrites(){window.addEventListener('beforeunload',function(){snapshot('before-unload')});document.addEventListener('click',function(e){var t=e.target&&e.target.closest?e.target.closest('button'):null;if(!t)return;var x=(t.textContent||'').toLowerCase();if(/guardar|save|sincronizar|sync|cerrar visita|firmar/.test(x))setTimeout(function(){snapshot('after-write')},500)},true)}
+function trapErrors(){window.addEventListener('error',function(e){var h=read(HEALTH,{});h.lastError=String(e.message||'error');h.lastErrorAt=now();write(HEALTH,h)});window.addEventListener('unhandledrejection',function(e){var h=read(HEALTH,{});h.lastError='Promise rejection';h.lastErrorAt=now();write(HEALTH,h)})}
+function addRecoveryControl(){try{var f=document.getElementById('settingsForm');if(!f||document.getElementById('ntResiliencePanel'))return;var d=document.createElement('div');d.id='ntResiliencePanel';d.className='span2';d.innerHTML='<h3>🛡️ Protección y recuperación</h3><p class="muted">NurseTrack conserva un último estado válido y puede restaurarlo si detecta corrupción local o varios arranques fallidos.</p><div class="row"><button type="button" class="btn secondary" id="ntMakeSnapshot">Crear punto seguro</button><button type="button" class="btn secondary" id="ntRunHealth">Verificar sistema</button><button type="button" class="btn danger" id="ntRestoreLastGood">Restaurar último estado válido</button><span id="ntHealthText" class="muted"></span></div>';f.appendChild(d);document.getElementById('ntMakeSnapshot').onclick=function(){var ok=snapshot('manual');document.getElementById('ntHealthText').textContent=ok?'Punto seguro creado ✓':'No se pudo crear el punto seguro'};document.getElementById('ntRunHealth').onclick=function(){var ok=selfCheck();document.getElementById('ntHealthText').textContent=ok?'Sistema verificado ✓':'Se requiere revisión'};document.getElementById('ntRestoreLastGood').onclick=function(){if(!confirm('¿Restaurar el último estado válido guardado en este dispositivo?'))return;if(restore()){health('recovered','Restauración manual completada');location.reload()}else alert('No hay un punto seguro válido disponible.')}}catch(e){}}
+function init(){if(!bootGuard())return;selfCheck();protectWrites();trapErrors();addRecoveryControl();setTimeout(resetBoot,8000);setInterval(function(){snapshot('periodic');selfCheck()},60000);document.addEventListener('nursetrack:templates-synced',function(){snapshot('after-template-sync')});document.addEventListener('nursetrack:membership-payment-synced',function(){snapshot('after-membership-sync')});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+window.ntResilience={check:selfCheck,snapshot:snapshot,restore:restore};
+})();
