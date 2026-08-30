@@ -2,7 +2,7 @@
 'use strict';
 if(window.__ntVersionGuardLoaded)return;window.__ntVersionGuardLoaded=true;
 var KEY='nursetrack_v3_version_guard';
-var CURRENT='20260830-final2';
+var CURRENT='20260830-final7';
 function read(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return{}}}
 function write(v){try{localStorage.setItem(KEY,JSON.stringify(v));return true}catch(e){return false}}
 function now(){return new Date().toISOString()}
