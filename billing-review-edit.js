@@ -2,7 +2,7 @@
 var KEY='nursetrack_billing_v1';
 function read(){try{var d=JSON.parse(localStorage.getItem(KEY)||'{"claims":[]}');d.claims=Array.isArray(d.claims)?d.claims:[];return d}catch(e){return {claims:[]}}}
 function write(d){localStorage.setItem(KEY,JSON.stringify(d));try{window.dispatchEvent(new Event('nursetrack:billing-updated'))}catch(e){}}
-function user(){try{var a=JSON.parse(localStorage.getItem('nursetrack_clinical_auth_v21')||'null');return a&&(a.name||a.user||a.username)||'Usuario'}catch(e){return 'Usuario'}}
+function user(){try{var v3=JSON.parse(localStorage.getItem('nursetrack_v3_active_user')||'null');if(v3)return v3.name||v3.login||v3.user||'Usuario'}catch(e){}try{var a=JSON.parse(localStorage.getItem('nursetrack_clinical_auth_v21')||'null');return a&&(a.name||a.user||a.username)||'Usuario'}catch(e){return 'Usuario'}}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]})}
 function audit(c,type,field,before,after){c.audit=Array.isArray(c.audit)?c.audit:[];c.audit.push({at:new Date().toISOString(),user:user(),type:type,field:field,before:before,after:after})}
 function recalc(c){c.serviceLines=Array.isArray(c.serviceLines)?c.serviceLines:[];if(c.serviceLines.length)c.charge=c.serviceLines.reduce(function(a,l){return a+(Number(l.charge)||0)*(Number(l.units)||1)},0);c.updatedAt=new Date().toISOString()}
