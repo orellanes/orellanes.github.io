@@ -1,4 +1,4 @@
-# NurseTrack Clinical v3.0 — Stable21
+# NurseTrack Clinical v3.0 — Stable22
 
 Official web entry: `index.html` → secure login → cloud wrapper → `app-clean-v3.html`.
 
@@ -10,11 +10,28 @@ Official web entry: `index.html` → secure login → cloud wrapper → `app-cle
 - Membership: unique membership/renewal/payment numbering, plan management, renewals, payments, status history, alerts and automatic daily expiration refresh.
 - Emergency access: `admin-emergency.html`, authorized dynamically by the active Superadministrator role.
 - Password recovery: `reset-password.html`.
+- Assisted recovery: `module-v3-admin-recovery.js`, visible only to Superadministrator. It can request a recovery email with documented reason/audit. Sensitive admin actions remain blocked until a server-side admin endpoint exists.
+- Clinical catalog: `module-v3-clinical-catalog.js` centralizes diagnoses, laboratory tests, CPT/HCPCS services, lab-to-diagnosis/service-to-diagnosis crosswalks, optional laboratory profiles and future eRx settings. Superadministrator can add/deactivate/import/export catalog content.
+- Laboratory orders: `module-v3-lab-orders.js` uses a generic laboratory catalog, supports optional receiving-lab header, diagnosis/medical-necessity suggestion, mandatory provider confirmation/edit, saved orders and printing.
+- Behavioral coding: `module-v3-behavioral-crosswalk.js` connects the existing addiction/behavioral template to the central catalog so CPT/HCPCS codes can display a brief explanation and an optional diagnosis suggestion requiring professional confirmation.
+- Regular prescriptions: `module-v3-erx-readiness.js` prepares non-controlled prescriptions for a future certified e-prescribing integration. Controlled prescriptions are forced to a print/external workflow. eRx activation is Superadministrator-controlled and remains non-transmitting until a validated backend/vendor exists.
 - Appointment reminders: current device SMS/email fallback remains available; `api/send-reminder.js` is prepared for authenticated Telnyx SMS and Resend email when deployed on Vercel.
-- PayPal readiness: `module-v3-paypal-readiness.js` is loaded with the Membership module. It reads the real NurseTrack membership balance, displays PayPal activation status, and keeps checkout disabled until a secure server backend exists.
+- PayPal readiness: `module-v3-paypal-readiness.js` reads the real NurseTrack membership balance and keeps checkout disabled until a secure server backend exists.
 - PayPal public config: `api/paypal-config.js` exposes only the browser-safe PayPal client ID, environment and currency when deployed on Vercel. It never exposes the PayPal client secret.
 - Backend health: `api/health.js` reports service/version and whether PayPal/Telnyx configuration is present, without returning credential values.
-- Vercel configuration: `vercel.json` applies the serverless settings to all `api/*.js` routes and adds no-store/security response headers.
+- Vercel configuration: `vercel.json` applies serverless settings to `api/*.js` routes and security/no-store headers.
+
+## Clinical catalog rules
+
+- External laboratory/vendor names are not displayed by default.
+- Superadministrator may add one or more receiving laboratory profiles and explicitly enable the header on printed orders.
+- Crosswalks are suggestions, not diagnoses. A provider must confirm or change the suggested diagnosis before a laboratory order is saved/printed.
+- CPT/HCPCS and diagnosis records are editable and may be marked pending validation, active or inactive; historical documents should preserve the values used when created.
+- The public laboratory directory located during development is dated 2023; it must not be represented as a 2026-validated code list until a newer official source is obtained.
+
+## Behavioral health/substance coding starter references
+
+Stable22 includes editable reference entries for commonly used behavioral/SBIRT service codes such as CPT 90832/90834/90837 and 99408/99409 plus HCPCS G0396/G0397/H0049/H0050. These remain catalog references and payer/provider rules must be validated before production billing.
 
 ## Vercel environment variables for reminders
 
@@ -26,41 +43,30 @@ Configure these only in Vercel Project Settings. Never commit their values to Gi
 - `TELNYX_API_KEY`
 - `TELNYX_FROM_NUMBER`
 - `TELNYX_MESSAGING_PROFILE_ID` (optional)
-- `RESEND_API_KEY` (optional, for email reminders)
-- `REMINDER_FROM_EMAIL` (optional, for email reminders)
+- `RESEND_API_KEY` (optional)
+- `REMINDER_FROM_EMAIL` (optional)
 
 ## Vercel environment variables for PayPal
 
-Configure these only in Vercel Project Settings. Never commit secret values to GitHub:
-
 - `PAYPAL_ENV=sandbox` while testing; change to `live` only after validation.
-- `PAYPAL_CLIENT_ID` (browser-safe identifier).
-- `PAYPAL_CLIENT_SECRET` (server-side secret only; never expose it in frontend code).
+- `PAYPAL_CLIENT_ID`
+- `PAYPAL_CLIENT_SECRET` (server-side only)
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
 - `APP_ORIGIN=https://orellanes.github.io`
 
-### Planned secure PayPal payment flow
+## Future eRx backend configuration
 
-1. User selects an existing NurseTrack membership.
-2. Server validates the authenticated Supabase session and company access.
-3. Server reads the outstanding membership balance from Supabase; the browser does not choose the charge amount.
-4. Server creates a PayPal order in USD for that exact balance.
-5. Buyer approves checkout in PayPal.
-6. Server captures the order and verifies PayPal reports a completed capture.
-7. NurseTrack records the payment through its existing membership payment function, using `PayPal` as the method and the PayPal capture ID as the transaction reference.
-8. Supabase recalculates the membership balance/payment status; when balance reaches zero, the membership payment state becomes paid.
-
-The order-creation/capture backend is intentionally **not active yet**. It requires server-side deployment and credentials; real payment execution must not occur from static GitHub Pages or expose secrets in browser code.
+A certified e-prescribing vendor/network must be selected before transmission is enabled. Client/API secrets, callbacks and webhooks belong only in Vercel/backend secrets. Stable22 intentionally does not send prescriptions electronically. Non-controlled prescriptions can be prepared/printed; controlled prescriptions are print/external only.
 
 ## Deployment status — 2026-08-31
 
-The connected Vercel account accepted an API deployment request but returned `402 payment_required` because the Hobby account had reached its free API deployment limit (100/100) for the current reset period. The repository is deployment-ready; no code rebuild is required for the next deployment attempt.
+The connected Vercel Hobby account returned `402 payment_required` after reaching its API deployment quota. The repository is deployment-ready for the next attempt after the quota resets or the account capacity changes.
 
 ## Release rule
 
-Stable21 is the synchronized release identifier used by the official entry, login, cloud wrapper, recovery flow, emergency access, lazy module loader and diagnostics. When changing runtime JavaScript, bump the release identifier consistently to prevent stale iPhone/browser cache.
+Stable22 is the synchronized release identifier used by the official entry, login, cloud wrapper, recovery flow, emergency access, lazy module loader and diagnostics. When runtime JavaScript changes, bump the identifier consistently to avoid stale iPhone/browser cache.
 
 ## Testing and production safety
 
-Use PayPal Sandbox and fictitious/test data while validating payment flows. Do not enter real PHI or accept production membership payments until the hosting, agreements, access controls, logging, backup, security, payment handling and compliance posture required for the intended clinical use have been formally reviewed and approved.
+Use fictitious/test data, PayPal Sandbox and non-production vendor credentials while validating workflows. Do not use real PHI, production payments, or production e-prescribing until hosting, agreements, credentials, access controls, logging, backups, security, billing and clinical/compliance requirements have been formally reviewed and approved.
