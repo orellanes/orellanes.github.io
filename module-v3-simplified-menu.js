@@ -1,0 +1,10 @@
+(function(){'use strict';if(window.__ntSimplifiedMenu)return;window.__ntSimplifiedMenu=true;
+var CORE={home:1,patients:1,integratedRecord:1,agenda:1,socialTemplates:1};
+var LABELS={home:'🏠 Inicio',patients:'👥 Pacientes',integratedRecord:'📋 Expediente',agenda:'📅 Agenda',socialTemplates:'🤝 Trabajo Social'};
+function ensure(){var side=document.querySelector('.side');if(!side)return;var more=side.querySelector('#ntMoreMenu');if(!more){more=document.createElement('details');more.id='ntMoreMenu';more.style.cssText='margin-top:6px;border-top:1px solid rgba(255,255,255,.18);padding-top:6px';var sum=document.createElement('summary');sum.textContent='••• Más';sum.style.cssText='cursor:pointer;padding:10px 11px;border-radius:10px;color:#eef7f8;font-weight:700;list-style:none';more.appendChild(sum);var box=document.createElement('div');box.id='ntMoreMenuBox';box.style.cssText='padding-top:4px';more.appendChild(box);var h=side.querySelector('h3');if(h)side.insertBefore(more,h);else side.appendChild(more)}var box=more.querySelector('#ntMoreMenuBox');
+Array.from(side.children).forEach(function(el){if(!el.classList||!el.classList.contains('navbtn'))return;var p=el.dataset.page||el.dataset.ntLazyPage||'';if(CORE[p]){if(LABELS[p])el.textContent=LABELS[p];if(el.parentElement!==side)side.insertBefore(el,more)}else{if(el.parentElement!==box)box.appendChild(el)}});
+var wanted=['home','patients','integratedRecord','agenda','socialTemplates'];wanted.forEach(function(p){var b=side.querySelector('.navbtn[data-page="'+p+'"],.navbtn[data-nt-lazy-page="'+p+'"]');if(b&&LABELS[p])b.textContent=LABELS[p]});
+}
+function init(){ensure();var obs=new MutationObserver(function(){clearTimeout(window.__ntSimpleMenuTimer);window.__ntSimpleMenuTimer=setTimeout(ensure,30)});var side=document.querySelector('.side');if(side)obs.observe(side,{childList:true,subtree:false});setInterval(ensure,1500)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+window.NT_SIMPLIFIED_MENU={refresh:ensure};})();
