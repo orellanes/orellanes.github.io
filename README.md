@@ -1,4 +1,4 @@
-# NurseTrack Clinical v3.0 — Stable22
+# NurseTrack Clinical v3.0 — Stable23
 
 Official web entry: `index.html` → secure login → cloud wrapper → `app-clean-v3.html`.
 
@@ -7,6 +7,7 @@ Official web entry: `index.html` → secure login → cloud wrapper → `app-cle
 - Frontend: static web app hosted from this repository.
 - Authentication and database: Supabase project `NurseTrack-Clinical-Secure`.
 - Database access: Row Level Security (RLS) enabled on all public tables.
+- Clinical Center: `module-v3-clinical-hub.js` provides one central NurseTrack screen linking the Clinical Catalog, Laboratory Orders, Regular Prescriptions/eRx readiness, and Behavioral Health/Substance modules.
 - Membership: unique membership/renewal/payment numbering, plan management, renewals, payments, status history, alerts and automatic daily expiration refresh.
 - Emergency access: `admin-emergency.html`, authorized dynamically by the active Superadministrator role.
 - Password recovery: `reset-password.html`.
@@ -31,7 +32,7 @@ Official web entry: `index.html` → secure login → cloud wrapper → `app-cle
 
 ## Behavioral health/substance coding starter references
 
-Stable22 includes editable reference entries for commonly used behavioral/SBIRT service codes such as CPT 90832/90834/90837 and 99408/99409 plus HCPCS G0396/G0397/H0049/H0050. These remain catalog references and payer/provider rules must be validated before production billing.
+Stable23 includes editable reference entries for commonly used behavioral/SBIRT service codes such as CPT 90832/90834/90837 and 99408/99409 plus HCPCS G0396/G0397/H0049/H0050. These remain catalog references and payer/provider rules must be validated before production billing.
 
 ## Vercel environment variables for reminders
 
@@ -57,7 +58,7 @@ Configure these only in Vercel Project Settings. Never commit their values to Gi
 
 ## Future eRx backend configuration
 
-A certified e-prescribing vendor/network must be selected before transmission is enabled. Client/API secrets, callbacks and webhooks belong only in Vercel/backend secrets. Stable22 intentionally does not send prescriptions electronically. Non-controlled prescriptions can be prepared/printed; controlled prescriptions are print/external only.
+A certified e-prescribing vendor/network must be selected before transmission is enabled. Client/API secrets, callbacks and webhooks belong only in Vercel/backend secrets. Stable23 intentionally does not send prescriptions electronically. Non-controlled prescriptions can be prepared/printed; controlled prescriptions are print/external only.
 
 ## Deployment status — 2026-08-31
 
@@ -65,7 +66,7 @@ The connected Vercel Hobby account returned `402 payment_required` after reachin
 
 ## Release rule
 
-Stable22 is the synchronized release identifier used by the official entry, login, cloud wrapper, recovery flow, emergency access, lazy module loader and diagnostics. When runtime JavaScript changes, bump the identifier consistently to avoid stale iPhone/browser cache.
+Stable23 is the synchronized release identifier used by the official entry, login, cloud wrapper, recovery flow, emergency access, lazy module loader and diagnostics. When runtime JavaScript changes, bump the identifier consistently to avoid stale iPhone/browser cache.
 
 ## Testing and production safety
 
