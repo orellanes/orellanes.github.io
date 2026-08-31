@@ -1,0 +1,1 @@
+NurseTrack Stable25 PWA uses service-worker.js network-only behavior to avoid clinical data caching. iOS touch icon pending binary upload through repository Git object API.
