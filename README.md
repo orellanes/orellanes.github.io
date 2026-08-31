@@ -13,6 +13,8 @@ Official web entry: `index.html` → secure login → cloud wrapper → `app-cle
 - Appointment reminders: current device SMS/email fallback remains available; `api/send-reminder.js` is prepared for authenticated Telnyx SMS and Resend email when deployed on Vercel.
 - PayPal readiness: `module-v3-paypal-readiness.js` is loaded with the Membership module. It reads the real NurseTrack membership balance, displays PayPal activation status, and keeps checkout disabled until a secure server backend exists.
 - PayPal public config: `api/paypal-config.js` exposes only the browser-safe PayPal client ID, environment and currency when deployed on Vercel. It never exposes the PayPal client secret.
+- Backend health: `api/health.js` reports service/version and whether PayPal/Telnyx configuration is present, without returning credential values.
+- Vercel configuration: `vercel.json` applies the serverless settings to all `api/*.js` routes and adds no-store/security response headers.
 
 ## Vercel environment variables for reminders
 
@@ -49,7 +51,11 @@ Configure these only in Vercel Project Settings. Never commit secret values to G
 7. NurseTrack records the payment through its existing membership payment function, using `PayPal` as the method and the PayPal capture ID as the transaction reference.
 8. Supabase recalculates the membership balance/payment status; when balance reaches zero, the membership payment state becomes paid.
 
-The order-creation/capture backend is intentionally **not active yet**. It requires a connected Vercel project and server-side credentials, and real payment execution must not occur from static GitHub Pages or expose secrets in browser code.
+The order-creation/capture backend is intentionally **not active yet**. It requires server-side deployment and credentials; real payment execution must not occur from static GitHub Pages or expose secrets in browser code.
+
+## Deployment status — 2026-08-31
+
+The connected Vercel account accepted an API deployment request but returned `402 payment_required` because the Hobby account had reached its free API deployment limit (100/100) for the current reset period. The repository is deployment-ready; no code rebuild is required for the next deployment attempt.
 
 ## Release rule
 
