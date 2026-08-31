@@ -3,8 +3,9 @@ var PREFIX='mirror:';
 var KEYS=[
 'nursetrack_clinical_v21','nursetrack_visit_agenda_v295','nursetrack_v3_safe_appointments','nursetrack_v3_safe_labs',
 'nursetrack_v3_template_governance','nursetrack_v3_custom_templates','nursetrack_v3_completed_template_records','nursetrack_v3_signed_template_records','nursetrack_v3_company_branding',
-'nursetrack_v3_users_permissions','nursetrack_v3_patient_assignments','nursetrack_v3_superadmin',
+'nursetrack_v3_users_permissions','nursetrack_v3_patient_assignments','nursetrack_v3_superadmin','nursetrack_v3_assisted_recovery_audit',
 'nursetrack_v3_social_notes','nursetrack_v3_social_referrals','nursetrack_v3_social_case','nursetrack_v3_social_assessment','nursetrack_v3_social_followup','nursetrack_v3_social_closure','nursetrack_v3_addiction_templates','nursetrack_v3_cpt_diagnosis_catalog',
+'nursetrack_v3_clinical_catalog_v1','nursetrack_v3_clinical_catalog_audit','nursetrack_v3_lab_orders','nursetrack_v3_prescriptions_ready',
 'nursetrack_clinical_safety_v296','nursetrack_v3_safety_safe','nursetrack_provider_handoff_v297',
 'nursetrack_billing_v1','nursetrack_v3_billing_safe','nursetrack_v3_membership_safe','nursetrack_v3_membership_payments',
 'nursetrack_medication_safety_v1','nursetrack_v3_med_interactions','nursetrack_v3_medication_reference_reviews','nursetrack_fund_routing_v1'
