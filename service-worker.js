@@ -1,4 +1,6 @@
-const NT_SW_VERSION='safe37c';
+const NT_SW_VERSION='safe37c-cloudlite5';
+const STATIC_CACHE='nursetrack-static-'+NT_SW_VERSION;
 self.addEventListener('install',event=>{self.skipWaiting()});
-self.addEventListener('activate',event=>{event.waitUntil((async()=>{const names=await caches.keys();await Promise.all(names.filter(n=>n.startsWith('nursetrack-')).map(n=>caches.delete(n)));await self.clients.claim()})())});
-self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;const u=new URL(req.url);if(u.origin!==self.location.origin)return;event.respondWith(fetch(req,{cache:'no-store'}).catch(()=>new Response('NurseTrack requiere conexión para esta función.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}})))});
+self.addEventListener('activate',event=>{event.waitUntil((async()=>{const names=await caches.keys();await Promise.all(names.filter(n=>n.startsWith('nursetrack-')&&n!==STATIC_CACHE).map(n=>caches.delete(n)));await self.clients.claim()})())});
+function isStatic(u){return /\.(?:js|css|svg|png|jpg|jpeg|webp|woff2?)(?:$|\?)/i.test(u.pathname+u.search)}
+self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;const u=new URL(req.url);if(u.origin!==self.location.origin)return;if(isStatic(u)){event.respondWith((async()=>{const cache=await caches.open(STATIC_CACHE);const hit=await cache.match(req);if(hit){event.waitUntil(fetch(req).then(r=>{if(r&&r.ok)cache.put(req,r.clone())}).catch(()=>{}));return hit}try{const r=await fetch(req);if(r&&r.ok)event.waitUntil(cache.put(req,r.clone()));return r}catch(e){return new Response('NurseTrack requiere conexión para descargar este módulo.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}})}})());return}event.respondWith(fetch(req,{cache:'no-store'}).catch(()=>new Response('NurseTrack requiere conexión para esta función.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}})))});
