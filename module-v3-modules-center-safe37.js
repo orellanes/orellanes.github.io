@@ -7,7 +7,7 @@ function findNav(rx){return qa('.navbtn').find(function(b){return rx.test(b.text
 function clickNav(rx){var b=findNav(rx);if(b){b.click();return true}return false}
 async function lazy(name){var od=window.nt37OnDemand;if(!od||typeof od.load!=='function')return false;try{return await od.load(name)}catch(e){return false}}
 var directLoaded={};
-function loadDirect(src){if(directLoaded[src]||Array.from(document.scripts).some(function(s){return(s.src||'').indexOf(src)>=0}))return Promise.resolve(true);return new Promise(function(resolve){var s=document.createElement('script'),done=false,t=setTimeout(function(){if(done)return;done=true;try{s.remove()}catch(e){}resolve(false)},6000);s.src=src+'?v=20260902-safe37-modules3&t='+Date.now();s.async=false;s.onload=function(){if(done)return;done=true;clearTimeout(t);directLoaded[src]=true;resolve(true)};s.onerror=function(){if(done)return;done=true;clearTimeout(t);resolve(false)};(document.head||document.documentElement).appendChild(s)})}
+function loadDirect(src){if(directLoaded[src]||Array.from(document.scripts).some(function(s){return(s.src||'').indexOf(src)>=0}))return Promise.resolve(true);return new Promise(function(resolve){var s=document.createElement('script'),done=false,t=setTimeout(function(){if(done)return;done=true;try{s.remove()}catch(e){}resolve(false)},6000);s.src=src+'?v=20260902-safe37-modules4&t='+Date.now();s.async=false;s.onload=function(){if(done)return;done=true;clearTimeout(t);directLoaded[src]=true;resolve(true)};s.onerror=function(){if(done)return;done=true;clearTimeout(t);resolve(false)};(document.head||document.documentElement).appendChild(s)})}
 function needPatient(){if(currentPatient())return true;alert('Abra primero un paciente para usar este módulo.');return false}
 function showAndScroll(page,id){if(typeof window.showPage==='function')window.showPage(page);setTimeout(function(){var el=q(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},160)}
 async function openModule(name){
@@ -20,6 +20,7 @@ async function openModule(name){
  if(name==='labs'){await lazy('labs');return clickNav(/laboratorio|\blab/i)||alert('Laboratorios está cargado. Abra nuevamente Módulos.')}
  if(name==='coding'){await lazy('coding');return clickNav(/icd|cpt|hcpcs|código/i)||alert('Códigos clínicos está cargado. Abra nuevamente Módulos.')}
  if(name==='safety'){await lazy('safety');return clickNav(/seguridad.*med|medicamento/i)||alert('Seguridad de medicamentos está cargada.')}
+ if(name==='stations'){if(window.NT_STATIONS&&typeof window.NT_STATIONS.open==='function')return window.NT_STATIONS.open();var okSt=await loadDirect('module-v3-stations-safe37.js');if(okSt&&window.NT_STATIONS)return window.NT_STATIONS.open();return alert('No se pudo cargar Estaciones y Cobertura.')}
  if(name==='appointments'){await lazy('appointments');return clickNav(/cita|agenda/i)||alert('Citas y recordatorios está cargado.')}
  if(name==='reports'){await lazy('reports');return clickNav(/reporte|report/i)||alert('Reportes está cargado.')}
  if(name==='membership'){await lazy('membership');return clickNav(/membres/i)||alert('Membresía está cargada.')}
@@ -48,6 +49,7 @@ var GROUPS=[
   ['safety','💊','Seguridad de Medicamentos','Alertas e interacciones clínicas'],
   ['documents','📎','Documentos / Adjuntos','Laboratorios externos, pruebas, consentimientos y archivos']]],
  ['Operación y seguimiento',[
+  ['stations','🏥','Estaciones y Cobertura','Tres estaciones, enfermera asignada, relevo y tablero visible a Registro'],
   ['appointments','📅','Citas y Recordatorios','Próximas citas, llegadas y recordatorios'],
   ['reports','📊','Reportes','Ausencias, llegadas, actividad y resúmenes'],
   ['billing','💵','Facturación clínica','CPT/HCPCS, ICD-10, pagador, cargos y estado'],
