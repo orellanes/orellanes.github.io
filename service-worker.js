@@ -1,4 +1,4 @@
-const NT_SW_VERSION='safe37-minimal25e';
+const NT_SW_VERSION='safe37-minimal25h';
 const STATIC_CACHE='nursetrack-static-'+NT_SW_VERSION;
 self.addEventListener('install',event=>{self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const names=await caches.keys();await Promise.all(names.filter(n=>n.startsWith('nursetrack-')&&n!==STATIC_CACHE).map(n=>caches.delete(n)));await self.clients.claim()})())});
