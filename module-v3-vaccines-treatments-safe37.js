@@ -4,11 +4,11 @@ if(window.__nt37VaccinesTreatments)return;window.__nt37VaccinesTreatments=true;
 var TABLE='nursetrack_vaccine_treatment_records',companyId=null;
 function q(s,r){return(r||document).querySelector(s)}function qa(s,r){return Array.from((r||document).querySelectorAll(s))}
 function sb(){return window.nt28Cloud||null}function usr(){return window.nt28CloudUser||null}
-function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]})}
 function current(){var st=window.state||{},id=st.selectedPatientId||'',p=(st.patients||[]).find(function(x){return String(x.id)===String(id)})||null;return{id:id,p:p}}
 function pname(p){return p?[p.firstName,p.middleName,p.lastName,p.secondLastName].filter(Boolean).join(' ')||p.name||p.fullName||'Paciente':'Paciente'}
 function today(){return new Date().toISOString().slice(0,10)}
-function canWrite(){try{var r=window.nt37Permissions&&window.nt37Permissions.role&&window.nt37Permissions.role();return ['nurse','clinician','admin','superadmin'].indexOf(r)>=0}catch(e){return false}}
+function canWrite(){try{var p=window.nt37Permissions;if(!p||!p.role)return false;var r=p.role(),roleOK=['nurse','clinician','admin','superadmin'].indexOf(r)>=0,capOK=!p.allowed||p.allowed('treatments');return roleOK&&capOK}catch(e){return false}}
 function canDelete(){try{return !!(window.nt37Permissions&&window.nt37Permissions.isSuper&&window.nt37Permissions.isSuper())}catch(e){return false}}
 async function company(){if(companyId)return companyId;var s=sb(),u=usr();if(!s||!u)return null;var r=await s.from('nursetrack_company_users').select('company_id').eq('user_id',u.id).eq('active',true).limit(1).maybeSingle();if(r.error)throw r.error;companyId=r.data&&r.data.company_id||null;return companyId}
 function statusText(x){return {administered:'Administrado',ordered:'Ordenado',refused:'Rechazado',deferred:'Pospuesto',not_given:'No administrado'}[x]||x}
