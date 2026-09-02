@@ -4,7 +4,7 @@ function ready(fn){if(document.readyState==='loading')document.addEventListener(
 ready(function(){
   var KEY='nursetrack_language';
   var pairs={
-    'Censo':'Census','Pacientes':'Patients','Nuevo paciente':'New patient','Respaldo / Excel':'Backup / Excel','Configuración':'Settings','Auditoría':'Audit','Súper Administrador':'Super Administrator','Enfermería':'Nursing','Trabajo Social':'Social Work','Salud Mental':'Mental Health','Laboratorios':'Laboratories','Reportes':'Reports','Guardar':'Save','Cancelar':'Cancel','Editar':'Edit','Imprimir':'Print','Buscar':'Search','Añadir':'Add','Administración de usuarios':'User administration','Usuarios y Accesos':'Users & Access','Administrar usuarios y permisos':'Manage users and permissions','Idioma':'Language','Español':'Spanish'
+    'Censo':'Census','Pacientes':'Patients','Nuevo paciente':'New patient','Respaldo / Excel':'Backup / Excel','Respaldo':'Backup','Configuración':'Settings','Settings':'Configuración','Auditoría':'Audit','Súper Administrador':'Super Administrator','Enfermería':'Nursing','Trabajo Social':'Social Work','Nutrición':'Nutrition','Salud Mental':'Mental Health','Salud Mental / Psiquiatría':'Mental Health / Psychiatry','Uso de Sustancias':'Substance Use','Monitoreo Toxicológico':'Toxicology Monitoring','Laboratorios':'Laboratories','ICD-10 / CPT / HCPCS':'ICD-10 / CPT / HCPCS','Seguridad de Medicamentos':'Medication Safety','Documentos / Adjuntos':'Documents / Attachments','Citas y Recordatorios':'Appointments & Reminders','Reportes':'Reports','Membresía':'Membership','Centro de Impresión':'Print Center','Módulos':'Modules','Módulos de NurseTrack':'NurseTrack Modules','Atención clínica':'Clinical Care','Diagnóstico y tratamiento':'Diagnosis & Treatment','Operación y seguimiento':'Operations & Follow-up','Administración':'Administration','Guardar':'Save','Cancelar':'Cancel','Editar':'Edit','Imprimir':'Print','Buscar':'Search','Añadir':'Add','Administración de usuarios':'User administration','Usuarios y Accesos':'Users & Access','Administrar usuarios y permisos':'Manage users and permissions','Idioma':'Language','Español':'Spanish'
   };
   function current(){return localStorage.getItem(KEY)||'es';}
   function translateExact(text,to){
@@ -15,7 +15,7 @@ ready(function(){
   }
   function apply(){
     var to=current(); document.documentElement.lang=to;
-    document.querySelectorAll('button,a,label,h1,h2,h3,h4,th,td,span,.navbtn').forEach(function(el){
+    document.querySelectorAll('button,a,label,h1,h2,h3,h4,th,td,span,.navbtn,strong').forEach(function(el){
       if(el.closest&&el.closest('#nt37LanguageCard'))return;
       if(el.children&&el.children.length)return;
       var tr=translateExact(el.textContent,to); if(tr)el.textContent=tr;
@@ -44,8 +44,9 @@ ready(function(){
   }
   function ensure(){installSettings();installTop();apply();}
   ensure();
-  var mo=new MutationObserver(function(){installSettings();installTop();});mo.observe(document.documentElement,{childList:true,subtree:true});
+  var mo=new MutationObserver(function(){installSettings();installTop();apply();});mo.observe(document.documentElement,{childList:true,subtree:true});
   setInterval(ensure,1800);
   document.addEventListener('nt37AppShown',ensure);
+  document.addEventListener('nt37PermissionsChanged',apply);
 });
 })();
