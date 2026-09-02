@@ -13,6 +13,8 @@ ready(async function(){
     if(!profile||profile.active!==true||!['superadmin','superadministrator'].includes(role))return;
 
     async function openUsers(){
+      const settingsNav=document.querySelector('.navbtn[data-page="settings"],[data-page="settings"]');
+      if(settingsNav&&typeof settingsNav.click==='function')settingsNav.click();
       for(let i=0;i<40;i++){
         const userAdmin=document.querySelector('#nt37UserAdminHost button');
         if(userAdmin){userAdmin.click();return;}
@@ -22,12 +24,27 @@ ready(async function(){
         if(overlay){overlay.style.display='block';return;}
         await wait(150);
       }
-      alert('Administración de usuarios todavía está cargando. Intenta otra vez en unos segundos.');
+      alert('Administración de usuarios todavía está cargando. Intenta otra vez.');
     }
 
-    function removeSidebar(){
-      const b=document.getElementById('nt37SuperSidebarBtn');
-      if(b)b.remove();
+    function installSidebar(){
+      const side=document.querySelector('.side')||document.querySelector('aside');
+      if(!side)return false;
+      let b=document.getElementById('nt37SuperSidebarBtn');
+      if(!b){
+        b=document.createElement('button');
+        b.id='nt37SuperSidebarBtn';
+        b.type='button';
+        b.className='navbtn';
+        b.textContent='🛡️ Súper Administrador';
+        b.title='Usuarios, accesos y permisos';
+        b.onclick=openUsers;
+        const settings=side.querySelector('.navbtn[data-page="settings"],[data-page="settings"]');
+        if(settings&&settings.parentNode===side){
+          if(settings.nextSibling)side.insertBefore(b,settings.nextSibling);else side.appendChild(b);
+        }else side.appendChild(b);
+      }
+      return true;
     }
 
     function installSettingsCard(){
@@ -38,15 +55,14 @@ ready(async function(){
         card=document.createElement('div');
         card.id='nt37UserSettingsCard';
         card.className='card';
-        card.innerHTML='<h3 style="margin-top:0">👥 Administración de usuarios</h3><p class="muted">Solo Súper Administrador. Crea usuarios, asigna roles y controla su acceso.</p><div class="row"><button type="button" class="btn primary" id="nt37OpenUsersBtn">+ Añadir / administrar usuarios</button></div>';
-        const settingsForm=document.getElementById('settingsForm');
-        if(settingsForm)settingsForm.insertAdjacentElement('afterend',card);else page.prepend(card);
+        card.innerHTML='<div class="pagehead" style="margin-bottom:10px"><div><h3 style="margin:0">🛡️ Súper Administrador — Usuarios y Accesos</h3><p class="muted" style="margin:6px 0 0">Solo Súper Administrador. Cree usuarios, otorgue acceso, cambie permisos y active o desactive cuentas.</p></div></div><div class="row"><button type="button" class="btn primary" id="nt37OpenUsersBtn">👥 Administrar usuarios y permisos</button></div>';
+        page.prepend(card);
         card.querySelector('#nt37OpenUsersBtn').onclick=openUsers;
       }
       return true;
     }
 
-    function ensure(){removeSidebar();installSettingsCard();}
+    function ensure(){installSidebar();installSettingsCard();}
     ensure();
     const mo=new MutationObserver(ensure);
     mo.observe(document.documentElement,{childList:true,subtree:true});
