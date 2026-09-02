@@ -12,7 +12,6 @@ ready(async function(){
     const role=String(profile&&profile.role||'').toLowerCase();
     if(!profile||profile.active!==true||!['superadmin','superadministrator'].includes(role))return;
 
-    function findSide(){return document.querySelector('.side')||document.querySelector('aside');}
     async function openUsers(){
       for(let i=0;i<40;i++){
         const userAdmin=document.querySelector('#nt37UserAdminHost button');
@@ -26,25 +25,9 @@ ready(async function(){
       alert('Administración de usuarios todavía está cargando. Intenta otra vez en unos segundos.');
     }
 
-    function installSidebar(){
-      const side=findSide();
-      if(!side)return false;
-      let b=document.getElementById('nt37SuperSidebarBtn');
-      if(!b){
-        b=document.createElement('button');
-        b.id='nt37SuperSidebarBtn';
-        b.type='button';
-        b.className='navbtn';
-        b.innerHTML='👥 Administrar usuarios';
-        b.title='Solo Súper Administrador';
-        b.style.cssText='font-weight:900;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);margin:6px 0 10px';
-        b.onclick=openUsers;
-      }
-      const settings=side.querySelector('[data-page="settings"]');
-      if(settings){
-        if(b.parentElement!==side||settings.nextElementSibling!==b)settings.insertAdjacentElement('afterend',b);
-      }else if(b.parentElement!==side){side.prepend(b);}
-      return true;
+    function removeSidebar(){
+      const b=document.getElementById('nt37SuperSidebarBtn');
+      if(b)b.remove();
     }
 
     function installSettingsCard(){
@@ -55,20 +38,20 @@ ready(async function(){
         card=document.createElement('div');
         card.id='nt37UserSettingsCard';
         card.className='card';
-        card.innerHTML='<h3 style="margin-top:0">👥 Administración de usuarios</h3><p class="muted">Solo Súper Administrador. Crea usuarios, asigna roles y controla su acceso.</p><button type="button" class="btn primary" id="nt37OpenUsersBtn">+ Añadir / administrar usuarios</button>';
-        const firstCard=page.querySelector('.card');
-        if(firstCard)firstCard.insertAdjacentElement('afterend',card);else page.appendChild(card);
+        card.innerHTML='<h3 style="margin-top:0">👥 Administración de usuarios</h3><p class="muted">Solo Súper Administrador. Crea usuarios, asigna roles y controla su acceso.</p><div class="row"><button type="button" class="btn primary" id="nt37OpenUsersBtn">+ Añadir / administrar usuarios</button></div>';
+        const settingsForm=document.getElementById('settingsForm');
+        if(settingsForm)settingsForm.insertAdjacentElement('afterend',card);else page.prepend(card);
         card.querySelector('#nt37OpenUsersBtn').onclick=openUsers;
       }
       return true;
     }
 
-    function ensure(){installSidebar();installSettingsCard();}
+    function ensure(){removeSidebar();installSettingsCard();}
     ensure();
     const mo=new MutationObserver(ensure);
     mo.observe(document.documentElement,{childList:true,subtree:true});
-    setInterval(ensure,1000);
+    setInterval(ensure,1200);
     document.addEventListener('nt37AppShown',ensure);
-  }catch(e){console.warn('NurseTrack superadmin sidebar:',e);}
+  }catch(e){console.warn('NurseTrack superadmin settings:',e);}
 });
 })();
