@@ -7,7 +7,7 @@ function findNav(rx){return qa('.navbtn').find(function(b){return rx.test(b.text
 function clickNav(rx){var b=findNav(rx);if(b){b.click();return true}return false}
 async function lazy(name){var od=window.nt37OnDemand;if(!od||typeof od.load!=='function')return false;try{return await od.load(name)}catch(e){return false}}
 var directLoaded={};
-function loadDirect(src){if(directLoaded[src]||Array.from(document.scripts).some(function(s){return(s.src||'').indexOf(src)>=0}))return Promise.resolve(true);return new Promise(function(resolve){var s=document.createElement('script'),done=false,t=setTimeout(function(){if(done)return;done=true;try{s.remove()}catch(e){}resolve(false)},6000);s.src=src+'?v=20260902-safe37-modules4&t='+Date.now();s.async=false;s.onload=function(){if(done)return;done=true;clearTimeout(t);directLoaded[src]=true;resolve(true)};s.onerror=function(){if(done)return;done=true;clearTimeout(t);resolve(false)};(document.head||document.documentElement).appendChild(s)})}
+function loadDirect(src){if(directLoaded[src]||Array.from(document.scripts).some(function(s){return(s.src||'').indexOf(src)>=0}))return Promise.resolve(true);return new Promise(function(resolve){var s=document.createElement('script'),done=false,t=setTimeout(function(){if(done)return;done=true;try{s.remove()}catch(e){}resolve(false)},6000);s.src=src+'?v=20260902-safe37-modules5&t='+Date.now();s.async=false;s.onload=function(){if(done)return;done=true;clearTimeout(t);directLoaded[src]=true;resolve(true)};s.onerror=function(){if(done)return;done=true;clearTimeout(t);resolve(false)};(document.head||document.documentElement).appendChild(s)})}
 function needPatient(){if(currentPatient())return true;alert('Abra primero un paciente para usar este módulo.');return false}
 function showAndScroll(page,id){if(typeof window.showPage==='function')window.showPage(page);setTimeout(function(){var el=q(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},160)}
 async function openModule(name){
@@ -17,6 +17,7 @@ async function openModule(name){
  if(name==='mental'){if(!needPatient())return;if(window.NT_MENTAL_SUBSTANCE&&typeof window.NT_MENTAL_SUBSTANCE.open==='function')return window.NT_MENTAL_SUBSTANCE.open('mental');alert('El módulo de Salud Mental está cargando. Intente nuevamente.');return}
  if(name==='substance'){if(!needPatient())return;if(window.NT_MENTAL_SUBSTANCE&&typeof window.NT_MENTAL_SUBSTANCE.open==='function')return window.NT_MENTAL_SUBSTANCE.open('substance');alert('El módulo de Sustancias está cargando. Intente nuevamente.');return}
  if(name==='toxicology'){if(!needPatient())return;if(window.NT_MENTAL_SUBSTANCE&&typeof window.NT_MENTAL_SUBSTANCE.open==='function')return window.NT_MENTAL_SUBSTANCE.open('toxicology');alert('El módulo de monitoreo toxicológico está cargando.');return}
+ if(name==='treatments'){if(!needPatient())return;if(window.NT_VACCINES_TREATMENTS&&typeof window.NT_VACCINES_TREATMENTS.open==='function')return window.NT_VACCINES_TREATMENTS.open();var okVT=await loadDirect('module-v3-vaccines-treatments-safe37.js');if(okVT&&window.NT_VACCINES_TREATMENTS)return window.NT_VACCINES_TREATMENTS.open();return alert('No se pudo cargar Vacunas y Tratamientos.')}
  if(name==='labs'){await lazy('labs');return clickNav(/laboratorio|\blab/i)||alert('Laboratorios está cargado. Abra nuevamente Módulos.')}
  if(name==='coding'){await lazy('coding');return clickNav(/icd|cpt|hcpcs|código/i)||alert('Códigos clínicos está cargado. Abra nuevamente Módulos.')}
  if(name==='safety'){await lazy('safety');return clickNav(/seguridad.*med|medicamento/i)||alert('Seguridad de medicamentos está cargada.')}
@@ -44,6 +45,7 @@ var GROUPS=[
   ['substance','🧩','Uso de Sustancias','Evaluación, intervención y seguimiento'],
   ['toxicology','🧪','Monitoreo Toxicológico','Seguimiento y documentación toxicológica']]],
  ['Diagnóstico y tratamiento',[
+  ['treatments','💉','Vacunas y Tratamientos','Vacunas, medicamentos administrados, lote, vía, sitio, educación y observación'],
   ['labs','🧫','Laboratorios','Órdenes, resultados, documentos e impresión'],
   ['coding','🧾','ICD-10 / CPT / HCPCS','Diagnósticos, procedimientos y cruce clínico'],
   ['safety','💊','Seguridad de Medicamentos','Alertas e interacciones clínicas'],
