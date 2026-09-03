@@ -1,5 +1,5 @@
 (function(){'use strict';
-const V='20260903-cloudsafe6-patienttemplates2';
+const V='20260903-cloudsafe6-patienttemplates3';
 const MODULES={
  nursing:{label:'🩺 Enfermería',patient:true,files:['module-v3-shared-demographics-safe37.js','module-v3-nursing-host-safe35.js','module-v3-nursing-modern.js','module-v3-nursing-complete-visit-safe36.js','module-v3-nursing-print-safe36.js','module-v3-nursing-followup-shared-safe37.js']},
  social:{label:'🤝 Trabajo Social',patient:true,files:['module-v3-shared-demographics-safe37.js','module-v3-social-work-shared-demographics-safe37.js','module-v3-social-work-modern.js']},
