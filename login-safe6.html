@@ -13,13 +13,11 @@
 <body>
 <div class="wrap"><div class="card">
 <div class="center"><div class="logo">NT</div><h1>NurseTrack Clinical</h1><div class="badge">v3.7 · CLOUD SAFE 6</div><div class="muted">Un módulo activo a la vez · memoria liberada al cambiar</div></div>
-
 <section id="loginView">
 <form id="form"><div class="field"><label>Usuario o email</label><input id="user" autocomplete="username" autocapitalize="none" required></div><div class="field"><label>Contraseña</label><input id="pass" type="password" autocomplete="current-password" required></div><button class="btn" id="btn">Entrar</button></form>
 <button class="btn link" id="forgotBtn" type="button">¿Olvidó su contraseña? · Recuperar contraseña</button>
 <div id="status" class="status">Verificando sesión…</div>
 </section>
-
 <section id="requestView" class="hidden">
 <div class="divider"></div><h2 class="recovery-title">Recuperar contraseña</h2><div class="muted">Escriba su usuario o correo. Puede recibir un código por SMS o un enlace seguro por correo electrónico.</div>
 <div class="field"><label>Usuario o email</label><input id="recoveryIdentifier" autocomplete="username" autocapitalize="none" placeholder="Usuario o correo"></div>
@@ -28,7 +26,6 @@
 <button class="btn link" id="backLogin1" type="button">Volver al inicio de sesión</button>
 <div id="recoveryStatus" class="status">Seleccione cómo desea recuperar su contraseña.</div>
 </section>
-
 <section id="smsResetView" class="hidden">
 <div class="divider"></div><h2 class="recovery-title">Código de recuperación</h2><div class="muted">Escriba el código de 6 dígitos recibido por SMS y cree una contraseña nueva.</div>
 <div class="field"><label>Código de 6 dígitos</label><input id="verificationCode" class="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••"></div>
@@ -43,7 +40,7 @@
 <script>
 (function(){
 'use strict';
-const V='20260903-cloudsafe6-permissions1',URL='https://ummubyacvgdobgbwvwmf.supabase.co',KEY='sb_publishable_KQOrfgQCG35W_sQIYDvbvw_tow1VFn1',LOGIN=URL+'/functions/v1/nursetrack-username-login',RECOVERY=URL+'/functions/v1/recover-by-sms';
+const V='20260903-cloudsafe6-patienttemplates2',URL='https://ummubyacvgdobgbwvwmf.supabase.co',KEY='sb_publishable_KQOrfgQCG35W_sQIYDvbvw_tow1VFn1',LOGIN=URL+'/functions/v1/nursetrack-username-login',RECOVERY=URL+'/functions/v1/recover-by-sms';
 const status=document.getElementById('status'),btn=document.getElementById('btn'),loginView=document.getElementById('loginView'),requestView=document.getElementById('requestView'),smsResetView=document.getElementById('smsResetView'),recoveryStatus=document.getElementById('recoveryStatus'),smsStatus=document.getElementById('smsStatus');
 let activeIdentifier='';
 function set(el,t,k){el.textContent=t;el.className='status'+(k?' '+k:'')}
