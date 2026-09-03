@@ -1,6 +1,6 @@
 (function(){'use strict';
 if(window.__nt37OnDemand)return;window.__nt37OnDemand=true;
-var VERSION='20260903-cloud-design1';
+var VERSION='20260903-cloud-patienttemplates2';
 var bundles={
  nursing:['module-v3-shared-demographics-safe37.js','module-v3-nursing-host-safe35.js','module-v3-nursing-modern.js','module-v3-nursing-complete-visit-safe36.js','module-v3-nursing-print-safe36.js','module-v3-nursing-followup-shared-safe37.js'],
  social:['module-v3-shared-demographics-safe37.js','module-v3-social-work-shared-demographics-safe37.js','module-v3-social-work-modern.js'],
@@ -18,7 +18,8 @@ var bundles={
  membership:['module-v3-safe-membership.js','module-v3-membership-patient-link-safe37.js','module-v3-membership-plan-admin.js','module-v3-paypal-readiness.js'],
  billing:['module-v3-billing-safe37.js'],
  signature:['module-v3-professional-profile-safe37.js','module-v3-electronic-signature-safe37.js'],
- templates:['module-v3-template-studio-safe36.js','module-v3-design-studio-safe37.js'],
+ templates:['module-v3-design-studio-safe37.js'],
+ classic_templates:['module-v3-template-studio-safe36.js'],
  backup:['module-v3-cloud-backup-audit-safe37.js'],
  audit:['module-v3-cloud-backup-audit-safe37.js'],
  health:['module-v3-system-health-safe37.js'],
@@ -29,7 +30,7 @@ var loaded={},inflight={};
 function pause(ms){return new Promise(function(r){setTimeout(r,ms)})}
 function hasScript(src){return Array.from(document.scripts).some(function(s){return (s.src||'').indexOf(src)>=0})}
 function add(src){return new Promise(function(resolve){if(hasScript(src)){resolve(true);return}var s=document.createElement('script'),done=false,t=setTimeout(function(){if(done)return;done=true;try{s.remove()}catch(e){}resolve(false)},7000);s.src=src+'?v='+VERSION+'&t='+Date.now();s.async=false;s.onload=function(){if(done)return;done=true;clearTimeout(t);resolve(true)};s.onerror=function(){if(done)return;done=true;clearTimeout(t);resolve(false)};(document.head||document.documentElement).appendChild(s)})}
-async function doLoad(name){if(loaded[name])return true;var list=bundles[name]||[],ok=true;document.documentElement.dataset.ntCloudModuleLoading=name;for(var i=0;i<list.length;i++){var x=await add(list[i]);if(!x){await pause(150);x=await add(list[i])}if(!x)ok=false;await pause(80)}if(ok)loaded[name]=true;delete document.documentElement.dataset.ntCloudModuleLoading;document.documentElement.dataset['ntOnDemand'+name.charAt(0).toUpperCase()+name.slice(1)]=ok?'loaded':'failed';try{document.dispatchEvent(new CustomEvent('nt37CloudModuleLoaded',{detail:{module:name,ok:ok}}))}catch(e){}return ok}
+async function doLoad(name){if(loaded[name])return true;var list=bundles[name]||[],ok=list.length>0;document.documentElement.dataset.ntCloudModuleLoading=name;for(var i=0;i<list.length;i++){var x=await add(list[i]);if(!x){await pause(150);x=await add(list[i])}if(!x)ok=false;await pause(80)}if(ok)loaded[name]=true;delete document.documentElement.dataset.ntCloudModuleLoading;document.documentElement.dataset['ntOnDemand'+name.charAt(0).toUpperCase()+name.slice(1)]=ok?'loaded':'failed';try{document.dispatchEvent(new CustomEvent('nt37CloudModuleLoaded',{detail:{module:name,ok:ok}}))}catch(e){}return ok}
 function load(name){if(loaded[name])return Promise.resolve(true);if(inflight[name])return inflight[name];inflight[name]=doLoad(name).finally(function(){delete inflight[name]});return inflight[name]}
 function currentPatient(){var st=window.state||{};return(st.patients||[]).find(function(p){return String(p.id)===String(st.selectedPatientId)})||null}
 function findNav(words){return Array.from(document.querySelectorAll('.navbtn')).find(function(b){var t=(b.textContent||'').toLowerCase();return !b.dataset.ntLazyPlaceholder&&words.some(function(w){return t.indexOf(w)>=0})})}
