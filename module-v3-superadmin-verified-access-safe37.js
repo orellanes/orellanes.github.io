@@ -1,0 +1,6 @@
+(function(){'use strict';
+if(window.__nt37VerifiedSuperAccess)return;window.__nt37VerifiedSuperAccess=true;
+async function verify(){try{var sb=window.nt28Cloud;if(!sb||!sb.auth)return false;var gu=await sb.auth.getUser(),u=gu&&gu.data&&gu.data.user;if(!u)return false;var r=await sb.from('nursetrack_profiles').select('role,active').eq('user_id',u.id).maybeSingle(),p=r&&r.data;if(!p||p.active!==true)return false;var role=String(p.role||'').toLowerCase().replace(/[\s-]+/g,'_');var ok=['superadmin','superadministrator','super_administrator','superadministrador'].includes(role);if(!ok)return false;window.nt37VerifiedSuperAdmin=true;var legacy=window.nt37Permissions=window.nt37Permissions||{};var old=typeof legacy.isSuper==='function'?legacy.isSuper:null;legacy.isSuper=function(){if(window.nt37VerifiedSuperAdmin)return true;try{return old?!!old():false}catch(e){return false}};try{document.dispatchEvent(new CustomEvent('nt37:superadmin-verified'))}catch(e){}return true}catch(e){return false}}
+window.NT_VERIFY_SUPERADMIN=verify;
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(verify,80)},{once:true});else setTimeout(verify,80);
+})();
