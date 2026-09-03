@@ -1,5 +1,5 @@
 (function(){'use strict';
-const V='20260903-cloudsafe6-templateprint1';
+const V='20260903-cloudsafe6-documenttransfer1';
 const MODULES={
  nursing:{label:'🩺 Enfermería',patient:true,files:['module-v3-shared-demographics-safe37.js','module-v3-nursing-host-safe35.js','module-v3-nursing-modern.js','module-v3-nursing-complete-visit-safe36.js','module-v3-nursing-print-safe36.js','module-v3-nursing-followup-shared-safe37.js']},
  social:{label:'🤝 Trabajo Social',patient:true,files:['module-v3-shared-demographics-safe37.js','module-v3-social-work-shared-demographics-safe37.js','module-v3-social-work-modern.js']},
@@ -10,7 +10,7 @@ const MODULES={
  labs:{label:'🧪 Laboratorios',patient:true,files:['module-v3-lab-full-catalog-safe37.js','module-v3-lab-order-safe37.js','module-v3-lab-header-safe37.js','module-v3-lab-cloud-orders-safe37.js']},
  coding:{label:'🧾 ICD-10 / CPT / HCPCS',files:['module-v3-fcodes-safe37.js','coding-assistant.js','module-v3-coding-bridge-safe37.js']},
  safety:{label:'💊 Seguridad de medicamentos',patient:true,files:['module-v3-medication-safety-safe37.js']},
- documents:{label:'📎 Documentos',patient:true,files:['module-v3-patient-documents-safe37.js']},
+ documents:{label:'📎 Documentos',patient:true,files:['module-v3-patient-documents-safe37.js','module-v3-patient-documents-transfer-safe37.js']},
  appointments:{label:'📅 Citas',files:['module-v3-appointments-safe37.js','module-v3-reminder-outbox-safe37.js']},
  reports:{label:'📊 Reportes',files:['module-v3-reports-safe37.js']},
  billing:{label:'💵 Facturación',files:['module-v3-billing-safe37.js']},
