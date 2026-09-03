@@ -1,6 +1,6 @@
 (function(){'use strict';
 if(window.__nt37OnDemand)return;window.__nt37OnDemand=true;
-var VERSION='20260903-cloud-documenttransfer1';
+var VERSION='20260903-cloud-clinicalbackup1';
 var bundles={
  nursing:['module-v3-shared-demographics-safe37.js','module-v3-nursing-host-safe35.js','module-v3-nursing-modern.js','module-v3-nursing-complete-visit-safe36.js','module-v3-nursing-print-safe36.js','module-v3-nursing-followup-shared-safe37.js'],
  social:['module-v3-shared-demographics-safe37.js','module-v3-social-work-shared-demographics-safe37.js','module-v3-social-work-modern.js'],
@@ -20,7 +20,7 @@ var bundles={
  signature:['module-v3-professional-profile-safe37.js','module-v3-electronic-signature-safe37.js'],
  templates:['module-v3-design-studio-safe37.js','module-v3-design-print-safe37.js'],
  classic_templates:['module-v3-template-studio-safe36.js'],
- backup:['module-v3-cloud-backup-audit-safe37.js'],
+ backup:['module-v3-cloud-backup-audit-safe37.js','module-v3-clinical-backup-json-safe37.js'],
  audit:['module-v3-cloud-backup-audit-safe37.js'],
  health:['module-v3-system-health-safe37.js'],
  print:['module-v3-superadmin-print-center-safe37.js'],
