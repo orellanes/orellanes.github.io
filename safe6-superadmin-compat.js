@@ -1,0 +1,5 @@
+(function(){'use strict';if(window.__ntSafe6SuperadminCompat)return;window.__ntSafe6SuperadminCompat=true;
+function norm(r){r=String(r||'').toLowerCase().replace(/[\s-]+/g,'_');if(r==='superadministrator'||r==='super_administrator'||r==='superadministrador')return'superadmin';return r}
+function install(){var p=window.nt37Permissions=window.nt37Permissions||{};var previous=typeof p.isSuper==='function'?p.isSuper:null;p.isSuper=function(){try{var up=window.nt37UserPermissions,s=up&&up.state;if(s&&s.ready&&norm(s.role)==='superadmin')return true;var dr=document.documentElement&&document.documentElement.dataset&&document.documentElement.dataset.ntPermissionRole;if(norm(dr)==='superadmin')return true;if(previous)return !!previous.call(p)}catch(e){}return false};try{document.dispatchEvent(new CustomEvent('nt37PermissionsChanged',{detail:{source:'safe6-superadmin-compat'}}))}catch(e){}}
+document.addEventListener('nt37:user-permissions-loaded',install);document.addEventListener('DOMContentLoaded',install);setTimeout(install,0);setTimeout(install,800);window.addEventListener('pageshow',install);
+})();
