@@ -1,0 +1,14 @@
+(function(){'use strict';
+if(window.__nt37PatientDocumentsTransfer)return;window.__nt37PatientDocumentsTransfer=true;
+var BUCKET='nursetrack-patient-documents';
+function q(s,r){return(r||document).querySelector(s)}
+function qa(s,r){return Array.from((r||document).querySelectorAll(s))}
+function sb(){return window.nt28Cloud||null}
+function safeName(v){return String(v||'documento').replace(/[\\/:*?"<>|]+/g,'_')}
+async function exportDoc(id,btn){var s=sb();if(!s)return alert('No se detectó la conexión con la nube.');var old=btn&&btn.textContent;if(btn){btn.disabled=true;btn.textContent='Exportando…'}try{var r=await s.from('nursetrack_patient_documents').select('file_name,storage_path').eq('id',id).maybeSingle();if(r.error)throw r.error;if(!r.data||!r.data.storage_path)throw new Error('Documento no encontrado');var d=await s.storage.from(BUCKET).download(r.data.storage_path);if(d.error)throw d.error;var url=URL.createObjectURL(d.data),a=document.createElement('a');a.href=url;a.download=safeName(r.data.file_name||'documento');a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500)}catch(e){alert('No se pudo exportar el documento: '+(e&&e.message||'error'))}finally{if(btn){btn.disabled=false;btn.textContent=old||'⬇️ Exportar'}}}
+function enhanceUploader(){var b=q('#nt37DocUpload');if(b)b.textContent='⬆️ Importar / adjuntar documento';var card=q('#nt37PatientDocumentsCard');if(card&&!q('#nt37DocTransferHelp',card)){var h=document.createElement('div');h.id='nt37DocTransferHelp';h.className='muted';h.style.marginTop='8px';h.textContent='Importar = subir un archivo al expediente · Exportar = descargar una copia a este dispositivo.';var meter=q('#nt37DocMeter',card);if(meter&&meter.parentNode)meter.parentNode.insertBefore(h,meter)}}
+function enhanceRows(){var box=q('#nt37DocRows');if(!box)return;qa('[data-doc-open]',box).forEach(function(open){var id=open.getAttribute('data-doc-open');if(!id)return;var row=open.parentElement;if(!row||q('[data-doc-export="'+id+'"]',row))return;var b=document.createElement('button');b.type='button';b.className='btn secondary';b.setAttribute('data-doc-export',id);b.textContent='⬇️ Exportar';b.onclick=function(){exportDoc(id,b)};row.insertBefore(b,open.nextSibling)})}
+function enhance(){enhanceUploader();enhanceRows()}
+function init(){enhance();var box=q('#nt37DocRows');if(box)new MutationObserver(function(){enhanceRows()}).observe(box,{childList:true,subtree:true});document.addEventListener('nt37CloudModuleLoaded',function(e){if(e.detail&&e.detail.module==='documents')setTimeout(enhance,50)});window.NT_PATIENT_DOCUMENTS_TRANSFER={exportDoc:exportDoc}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
