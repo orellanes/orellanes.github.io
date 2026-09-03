@@ -1,0 +1,10 @@
+(function(){'use strict';
+if(window.__nt37TemplateDirectLauncher)return;window.__nt37TemplateDirectLauncher=true;
+var V='20260903-templateaccess1';
+function has(src){return Array.from(document.scripts).some(function(s){return(s.src||'').indexOf('/'+src)>=0})}
+function add(src){return new Promise(function(resolve){if(has(src))return resolve(true);var s=document.createElement('script'),done=false,t=setTimeout(function(){if(done)return;done=true;try{s.remove()}catch(e){}resolve(false)},7000);s.src=src+'?v='+V+'&t='+Date.now();s.async=false;s.onload=function(){if(done)return;done=true;clearTimeout(t);resolve(true)};s.onerror=function(){if(done)return;done=true;clearTimeout(t);resolve(false)};(document.head||document.documentElement).appendChild(s)})}
+async function verified(){if(window.nt37VerifiedSuperAdmin)return true;if(typeof window.NT_VERIFY_SUPERADMIN==='function')return await window.NT_VERIFY_SUPERADMIN();return false}
+async function open(mode){var ok=await verified();if(!ok){alert('No se pudo confirmar el acceso de Súper Administrador. Actualiza NurseTrack y vuelve a entrar.');return false}var a=await add('module-v3-design-studio-lite-safe37.js');if(!a){alert('No se pudo cargar el constructor de plantillas.');return false}await add('module-v3-template-import-safe37.js');var ds=window.NT_DESIGN_STUDIO;if(!ds){alert('El constructor no terminó de iniciar. Actualiza NurseTrack e intenta nuevamente.');return false}var center=document.getElementById('nt37SuperCenter');if(center)center.style.display='none';if(mode==='cover'&&typeof ds.showCover==='function')ds.showCover();else if(typeof ds.showTemplates==='function')ds.showTemplates();return true}
+window.NT_OPEN_TEMPLATE_BUILDER=open;
+document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest('#nt37OpenTemplates,#nt37OpenCover');if(!t)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();open(t.id==='nt37OpenCover'?'cover':'templates')},true);
+})();
