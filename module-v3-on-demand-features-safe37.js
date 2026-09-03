@@ -1,6 +1,6 @@
 (function(){'use strict';
 if(window.__nt37OnDemand)return;window.__nt37OnDemand=true;
-var VERSION='20260903-cloud-templateprint1';
+var VERSION='20260903-cloud-documenttransfer1';
 var bundles={
  nursing:['module-v3-shared-demographics-safe37.js','module-v3-nursing-host-safe35.js','module-v3-nursing-modern.js','module-v3-nursing-complete-visit-safe36.js','module-v3-nursing-print-safe36.js','module-v3-nursing-followup-shared-safe37.js'],
  social:['module-v3-shared-demographics-safe37.js','module-v3-social-work-shared-demographics-safe37.js','module-v3-social-work-modern.js'],
@@ -12,7 +12,7 @@ var bundles={
  coding:['module-v3-fcodes-safe37.js','coding-assistant.js','module-v3-coding-bridge-safe37.js'],
  catalogs:['module-v3-code-catalog-admin-safe37.js','module-v3-diagnosis-catalog-admin-safe37.js','module-v3-diagnosis-bulk-tools-safe37.js','module-v3-icd-import-guard-safe37.js'],
  safety:['module-v3-medication-safety-safe37.js'],
- documents:['module-v3-patient-documents-safe37.js'],
+ documents:['module-v3-patient-documents-safe37.js','module-v3-patient-documents-transfer-safe37.js'],
  appointments:['module-v3-appointments-safe37.js','module-v3-reminder-outbox-safe37.js'],
  reports:['module-v3-reports-safe37.js'],
  membership:['module-v3-safe-membership.js','module-v3-membership-patient-link-safe37.js','module-v3-membership-plan-admin.js','module-v3-paypal-readiness.js'],
