@@ -1,6 +1,6 @@
 (function(){'use strict';
 if(window.__nt37OnDemand)return;window.__nt37OnDemand=true;
-var VERSION='20260903-cloudpermissions1';
+var VERSION='20260903-cloudpermissions2';
 var bundles={
  nursing:['module-v3-shared-demographics-safe37.js','module-v3-nursing-host-safe35.js','module-v3-nursing-modern.js','module-v3-nursing-complete-visit-safe36.js','module-v3-nursing-print-safe36.js','module-v3-nursing-followup-shared-safe37.js'],
  social:['module-v3-shared-demographics-safe37.js','module-v3-social-work-shared-demographics-safe37.js','module-v3-social-work-modern.js'],
@@ -23,7 +23,7 @@ var bundles={
  audit:['module-v3-cloud-backup-audit-safe37.js'],
  health:['module-v3-system-health-safe37.js'],
  print:['module-v3-superadmin-print-center-safe37.js'],
- admin:['module-v3-user-management-safe37.js','module-v3-user-permission-admin-safe37.js','module-v3-superadmin-center-safe37.js','module-v3-superadmin-maintenance-safe37.js']
+ admin:['module-v3-user-management-safe37.js','module-v3-user-permission-admin-safe37.js','module-v3-user-details-admin-safe37.js','module-v3-superadmin-center-safe37.js','module-v3-superadmin-maintenance-safe37.js']
 };
 var loaded={},inflight={};
 function pause(ms){return new Promise(function(r){setTimeout(r,ms)})}
