@@ -1,0 +1,6 @@
+(function(){
+'use strict';
+if(window.__NT_CLOUD_POLISH)return;window.__NT_CLOUD_POLISH=1;
+function apply(){if(!window.NURSETRACK_CLOUD_CLIENT)return;document.title='NurseTrack Clinical';const top=document.querySelector('.top .brand');if(top){const h=top.querySelector('h1');if(h)h.textContent='NurseTrack Clinical';const s=top.querySelector('small');if(s)s.textContent='Expediente clínico seguro · nube sincronizada'}const banner=document.querySelector('.banner');if(banner){banner.textContent='NurseTrack Clinical · Sesión segura en la nube';banner.style.background='#e9f4f6';banner.style.color='#0f6175';banner.style.borderBottomColor='#cfe3e8'}const login=document.querySelector('#loginScreen .loginbox');if(login){const h=login.querySelector('h1');if(h)h.textContent='NurseTrack Clinical';const p=login.querySelector('p.muted');if(p)p.textContent='Acceso clínico protegido'}document.querySelectorAll('.notice').forEach(n=>{if(/datos permanecen en este navegador|respaldo.*local/i.test(n.textContent||''))n.style.display='none'})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply,{once:true});else apply();setTimeout(apply,500);window.NURSETRACK_CLOUD_POLISH={apply};
+})();
