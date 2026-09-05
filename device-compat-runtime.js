@@ -2,34 +2,26 @@
 'use strict';
 if(window.__NT_DEVICE_COMPAT__) return;
 window.__NT_DEVICE_COMPAT__=true;
-var doc=document;
-var root=doc.documentElement;
-var body=doc.body;
-try{root.style.setProperty('touch-action','manipulation');root.style.setProperty('overscroll-behavior','contain');}catch(_){ }
-try{if(body){body.style.setProperty('touch-action','manipulation');body.style.setProperty('-webkit-overflow-scrolling','touch');body.style.setProperty('pointer-events','auto','important');}}catch(_){ }
-var style=doc.createElement('style');
+var d=document, root=d.documentElement;
+var style=d.createElement('style');
 style.id='ntDeviceCompatStyle';
-style.textContent='html,body{pointer-events:auto!important;-webkit-text-size-adjust:100%;}button,a,input,select,textarea,label,[role="button"],[tabindex]{pointer-events:auto!important;touch-action:manipulation;}input,textarea,select{user-select:text;-webkit-user-select:text;}button,a,[role="button"]{user-select:none;-webkit-user-select:none;}@media (hover:hover) and (pointer:fine){button,a,[role="button"]{cursor:pointer}}';
-(doc.head||root).appendChild(style);
-function focusEditable(target){
-  if(!target) return;
-  var tag=(target.tagName||'').toLowerCase();
-  if(tag==='input'||tag==='textarea'||tag==='select'||target.isContentEditable){
-    try{target.focus({preventScroll:false});}catch(_){try{target.focus();}catch(__){}}
-  }
-}
-// Pointer Events are the shared path for mouse, pen, and modern touch. Do not synthesize clicks.
-doc.addEventListener('pointerdown',function(e){focusEditable(e.target);},{capture:true,passive:true});
-// iOS fallback when Pointer Events are delayed inside embedded documents.
-doc.addEventListener('touchend',function(e){if(e.changedTouches&&e.changedTouches.length){focusEditable(e.target);}},{capture:true,passive:true});
-// Keyboard accessibility for custom role=button controls only; native buttons already handle Enter/Space.
-doc.addEventListener('keydown',function(e){
-  var t=e.target;
-  if(!t||t.getAttribute('role')!=='button'||t.tagName==='BUTTON') return;
-  if(e.key==='Enter'||e.key===' '){e.preventDefault();try{t.click();}catch(_){}}
+style.textContent='html,body,#appScreen{pointer-events:auto!important}input,textarea,[contenteditable="true"]{pointer-events:auto!important;cursor:text!important;user-select:text!important;-webkit-user-select:text!important;touch-action:auto!important}select{pointer-events:auto!important;cursor:default!important;touch-action:manipulation!important}button,a,label,[role="button"],[tabindex]{pointer-events:auto!important}button,a,[role="button"]{cursor:pointer!important;touch-action:manipulation!important}.main,.side,.card,dialog,.dialogbody{touch-action:pan-x pan-y!important}';
+(d.head||root).appendChild(style);
+function editable(t){if(!t)return false;var tag=(t.tagName||'').toLowerCase();return tag==='input'||tag==='textarea'||t.isContentEditable;}
+// Do not synthesize clicks and do not call preventDefault on pointer/touch events.
+// Native browser behavior controls caret placement, text selection, mouse and touch.
+d.addEventListener('pointerdown',function(e){
+ var t=e.target;
+ if(editable(t)){
+   try{t.style.setProperty('pointer-events','auto','important');t.style.setProperty('cursor','text','important');}catch(_){ }
+ }
+},{capture:true,passive:true});
+d.addEventListener('focusin',function(e){
+ var t=e.target;if(editable(t)){try{t.style.setProperty('cursor','text','important');}catch(_){ }}
 },true);
-// Recover focus after switching back from browser chrome or another app.
-window.addEventListener('pageshow',function(){try{doc.documentElement.style.pointerEvents='auto';if(doc.body)doc.body.style.pointerEvents='auto';}catch(_){}});
-doc.addEventListener('visibilitychange',function(){if(!doc.hidden){try{doc.documentElement.style.pointerEvents='auto';if(doc.body)doc.body.style.pointerEvents='auto';}catch(_){}}});
-window.NURSETRACK_DEVICE_COMPAT={pointer:!!window.PointerEvent,touch:navigator.maxTouchPoints||0};
+// Keyboard support only for non-native custom buttons.
+d.addEventListener('keydown',function(e){var t=e.target;if(!t||t.tagName==='BUTTON'||t.tagName==='A'||t.getAttribute('role')!=='button')return;if(e.key==='Enter'||e.key===' '){e.preventDefault();try{t.click();}catch(_){}}},true);
+function restore(){try{root.style.pointerEvents='auto';if(d.body)d.body.style.pointerEvents='auto';}catch(_){}}
+window.addEventListener('pageshow',restore);d.addEventListener('visibilitychange',function(){if(!d.hidden)restore()});
+window.NURSETRACK_DEVICE_COMPAT={version:'cursorfix10',pointer:!!window.PointerEvent,touch:navigator.maxTouchPoints||0};
 })();
