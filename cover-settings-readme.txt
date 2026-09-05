@@ -1,0 +1,1 @@
+Visible main cover editor runtime added in cover-settings-runtime.js. It is designed to be injected into the same-origin NurseTrack app iframe and exposes the section “Editar portada principal” inside settingsForm.
