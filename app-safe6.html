@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b63a8">
 <title>NurseTrack Clinical v3.8</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f3f8f8;color:#17343c}.boot{position:fixed;inset:0;display:grid;place-items:center;padding:18px;background:#f3f8f8;z-index:20}.card{width:min(430px,100%);background:#fff;border:1px solid #d8e6e8;border-radius:22px;padding:26px;text-align:center;box-shadow:0 18px 55px rgba(35,74,82,.12)}.muted{color:#6f858b;line-height:1.5}.small{font-size:12px;margin-top:8px}.error{color:#923f3f}.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:800;cursor:pointer;margin:6px;background:#0b63a8;color:#fff}#appframe{border:0;width:100%;height:100%;display:none;background:#f3f8f8}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f3f8f8;color:#17343c}.boot{position:fixed;inset:0;display:grid;place-items:center;padding:18px;background:#f3f8f8;z-index:20}.card{width:min(430px,100%);background:#fff;border:1px solid #d8e6e8;border-radius:22px;padding:26px;text-align:center;box-shadow:0 18px 55px rgba(35,74,82,.12)}.muted{color:#6f858b;line-height:1.5}.small{font-size:12px;margin-top:8px}.error{color:#923f3f}.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:800;cursor:pointer;margin:6px;background:#0b63a8;color:#fff}#appframe{border:0;width:100%;height:100%;display:block;background:#f3f8f8;visibility:hidden}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
@@ -20,15 +20,15 @@
 <script>
 (async function(){
 'use strict';
-const FALLBACK='20260905-universal-loader6';
+const FALLBACK='20260905-fast-reveal7';
 const qs=new URLSearchParams(location.search);
 const incoming=qs.get('v')||'';
 const boot=document.getElementById('boot'),msg=document.getElementById('bootMsg'),step=document.getElementById('bootStep'),frame=document.getElementById('appframe');
 function setStep(t){if(step)step.textContent=t}
-function fail(t){boot.style.display='grid';msg.textContent=t;msg.className='muted error';step.innerHTML='<button class="btn" onclick="location.reload()">Reintentar</button><button class="btn" onclick="location.replace(\'login-safe6.html?v='+FALLBACK+'\')">Ir al login</button>'}
+function fail(t){boot.style.display='grid';frame.style.visibility='hidden';msg.textContent=t;msg.className='muted error';step.innerHTML='<button class="btn" onclick="location.reload()">Reintentar</button><button class="btn" onclick="location.replace(\'login-safe6.html?v='+FALLBACK+'\')">Ir al login</button>'}
 function timeout(p,ms,label){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error(label||'timeout')),ms))])}
 let latest=FALLBACK;
-try{const vr=await timeout(fetch('nursetrack-version.json?t='+Date.now(),{cache:'no-store'}),3000,'version');if(vr.ok){const j=await vr.json();if(j&&j.build)latest=String(j.build)}}catch(_){ }
+try{const vr=await timeout(fetch('nursetrack-version.json?t='+Date.now(),{cache:'no-store'}),2500,'version');if(vr.ok){const j=await vr.json();if(j&&j.build)latest=String(j.build)}}catch(_){ }
 if(incoming&&incoming!==latest){location.replace('app-safe6.html?v='+encodeURIComponent(latest)+'&r='+Date.now());return}
 window.NURSETRACK_PUBLIC_BUILD=latest;
 setStep('Validando sesión de nube…');
@@ -38,30 +38,39 @@ try{
  const sb=supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
  window.NURSETRACK_CLOUD_CLIENT=sb;window.nt28Cloud=sb;window.nt28CloudStart=async()=>sb;
  let session=null;
- try{const sr=await timeout(sb.auth.getSession(),4500,'session');session=sr&&sr.data&&sr.data.session}catch(_){ }
+ try{const sr=await timeout(sb.auth.getSession(),3500,'session');session=sr&&sr.data&&sr.data.session}catch(_){ }
  if(!session){location.replace('login-safe6.html?v='+encodeURIComponent(latest));return}
  const displayName=(session.user&&((session.user.user_metadata&&session.user.user_metadata.display_name)||session.user.email))||'Cloud user';
  try{localStorage.setItem('nursetrack_clinical_auth_v21',JSON.stringify({name:displayName,pinHash:'811c9dc5',cloud:true}))}catch(_){ }
  setStep('Abriendo NurseTrack…');
  const src='index.html.html?v='+encodeURIComponent(latest)+'&cloud=1&t='+Date.now();
- let loaded=false;
- const loadTimer=setTimeout(()=>{if(!loaded)fail('NurseTrack tardó demasiado en abrir. Intenta nuevamente.')},12000);
- frame.onload=async function(){
-   loaded=true;clearTimeout(loadTimer);
+ let revealed=false,configured=false;
+ function configureAndReveal(){
+   if(configured)return true;
    try{
      const w=frame.contentWindow,d=frame.contentDocument;
-     if(!w||!d)throw new Error('No se pudo acceder a la aplicación.');
+     if(!w||!d)return false;
+     const app=d.getElementById('appScreen');
+     if(!app)return false;
+     configured=true;
      w.NURSETRACK_CLOUD_CLIENT=sb;w.nt28Cloud=sb;w.nt28CloudStart=async()=>sb;w.NURSETRACK_PUBLIC_BUILD=latest;
-     const st=d.createElement('style');st.id='ntCloudUniversalOverride';st.textContent='#loginScreen{display:none!important}#appScreen{display:block!important}#appScreen.hidden{display:block!important}';d.head.appendChild(st);
-     function enforce(){const login=d.getElementById('loginScreen'),app=d.getElementById('appScreen');if(login){login.classList.add('hidden');login.style.setProperty('display','none','important')}if(app){app.classList.remove('hidden');app.style.setProperty('display','block','important')}}
+     const st=d.createElement('style');st.id='ntCloudUniversalOverride';st.textContent='#loginScreen{display:none!important}#appScreen{display:block!important}#appScreen.hidden{display:block!important}';(d.head||d.documentElement).appendChild(st);
+     function enforce(){const login=d.getElementById('loginScreen'),ap=d.getElementById('appScreen');if(login){login.classList.add('hidden');login.style.setProperty('display','none','important')}if(ap){ap.classList.remove('hidden');ap.style.setProperty('display','block','important')}}
      enforce();
-     const mo=new MutationObserver(enforce);mo.observe(d.documentElement,{attributes:true,childList:true,subtree:true,attributeFilter:['class','style']});
-     const scripts=['module-v3-on-demand-features-safe37.js','module-v3-user-permission-guard-safe37.js','safe6-superadmin-compat.js','module-v3-superadmin-verified-access-safe37.js','module-v3-performance-panel-safe37.js','module-v3-superadmin-center-safe37.js','module-v3-template-direct-launcher-safe37.js','safe6-template-route-fix.js','safe6-patient-template-launcher.js','module-v3-personal-documents-safe37.js','safe6-my-folder-excel.js','safe6-patient-delete.js','module-v3-patient-drop-import-safe37.js','module-v3-patient-data-import-preview-safe37.js','module-v3-patient-pdf-data-extract-safe37.js','safe6-isolation.js','boceto-ui-runtime.js','safe6-superadmin-master-center.js','nursetrack-update-watcher.js'];
-     for(const name of scripts){try{await new Promise((res,rej)=>{const s=d.createElement('script');s.src=name+'?v='+encodeURIComponent(latest);s.onload=res;s.onerror=rej;d.body.appendChild(s)})}catch(_){ }}
-     enforce();boot.style.display='none';frame.style.display='block';
-   }catch(e){fail(e&&e.message||'No se pudo completar la carga de NurseTrack.')}
- };
+     try{const mo=new MutationObserver(enforce);mo.observe(d.documentElement,{attributes:true,childList:true,subtree:true,attributeFilter:['class','style']})}catch(_){ }
+     boot.style.display='none';frame.style.visibility='visible';revealed=true;
+     setTimeout(async function(){
+       const scripts=['module-v3-on-demand-features-safe37.js','module-v3-user-permission-guard-safe37.js','safe6-superadmin-compat.js','module-v3-superadmin-verified-access-safe37.js','module-v3-performance-panel-safe37.js','module-v3-superadmin-center-safe37.js','module-v3-template-direct-launcher-safe37.js','safe6-template-route-fix.js','safe6-patient-template-launcher.js','module-v3-personal-documents-safe37.js','safe6-my-folder-excel.js','safe6-patient-delete.js','module-v3-patient-drop-import-safe37.js','module-v3-patient-data-import-preview-safe37.js','module-v3-patient-pdf-data-extract-safe37.js','safe6-isolation.js','boceto-ui-runtime.js','safe6-superadmin-master-center.js','nursetrack-update-watcher.js'];
+       for(const name of scripts){try{await new Promise(res=>{const s=d.createElement('script');s.src=name+'?v='+encodeURIComponent(latest);s.onload=res;s.onerror=res;(d.body||d.documentElement).appendChild(s)})}catch(_){ }}
+       enforce();
+     },50);
+     return true;
+   }catch(_){return false}
+ }
  frame.src=src;
+ const poll=setInterval(()=>{if(configureAndReveal())clearInterval(poll)},120);
+ frame.onload=function(){configureAndReveal()};
+ setTimeout(()=>{if(!revealed){clearInterval(poll);fail('NurseTrack no terminó de abrir. Toca Reintentar.') }},9000);
 }catch(e){fail(e&&e.message||'No se pudo iniciar NurseTrack.')}
 })();
 </script>
