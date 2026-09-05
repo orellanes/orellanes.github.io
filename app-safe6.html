@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b63a8">
 <title>NurseTrack Clinical v3.8</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f3f8f8;color:#17343c;overflow:hidden}.boot{position:fixed;inset:0;display:grid;place-items:center;padding:18px;background:#f3f8f8;z-index:20}.card{width:min(430px,100%);background:#fff;border:1px solid #d8e6e8;border-radius:22px;padding:26px;text-align:center;box-shadow:0 18px 55px rgba(35,74,82,.12)}.muted{color:#6f858b;line-height:1.5}.small{font-size:12px;margin-top:8px}.error{color:#923f3f}.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:800;cursor:pointer;margin:6px;background:#0b63a8;color:#fff}#appframe{position:fixed;inset:0;border:0;width:100vw;height:100vh;display:block;background:#f3f8f8;visibility:hidden;pointer-events:auto;z-index:1}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f3f8f8;color:#17343c;overflow:hidden;touch-action:manipulation}.boot{position:fixed;inset:0;display:grid;place-items:center;padding:18px;background:#f3f8f8;z-index:20}.card{width:min(430px,100%);background:#fff;border:1px solid #d8e6e8;border-radius:22px;padding:26px;text-align:center;box-shadow:0 18px 55px rgba(35,74,82,.12)}.muted{color:#6f858b;line-height:1.5}.small{font-size:12px;margin-top:8px}.error{color:#923f3f}.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:800;cursor:pointer;margin:6px;background:#0b63a8;color:#fff}#appframe{position:fixed;inset:0;border:0;width:100vw;height:100vh;display:block;background:#f3f8f8;visibility:hidden;pointer-events:auto;z-index:1;touch-action:manipulation}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
@@ -20,7 +20,7 @@
 <script>
 (async function(){
 'use strict';
-const FALLBACK='20260905-pointerfix8';
+const FALLBACK='20260905-devicecompat9';
 const qs=new URLSearchParams(location.search);
 const incoming=qs.get('v')||'';
 const boot=document.getElementById('boot'),msg=document.getElementById('bootMsg'),step=document.getElementById('bootStep'),frame=document.getElementById('appframe');
@@ -54,7 +54,7 @@ try{
      if(!app)return false;
      configured=true;
      w.NURSETRACK_CLOUD_CLIENT=sb;w.nt28Cloud=sb;w.nt28CloudStart=async()=>sb;w.NURSETRACK_PUBLIC_BUILD=latest;
-     const st=d.createElement('style');st.id='ntCloudUniversalOverride';st.textContent='html,body,#appScreen{pointer-events:auto!important}#loginScreen{display:none!important;pointer-events:none!important}#appScreen{display:block!important}#appScreen.hidden{display:block!important}button,a,input,select,textarea,[role="button"]{pointer-events:auto!important}';(d.head||d.documentElement).appendChild(st);
+     const st=d.createElement('style');st.id='ntCloudUniversalOverride';st.textContent='html,body,#appScreen{pointer-events:auto!important;touch-action:manipulation}#loginScreen{display:none!important;pointer-events:none!important}#appScreen{display:block!important}#appScreen.hidden{display:block!important}button,a,input,select,textarea,label,[role="button"],[tabindex]{pointer-events:auto!important;touch-action:manipulation}';(d.head||d.documentElement).appendChild(st);
      function enforce(){const login=d.getElementById('loginScreen'),ap=d.getElementById('appScreen');if(login){login.classList.add('hidden');login.style.setProperty('display','none','important');login.style.setProperty('pointer-events','none','important')}if(ap){ap.classList.remove('hidden');ap.style.setProperty('display','block','important');ap.style.setProperty('pointer-events','auto','important')}}
      enforce();
      try{d.documentElement.style.pointerEvents='auto';d.body.style.pointerEvents='auto'}catch(_){ }
@@ -64,7 +64,7 @@ try{
      revealed=true;
      try{frame.focus();w.focus()}catch(_){ }
      setTimeout(async function(){
-       const scripts=['module-v3-on-demand-features-safe37.js','module-v3-user-permission-guard-safe37.js','safe6-superadmin-compat.js','module-v3-superadmin-verified-access-safe37.js','module-v3-performance-panel-safe37.js','module-v3-superadmin-center-safe37.js','module-v3-template-direct-launcher-safe37.js','safe6-template-route-fix.js','safe6-patient-template-launcher.js','module-v3-personal-documents-safe37.js','safe6-my-folder-excel.js','safe6-patient-delete.js','module-v3-patient-drop-import-safe37.js','module-v3-patient-data-import-preview-safe37.js','module-v3-patient-pdf-data-extract-safe37.js','safe6-isolation.js','boceto-ui-runtime.js','safe6-superadmin-master-center.js','nursetrack-update-watcher.js'];
+       const scripts=['device-compat-runtime.js','module-v3-on-demand-features-safe37.js','module-v3-user-permission-guard-safe37.js','safe6-superadmin-compat.js','module-v3-superadmin-verified-access-safe37.js','module-v3-performance-panel-safe37.js','module-v3-superadmin-center-safe37.js','module-v3-template-direct-launcher-safe37.js','safe6-template-route-fix.js','safe6-patient-template-launcher.js','module-v3-personal-documents-safe37.js','safe6-my-folder-excel.js','safe6-patient-delete.js','module-v3-patient-drop-import-safe37.js','module-v3-patient-data-import-preview-safe37.js','module-v3-patient-pdf-data-extract-safe37.js','safe6-isolation.js','boceto-ui-runtime.js','safe6-superadmin-master-center.js','nursetrack-update-watcher.js'];
        for(const name of scripts){try{await new Promise(res=>{const s=d.createElement('script');s.src=name+'?v='+encodeURIComponent(latest);s.onload=res;s.onerror=res;(d.body||d.documentElement).appendChild(s)})}catch(_){ }}
        enforce();
      },50);
