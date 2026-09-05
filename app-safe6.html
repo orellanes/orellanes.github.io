@@ -20,7 +20,7 @@
 <script>
 (async function(){
 'use strict';
-const FALLBACK='20260905-adminrouter18';
+const FALLBACK='20260905-admincovers19';
 const qs=new URLSearchParams(location.search),incoming=qs.get('v')||'';
 const boot=document.getElementById('boot'),msg=document.getElementById('bootMsg'),step=document.getElementById('bootStep'),frame=document.getElementById('appframe');
 function setStep(t){if(step)step.textContent=t}
@@ -32,10 +32,10 @@ window.NURSETRACK_PUBLIC_BUILD=latest;setStep('Validando sesión de nube…');
 try{
  const cfg=window.NURSETRACK_SUPABASE||{};if(!window.supabase||!cfg.url||!cfg.publishableKey)throw new Error('No se pudo cargar el servicio de nube.');
  const sb=supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});window.NURSETRACK_CLOUD_CLIENT=sb;window.nt28Cloud=sb;window.nt28CloudStart=async()=>sb;
- let session=null;try{const sr=await timeout(sb.auth.getSession(),3500);session=sr&&sr.data&&sr.data.session}catch(_){}if(!session){location.replace('login-safe6.html?v='+encodeURIComponent(latest));return}
+ let session=null;try{const sr=await timeout(sb.auth.getSession(),3500);session=sr&&sr.data&&sr.data.session}catch(_){}if(!session){location.replace('login-safe6.html?v='+encodeURIComponent(latest));return}window.nt28CloudUser=session.user||null;
  const displayName=(session.user&&((session.user.user_metadata&&session.user.user_metadata.display_name)||session.user.email))||'Cloud user';try{localStorage.setItem('nursetrack_clinical_auth_v21',JSON.stringify({name:displayName,pinHash:'811c9dc5',cloud:true}))}catch(_){}
  setStep('Abriendo NurseTrack…');const src='index.html.html?v='+encodeURIComponent(latest)+'&cloud=1&t='+Date.now();let revealed=false,configured=false;
- function configureAndReveal(){if(configured)return true;try{const w=frame.contentWindow,d=frame.contentDocument;if(!w||!d)return false;const app=d.getElementById('appScreen');if(!app)return false;configured=true;w.NURSETRACK_CLOUD_CLIENT=sb;w.nt28Cloud=sb;w.nt28CloudStart=async()=>sb;w.NURSETRACK_PUBLIC_BUILD=latest;
+ function configureAndReveal(){if(configured)return true;try{const w=frame.contentWindow,d=frame.contentDocument;if(!w||!d)return false;const app=d.getElementById('appScreen');if(!app)return false;configured=true;w.NURSETRACK_CLOUD_CLIENT=sb;w.nt28Cloud=sb;w.nt28CloudStart=async()=>sb;w.nt28CloudUser=session.user||null;w.NURSETRACK_PUBLIC_BUILD=latest;
  const st=d.createElement('style');st.id='ntCloudUniversalOverride';st.textContent='html,body,#appScreen{pointer-events:auto!important}#loginScreen{display:none!important;pointer-events:none!important}#appScreen,#appScreen.hidden{display:block!important;pointer-events:auto!important}input,textarea,[contenteditable="true"]{pointer-events:auto!important;cursor:text!important;user-select:text!important;-webkit-user-select:text!important}select{pointer-events:auto!important;cursor:default!important}button,a,label,[role="button"],[tabindex]{pointer-events:auto!important}button,a,[role="button"]{cursor:pointer!important}';(d.head||d.documentElement).appendChild(st);
  function enforce(){const login=d.getElementById('loginScreen'),ap=d.getElementById('appScreen');if(login){login.classList.add('hidden');login.style.setProperty('display','none','important');login.style.setProperty('pointer-events','none','important')}if(ap){ap.classList.remove('hidden');ap.style.setProperty('display','block','important');ap.style.setProperty('pointer-events','auto','important')}}enforce();
  frame.style.visibility='visible';frame.style.pointerEvents='auto';frame.style.zIndex='10';if(boot){boot.style.display='none';boot.style.pointerEvents='none';setTimeout(()=>{try{boot.remove()}catch(_){}},0)}revealed=true;
