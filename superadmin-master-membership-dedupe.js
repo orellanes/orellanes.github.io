@@ -1,0 +1,5 @@
+(function(){'use strict';
+function hideDuplicateMembership(){var grid=document.getElementById('ntSafe6MasterGrid');if(!grid)return false;var buttons=Array.from(grid.querySelectorAll('button'));var removed=false;buttons.forEach(function(b){var t=(b.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();if(t.indexOf('membresía')>=0||t.indexOf('membresia')>=0){b.remove();removed=true}});return removed}
+function run(){hideDuplicateMembership();var grid=document.getElementById('ntSafe6MasterGrid');if(grid&&!grid.dataset.ntMembershipDedupe){grid.dataset.ntMembershipDedupe='1';new MutationObserver(hideDuplicateMembership).observe(grid,{childList:true,subtree:true})}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(run,250)},{once:true});else setTimeout(run,250);setInterval(run,1200);document.addEventListener('nt37:superadmin-verified',function(){setTimeout(run,150)});document.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('[data-page="settings"],#settingsBtn'))setTimeout(run,180)},true);
+})();
