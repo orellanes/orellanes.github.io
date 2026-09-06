@@ -1,0 +1,7 @@
+(function(){'use strict';if(window.__ntBasePatientAnchor)return;window.__ntBasePatientAnchor=true;
+var basePatient=(typeof window.patient==='function')?window.patient:null;
+function visible(){try{var st=window.state||{},ps=Array.isArray(st.patients)?st.patients:[],meta=document.getElementById('patientMeta'),txt=String(meta&&meta.textContent||''),m=txt.match(/MRN\s+([^·\n]+)/i),mrn=m&&m[1]?String(m[1]).trim():'';if(mrn&&mrn!=='—'){var p=ps.find(function(x){return String(x.mrn||'').trim()===mrn});if(p)return p}var nm=document.getElementById('patientName'),name=String(nm&&nm.textContent||'').trim().toLowerCase();if(name)return ps.find(function(x){return (((x.firstName||'')+' '+(x.lastName||'')).trim().toLowerCase()===name)})||null}catch(e){}return null}
+function current(){try{if(basePatient){var p=basePatient();if(p)return p}}catch(e){}return visible()}
+function sync(p,source){if(!p)return null;var st=window.state||{};try{window.selected=p.id}catch(e){}st.selected=p.id;st.selectedPatientId=p.id;st.selectedId=p.id;st.patientId=p.id;st.currentPatientId=p.id;st.selectedPatient=p;st.currentPatient=p;try{if(window.NT_PATIENT_CONTEXT&&window.NT_PATIENT_CONTEXT.set)window.NT_PATIENT_CONTEXT.set(p,source||'base-anchor')}catch(e){}try{if(window.NT_ACTIVE_PATIENT&&window.NT_ACTIVE_PATIENT.set)window.NT_ACTIVE_PATIENT.set(p)}catch(e){}return p}
+window.NT_BASE_PATIENT={current:current,sync:sync,base:basePatient};
+})();
