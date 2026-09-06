@@ -1,0 +1,10 @@
+(function(){'use strict';
+function setup(){var card=document.getElementById('ntSafe6MasterAdmin');if(!card||card.dataset.ntCollapsible==='1')return false;card.dataset.ntCollapsible='1';var head=card.querySelector('.pagehead')||card.firstElementChild,grid=document.getElementById('ntSafe6MasterGrid'),status=document.getElementById('ntSafe6MasterStatus');if(!head||!grid)return false;var body=document.createElement('div');body.id='ntSafe6MasterBody';grid.parentNode.insertBefore(body,grid);body.appendChild(grid);if(status)body.appendChild(status);body.style.display='none';
+var btn=document.createElement('button');btn.type='button';btn.id='ntSafe6MasterToggle';btn.className='btn secondary';btn.setAttribute('aria-expanded','false');btn.style.cssText='margin-left:auto;min-width:110px;display:flex;align-items:center;justify-content:center;gap:7px';btn.innerHTML='<span>Abrir</span><strong id="ntSafe6MasterChevron">▾</strong>';head.style.display='flex';head.style.alignItems='center';head.style.gap='12px';head.appendChild(btn);
+function set(open){body.style.display=open?'block':'none';btn.setAttribute('aria-expanded',open?'true':'false');btn.querySelector('span').textContent=open?'Cerrar':'Abrir';var c=document.getElementById('ntSafe6MasterChevron');if(c)c.textContent=open?'▴':'▾'}
+btn.onclick=function(){set(btn.getAttribute('aria-expanded')!=='true')};set(false);return true}
+function run(){if(setup())return;setTimeout(setup,300)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
+new MutationObserver(function(){setup()}).observe(document.documentElement,{childList:true,subtree:true});
+document.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('[data-page="settings"],#settingsBtn'))setTimeout(setup,120)},true);
+})();
