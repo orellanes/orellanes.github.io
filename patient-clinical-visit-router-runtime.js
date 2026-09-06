@@ -1,0 +1,13 @@
+(function(){'use strict';if(window.__ntPatientClinicalVisitRouterV1)return;window.__ntPatientClinicalVisitRouterV1=true;
+function txt(el){return String((el&&el.textContent)||'').replace(/\s+/g,' ').trim().toLowerCase()}
+function patientOpen(){var s=window.state||{};if(s.selectedPatientId||s.selectedId||s.patientId||s.currentPatientId)return true;return !!document.querySelector('#patientPage:not(.hidden),#patientDetail:not(.hidden),[data-page-panel="patient"]:not(.hidden),[data-patient-id]')}
+function setArea(a){window.__ntPatientClinicalArea=a;try{sessionStorage.setItem('ntPatientClinicalArea',a)}catch(e){}}
+function area(){return window.__ntPatientClinicalArea||function(){try{return sessionStorage.getItem('ntPatientClinicalArea')||''}catch(e){return''}}()}
+function isNewVisit(el){var t=txt(el);return /nueva visita|new visit|\+ visita/.test(t)}
+function isNursing(el){return /enfermer/.test(txt(el))}
+function isSocial(el){return /trabajo social|social work|\bsocial\b/.test(txt(el))}
+function openModule(name){if(!patientOpen()){alert('Seleccione un paciente antes de abrir una visita.');return}if(name==='nursing'){if(window.NT_NURSING_HOST&&typeof window.NT_NURSING_HOST.show==='function'){window.NT_NURSING_HOST.show();setTimeout(function(){if(typeof window.nt35OpenVisit==='function')window.nt35OpenVisit()},60);return}if(window.NT_MODULES_CENTER&&typeof window.NT_MODULES_CENTER.openModule==='function'){Promise.resolve(window.NT_MODULES_CENTER.openModule('nursing')).then(function(){setTimeout(function(){if(typeof window.nt35OpenVisit==='function')window.nt35OpenVisit()},100)});return}}
+ if(name==='social'){if(window.NT_SOCIAL_WORK_MODERN&&typeof window.NT_SOCIAL_WORK_MODERN.open==='function'){window.NT_SOCIAL_WORK_MODERN.open();return}if(window.NT_MODULES_CENTER&&typeof window.NT_MODULES_CENTER.openModule==='function'){window.NT_MODULES_CENTER.openModule('social');return}}
+ alert('El módulo '+(name==='social'?'Trabajo Social':'Enfermería')+' todavía está cargando. Intente nuevamente.')}
+document.addEventListener('click',function(e){var el=e.target&&e.target.closest&&e.target.closest('button,a,[role="tab"],[data-tab]');if(!el)return;if(isNursing(el)&&!isNewVisit(el)){setArea('nursing');return}if(isSocial(el)&&!isNewVisit(el)){setArea('social');return}if(!isNewVisit(el))return;var a=area();if(!a){var pane=el.closest('[data-module],[data-page-panel],section,.tab-pane,.card');var pt=txt(pane);if(/trabajo social|social work/.test(pt))a='social';else if(/enfermer/.test(pt))a='nursing'}if(a!=='nursing'&&a!=='social')return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openModule(a)},true);
+document.addEventListener('nursetrack:patient-selected',function(){setArea('')});})();
