@@ -1,0 +1,12 @@
+(function(){'use strict';if(window.__ntSystemIntelligenceCollapse)return;window.__ntSystemIntelligenceCollapse=true;
+function findTitle(){return Array.from(document.querySelectorAll('h1,h2,h3,h4,strong,span,div')).find(function(el){var t=(el.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();return t==='centro de inteligencia del sistema'||t==='🧠 centro de inteligencia del sistema';})||null}
+function findCenter(title){if(!title)return null;var p=title;for(var i=0;i<8&&p;i++,p=p.parentElement){var tx=(p.textContent||'').toLowerCase();if(tx.indexOf('salud')>=0&&tx.indexOf('conexión')>=0&&tx.indexOf('nodos ui')>=0&&tx.indexOf('scripts activos')>=0)return p}return title.closest('.card,.panel,section,details,[data-card]')||title.parentElement}
+function install(){var title=findTitle(),center=findCenter(title);if(!title||!center)return false;if(center.dataset.ntIntelCollapse==='1')return true;center.dataset.ntIntelCollapse='1';
+var header=title.parentElement||title;var body=document.createElement('div');body.id='ntSystemIntelligenceBody';while(header.nextSibling)body.appendChild(header.nextSibling);center.appendChild(body);body.style.display='none';
+header.style.display='flex';header.style.alignItems='center';header.style.justifyContent='space-between';header.style.gap='10px';header.style.cursor='pointer';
+var btn=document.createElement('button');btn.type='button';btn.id='ntSystemIntelligenceToggle';btn.textContent='Abrir ▾';btn.style.cssText='border:1px solid #cbdce2;background:#f7fbfc;color:#214f59;border-radius:9px;padding:7px 11px;font-weight:900;cursor:pointer;white-space:nowrap';header.appendChild(btn);
+function set(open){body.style.display=open?'block':'none';btn.textContent=open?'Cerrar ▴':'Abrir ▾';center.dataset.ntIntelOpen=open?'1':'0'}
+function toggle(e){if(e){e.preventDefault();e.stopPropagation()}set(body.style.display==='none')}
+btn.addEventListener('click',toggle);header.addEventListener('click',function(e){if(e.target===btn)return;toggle(e)});set(false);return true}
+function boot(){if(install())return;var n=0,t=setInterval(function(){if(install()||++n>120)clearInterval(t)},250)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();new MutationObserver(function(){install()}).observe(document.documentElement,{childList:true,subtree:true});})();
