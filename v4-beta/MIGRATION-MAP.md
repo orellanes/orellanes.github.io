@@ -19,21 +19,21 @@
 | Visitas | `nursetrack_visits`, `nursetrack_visit_sync_keys` | Historial y nueva visita de Enfermería conectados |
 | Vitales | `nursetrack_vitals` | Formulario v4 conectado mediante RPC existente |
 | Registros clínicos | `nursetrack_clinical_records` | Guardado de Enfermería conectado mediante RPC existente |
-| PHQ-9 | `nursetrack_phq9` | Pendiente formulario v4 |
-| Plantillas | `nursetrack_templates`, `nursetrack_template_versions` | Preservadas; editor pendiente |
-| Documentos | `nursetrack_documents`, `nursetrack_patient_documents` | Preservados; UI pendiente |
-| Firmas | `nursetrack_signature_profiles` | Pendiente UI v4 |
+| PHQ-9 | `nursetrack_phq9` | **Conectado:** formulario, puntuación, pregunta 9, acción, notas, historial e impresión |
+| Plantillas | `nursetrack_templates`, `nursetrack_template_versions` | Lectura de plantillas publicadas conectada; editor administrativo pendiente |
+| Documentos | `nursetrack_documents`, `nursetrack_patient_documents` | **Conectado:** listado, lectura, borrador clínico y archivos del paciente |
+| Firmas | `nursetrack_signature_profiles`, `nursetrack_sign_document()` | Firma de documentos clínicos conectada; editor de perfil de firma pendiente |
 
 ## Disciplinas clínicas
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
 | Enfermería | visitas + vitales + registros clínicos + plantillas | **Conectado:** Evaluación inicial, Seguimiento, Reevaluación, Readmisión, vitales, narrativa, guardar abierto y guardar/cerrar |
-| Trabajo Social | plantillas + cloud modules + documentos | Pendiente UI v4 |
+| Trabajo Social | `nursetrack_templates` + `nursetrack_documents` | **Conectado:** evaluación inicial, seguimiento, formulario generado desde `schema_json`, borrador único, firma e impresión |
 | Medicina | `nursetrack_medical_encounters`, `nursetrack_medical_diagnoses`, `nursetrack_medical_procedures`, `nursetrack_medical_amendments`, `nursetrack_medical_favorites` | Pendiente UI v4 |
 | Recetas | `nursetrack_prescriptions`, `nursetrack_prescription_items` | Pendiente UI v4 |
 | Nutrición | plantillas / módulos existentes | Pendiente UI v4 |
-| Salud Mental / Psiquiatría | `nursetrack_mental_health_catalog`, `nursetrack_mental_health_billing_crosswalk`, `nursetrack_mental_health_sources`, PHQ-9 | Pendiente UI v4 |
+| Salud Mental / Psiquiatría | `nursetrack_mental_health_catalog`, `nursetrack_mental_health_billing_crosswalk`, `nursetrack_mental_health_sources`, PHQ-9 | PHQ-9 conectado; resto pendiente |
 | Uso de sustancias / Toxicología | módulos / plantillas existentes | Pendiente UI v4 |
 | Vacunas / Tratamientos | `nursetrack_vaccine_treatment_records` | Pendiente UI v4 |
 | Medicamentos / seguridad | `nursetrack_medication_reviews`, `nursetrack_medication_safety_rules` | Pendiente UI v4 |
@@ -43,8 +43,8 @@
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
-| Citas | `nursetrack_appointments` | Pendiente UI v4 |
-| Recordatorios | `nursetrack_reminder_outbox` | Pendiente UI v4 |
+| Citas | `nursetrack_appointments` | **Conectado:** listado por paciente, nueva cita, proveedor, localidad, estado y preferencias de recordatorio |
+| Recordatorios | `nursetrack_reminder_outbox` | Preferencias de SMS/email conectadas en cita; envío/outbox pendiente |
 | Notificaciones | `nursetrack_notifications` | Pendiente UI v4 |
 | Tareas | `nursetrack_tasks`, `nursetrack_clinical_tasks` | Pendiente UI v4 |
 | Estaciones | `nursetrack_station_assignments` | Pendiente UI v4 |
