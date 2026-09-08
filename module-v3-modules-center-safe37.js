@@ -11,7 +11,7 @@ function showOnly(sec,nav){if(!sec)return false;qa('main.main>section').forEach(
 function openButtonDirect(btn){if(!btn)return false;try{btn.click();return true}catch(_){return false}}
 async function lazy(name){var od=window.nt37OnDemand;if(!od||typeof od.load!=='function')return false;try{return await od.load(name)}catch(e){return false}}
 async function openModule(name){var p=null;if(['nursing','social','nutrition','mental','substance','toxicology','treatments','documents'].includes(name)){p=needPatient();if(!p)return}
-if(name==='nursing'){sync(p,'modules-nursing');if(!await lazy('nursing'))return;var b=q('#nt35OpenNursing')||findNav(/enfermer/i);return openButtonDirect(b)}
+if(name==='nursing'){sync(p,'modules-nursing');if(!await lazy('nursing'))return;if(window.NT_NURSING_HOST&&typeof window.NT_NURSING_HOST.show==='function')return window.NT_NURSING_HOST.show();return alert('No se pudo abrir Enfermería.')}
 if(name==='social'){sync(p,'modules-social');if(!window.NT_SOCIAL_WORK_MODERN||typeof window.NT_SOCIAL_WORK_MODERN.open!=='function'){if(!await lazy('social'))return}sync(p,'modules-social-open');if(window.NT_SOCIAL_WORK_MODERN&&window.NT_SOCIAL_WORK_MODERN.syncPatient)window.NT_SOCIAL_WORK_MODERN.syncPatient(p);if(window.NT_SOCIAL_WORK_MODERN&&window.NT_SOCIAL_WORK_MODERN.open)return window.NT_SOCIAL_WORK_MODERN.open();return}
 if(name==='nutrition'){if(!await lazy('nutrition'))return;if(window.NT_NUTRITION&&window.NT_NUTRITION.open)return window.NT_NUTRITION.open()}
 if(['mental','substance','toxicology'].includes(name)){if(!await lazy('mental'))return;if(window.NT_MENTAL_SUBSTANCE&&window.NT_MENTAL_SUBSTANCE.open)return window.NT_MENTAL_SUBSTANCE.open(name==='mental'?'mental':name)}
