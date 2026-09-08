@@ -52,7 +52,7 @@
 | Estaciones | `nursetrack_station_assignments` | **Conectado:** Estaciones 1–3 con upsert por compañía/fecha/estación |
 | Inventario | `nursetrack_inventory_items` | **Conectado:** lista, alta y edición con RLS administrativa |
 | Notificaciones | `nursetrack_notifications` | **Conectado:** listado por compañía/usuario, marcar leída y resolver |
-| Departamentos / localidades | `nursetrack_departments`, `nursetrack_locations` | Preservados; UI avanzada pendiente |
+| Departamentos / localidades | `nursetrack_departments`, `nursetrack_locations` | **Conectado:** lectura por compañía; alta/edición solo Súper Administrador y validación de código duplicado |
 
 ## Facturación y clearinghouse
 
@@ -75,9 +75,9 @@
 | Membresías | `nursetrack_memberships` | **Conectado:** listado y alta mediante RPC |
 | Pagos | `nursetrack_membership_payments` | **Conectado:** registro de pago mediante RPC |
 | Renovaciones | `nursetrack_membership_renewals` | **Conectado:** renovación mediante RPC |
-| Suscripción por compañía | `nursetrack_company_subscriptions` y relacionadas | Preservada; UI v4 pendiente |
-| Suscripción por usuario | `nursetrack_user_subscriptions` y relacionadas | Preservada; UI v4 pendiente |
-| PayPal / proveedor | Edge Functions y settings existentes | Preservado; checkout v4 pendiente |
+| Suscripción por compañía | `nursetrack_company_subscriptions` y relacionadas | Preservada; UI/checkout v4 pendiente |
+| Suscripción por usuario | `nursetrack_user_subscriptions` y relacionadas | Preservada; UI/checkout v4 pendiente |
+| PayPal / proveedor | Edge Functions existentes | Backend preservado e idempotente; activación del checkout v4 pendiente de una URL pública estable para callback, porque el retorno actual apunta a `cloud-app.html` |
 
 ## Administración, seguridad y respaldo
 
@@ -86,7 +86,7 @@
 | Súper Administrador | Edge Function `admin-users` | **Conectado:** listar/crear usuario, ficha, activar/desactivar, contraseña temporal y permisos; no permite segundo súper admin |
 | Roles | `nursetrack_roles` | Preservados; edición avanzada de catálogo pendiente |
 | Permisos | permissions + user permissions + history | **Conectado** desde Súper Administrador |
-| Auditoría | `nursetrack_audit_events` | Preservada; visor dedicado pendiente |
+| Auditoría | `nursetrack_audit_events` | **Conectado solo lectura:** filtros por fecha/acción/entidad; sin controles de eliminación |
 | Backups | `nursetrack_backups`, `nursetrack_recovery_snapshots` | **Conectado lectura:** visor de respaldos; v4 no sobrescribe ni elimina respaldos |
 | Recuperación | recovery codes + Edge Functions | Preservada |
 | Estado del sistema | `nursetrack_system_health`, releases, state | **Conectado lectura:** panel de estado básico |
@@ -109,19 +109,21 @@
 - `v4-beta/revenue-safety.js`
 - `v4-beta/personal-notifications.js`
 - `v4-beta/assignments.js`
+- `v4-beta/audit-viewer.js`
+- `v4-beta/admin-catalogs.js`
 - `v4-beta/navigation.js`
 
 ## Pendientes antes de convertir v4 en oficial
 
 1. Prueba visual/funcional real en navegador de escritorio, iPhone y iPad; todavía no se ha afirmado E2E visual.
 2. Entrega automática/programada de recordatorios y proveedor real de email; SMS manual ya usa la función real configurada.
-3. Checkout PayPal / suscripciones por compañía y usuario.
+3. Checkout PayPal / suscripciones por compañía y usuario después de publicar una URL v4 estable para retorno/callback.
 4. Carga binaria nueva de archivos personales/Excel después de validar Storage y políticas del bucket.
 5. Medicina avanzada: enmiendas, favoritos y algunas impresiones finales.
 6. Elegibilidad en vivo solo cuando exista integración/transacción real con clearinghouse.
 7. Catálogo CPT completo únicamente con fuente/licencia autorizada.
-8. Visor dedicado de auditoría y recuperación/restauración de backups.
-9. Departamentos/localidades y algunos catálogos administrativos avanzados.
+8. Recuperación/restauración de backups con controles de seguridad adicionales.
+9. Edición avanzada de roles y algunos catálogos administrativos secundarios.
 10. Validación final de permisos por rol y pruebas de no duplicación en un entorno seguro antes de publicar.
 
 ## Conteos de referencia previos a la migración
