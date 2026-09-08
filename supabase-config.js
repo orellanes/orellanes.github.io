@@ -18,6 +18,7 @@ window.NURSETRACK_SUPABASE = {
     'reports-membership.js?v=20260908-v4-ops-1',
     'billing-admin.js?v=20260908-v4-billing-admin-1',
     'operations-settings.js?v=20260908-v4-operations-1',
+    'templates-editor.js?v=20260908-v4-templates-1',
     'navigation.js?v=20260908-v4-navigation-1'
   ].forEach(function(src){
     var s=document.createElement('script');
