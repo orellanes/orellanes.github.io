@@ -28,7 +28,9 @@ window.NURSETRACK_SUPABASE = {
     'audit-viewer.js?v=20260908-v4-audit-1',
     'admin-catalogs.js?v=20260908-v4-admin-catalogs-1',
     'storage-upload.js?v=20260908-v4-storage-1',
-    'navigation.js?v=20260908-v4-navigation-4'
+    'capacity-settings.js?v=20260908-v4-capacity-1',
+    'appearance-settings.js?v=20260908-v4-appearance-1',
+    'navigation.js?v=20260908-v4-navigation-5'
   ].forEach(function(src){
     var s=document.createElement('script');
     s.src=src;
