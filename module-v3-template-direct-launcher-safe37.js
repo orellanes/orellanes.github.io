@@ -1,6 +1,6 @@
 (function(){'use strict';
 if(window.__nt37TemplateDirectLauncher)return;window.__nt37TemplateDirectLauncher=true;
-var V=String(window.NURSETRACK_PUBLIC_BUILD||'20260908-single-entry151');
+var V=String(window.NURSETRACK_PUBLIC_BUILD||'20260908-canonical-nav156');
 function has(src){return Array.from(document.scripts).some(function(s){return(s.src||'').indexOf('/'+src)>=0})}
 function add(src){return new Promise(function(resolve){if(has(src))return resolve(true);var s=document.createElement('script'),done=false,t=setTimeout(function(){if(done)return;done=true;try{s.remove()}catch(e){}resolve(false)},7000);s.src=src+'?v='+encodeURIComponent(V)+'&t='+Date.now();s.async=false;s.onload=function(){if(done)return;done=true;clearTimeout(t);resolve(true)};s.onerror=function(){if(done)return;done=true;clearTimeout(t);resolve(false)};(document.head||document.documentElement).appendChild(s)})}
 async function verified(){if(window.nt37VerifiedSuperAdmin)return true;if(window.NURSETRACK_SUPERADMIN_FULL_ACCESS||document.documentElement.dataset.ntSuperadmin==='true')return true;if(typeof window.NT_VERIFY_SUPERADMIN==='function')return await window.NT_VERIFY_SUPERADMIN();return false}
