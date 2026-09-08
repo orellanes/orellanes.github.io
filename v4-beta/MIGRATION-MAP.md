@@ -30,14 +30,14 @@
 |---|---|---|
 | Enfermería | visitas + vitales + registros clínicos + plantillas | **Conectado:** Evaluación inicial, Seguimiento, Reevaluación, Readmisión, vitales, narrativa, guardar abierto y guardar/cerrar |
 | Trabajo Social | `nursetrack_templates` + `nursetrack_documents` | **Conectado:** evaluación inicial, seguimiento, formulario generado desde `schema_json`, borrador único, firma e impresión |
-| Medicina | `nursetrack_medical_encounters`, `nursetrack_medical_diagnoses`, `nursetrack_medical_procedures`, `nursetrack_medical_amendments`, `nursetrack_medical_favorites` | Pendiente UI v4 |
-| Recetas | `nursetrack_prescriptions`, `nursetrack_prescription_items` | Pendiente UI v4 |
+| Medicina | `nursetrack_medical_encounters`, `nursetrack_medical_diagnoses`, `nursetrack_medical_procedures`, `nursetrack_medical_amendments`, `nursetrack_medical_favorites` | **Conectado núcleo:** borrador único, motivo, HPI, evaluación, plan, notas, diagnósticos, procedimientos y firma; enmiendas/favoritos pendientes |
+| Recetas | `nursetrack_prescriptions`, `nursetrack_prescription_items`, `nursetrack_create_printable_prescription()` | **Conectado:** creación de receta firmada ligada al encuentro; listado/impresión avanzada pendiente |
 | Nutrición | plantillas / módulos existentes | Pendiente UI v4 |
 | Salud Mental / Psiquiatría | `nursetrack_mental_health_catalog`, `nursetrack_mental_health_billing_crosswalk`, `nursetrack_mental_health_sources`, PHQ-9 | PHQ-9 conectado; resto pendiente |
 | Uso de sustancias / Toxicología | módulos / plantillas existentes | Pendiente UI v4 |
 | Vacunas / Tratamientos | `nursetrack_vaccine_treatment_records` | Pendiente UI v4 |
 | Medicamentos / seguridad | `nursetrack_medication_reviews`, `nursetrack_medication_safety_rules` | Pendiente UI v4 |
-| Laboratorios | `nursetrack_lab_catalog`, `nursetrack_lab_orders`, `nursetrack_labs` | Pendiente UI v4 |
+| Laboratorios | `nursetrack_lab_catalog`, `nursetrack_lab_orders`, `nursetrack_labs` | **Conectado:** catálogo, selección de pruebas, orden, diagnósticos, prioridad, profesional, instrucciones y resultados; usa `client_order_key` para evitar duplicados |
 
 ## Operación
 
@@ -57,8 +57,8 @@
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
-| Catálogo HCPCS/CPT autorizado | `nursetrack_billing_codes`, historial e import batches | Preservado |
-| Diagnósticos | `nursetrack_diagnosis_codes` | Preservado |
+| Catálogo HCPCS/CPT autorizado | `nursetrack_billing_codes`, historial e import batches | Preservado; búsqueda validada conectada desde Medicina |
+| Diagnósticos | `nursetrack_diagnosis_codes` | Preservado; búsqueda validada conectada desde Medicina |
 | Cargos | `nursetrack_service_billing_codes` | Preservado |
 | Reclamaciones | `nursetrack_claims`, `nursetrack_claim_lines`, `nursetrack_claim_events`, `nursetrack_claim_transmissions` | Pendiente UI v4 |
 | Clearinghouse | `nursetrack_clearinghouses`, `nursetrack_company_clearinghouse_connections`, `nursetrack_clearinghouse_responses`, `nursetrack_clearinghouse_payer_transactions` | Pendiente UI v4 |
