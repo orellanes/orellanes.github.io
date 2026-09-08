@@ -12,14 +12,14 @@ function openButtonDirect(btn){if(!btn)return false;try{btn.click();return true}
 async function lazy(name){var od=window.nt37OnDemand;if(!od||typeof od.load!=='function')return false;try{return await od.load(name)}catch(e){return false}}
 async function openModule(name){var p=null;if(['nursing','social','nutrition','mental','substance','toxicology','treatments','documents'].includes(name)){p=needPatient();if(!p)return}
 if(name==='nursing'){sync(p,'modules-nursing');if(!await lazy('nursing'))return;if(window.NT_NURSING_HOST&&typeof window.NT_NURSING_HOST.show==='function')return window.NT_NURSING_HOST.show();return alert('No se pudo abrir Enfermería.')}
-if(name==='social'){sync(p,'modules-social');if(!window.NT_SOCIAL_WORK_MODERN||typeof window.NT_SOCIAL_WORK_MODERN.open!=='function'){if(!await lazy('social'))return}sync(p,'modules-social-open');if(window.NT_SOCIAL_WORK_MODERN&&window.NT_SOCIAL_WORK_MODERN.syncPatient)window.NT_SOCIAL_WORK_MODERN.syncPatient(p);if(window.NT_SOCIAL_WORK_MODERN&&window.NT_SOCIAL_WORK_MODERN.open)return window.NT_SOCIAL_WORK_MODERN.open();return}
-if(name==='nutrition'){if(!await lazy('nutrition'))return;if(window.NT_NUTRITION&&window.NT_NUTRITION.open)return window.NT_NUTRITION.open()}
-if(['mental','substance','toxicology'].includes(name)){if(!await lazy('mental'))return;if(window.NT_MENTAL_SUBSTANCE&&window.NT_MENTAL_SUBSTANCE.open)return window.NT_MENTAL_SUBSTANCE.open(name==='mental'?'mental':name)}
+if(name==='social'){sync(p,'modules-social');if(!window.NT_SOCIAL_WORK_MODERN||typeof window.NT_SOCIAL_WORK_MODERN.open!=='function'){if(!await lazy('social'))return}sync(p,'modules-social-open');if(window.NT_SOCIAL_WORK_MODERN&&window.NT_SOCIAL_WORK_MODERN.syncPatient)window.NT_SOCIAL_WORK_MODERN.syncPatient(p);if(window.NT_SOCIAL_WORK_MODERN&&window.NT_SOCIAL_WORK_MODERN.open)return window.NT_SOCIAL_WORK_MODERN.open();return alert('No se pudo abrir Trabajo Social.')}
+if(name==='nutrition'){if(!await lazy('nutrition'))return;if(window.NT_NUTRITION&&window.NT_NUTRITION.open)return window.NT_NUTRITION.open();return alert('No se pudo abrir Nutrición.')}
+if(['mental','substance','toxicology'].includes(name)){if(!await lazy('mental'))return;if(window.NT_MENTAL_SUBSTANCE&&window.NT_MENTAL_SUBSTANCE.open)return window.NT_MENTAL_SUBSTANCE.open(name==='mental'?'mental':name);return alert('No se pudo abrir el módulo seleccionado.')}
 if(name==='treatments'){if(!await lazy('treatments'))return;if(window.NT_VACCINES_TREATMENTS&&window.NT_VACCINES_TREATMENTS.open)return window.NT_VACCINES_TREATMENTS.open();return openButtonDirect(q('#nt37VtNav')||findNav(/vacuna|tratamiento/i))}
 if(name==='labs'){if(!await lazy('labs'))return;return openButtonDirect(q('#nt37LabNav')||findNav(/laboratorio|\blab/i))}
-if(name==='appointments'){if(!await lazy('appointments'))return;return openButtonDirect(findNav(/cita|agenda/i))}
-if(name==='reports'){if(!await lazy('reports'))return;return openButtonDirect(findNav(/reporte|report/i))}
-if(name==='membership'){if(!await lazy('membership'))return;return openButtonDirect(findNav(/membres/i))}
+if(name==='appointments'){if(!await lazy('appointments'))return;if(window.nt37Appointments&&typeof window.nt37Appointments.show==='function')return window.nt37Appointments.show();return alert('No se pudo abrir Citas.')}
+if(name==='reports'){if(!await lazy('reports'))return;if(window.nt37Reports&&typeof window.nt37Reports.show==='function')return window.nt37Reports.show();return alert('No se pudo abrir Reportes.')}
+if(name==='membership'){if(!await lazy('membership'))return;if(window.NT_MEMBERSHIP&&typeof window.NT_MEMBERSHIP.show==='function')return window.NT_MEMBERSHIP.show();return alert('No se pudo abrir Membresía.')}
 if(name==='billing'){if(!await lazy('billing'))return;if(window.NT_BILLING&&window.NT_BILLING.open)return window.NT_BILLING.open();return openButtonDirect(findNav(/factur|billing/i))}
 if(name==='documents'){if(!await lazy('documents'))return;var pp=q('#patientPage');if(pp)showOnly(pp,findNav(/paciente/i));return}
 }
