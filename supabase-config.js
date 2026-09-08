@@ -11,7 +11,8 @@ window.NURSETRACK_SUPABASE = {
   [
     'social-documents.js?v=20260908-v4-social-docs-1',
     'patient-tools.js?v=20260908-v4-patient-tools-1',
-    'labs.js?v=20260908-v4-labs-1'
+    'labs.js?v=20260908-v4-labs-1',
+    'medicine.js?v=20260908-v4-medicine-1'
   ].forEach(function(src){
     var s=document.createElement('script');
     s.src=src;
