@@ -12,13 +12,13 @@
 
 | Área | Tabla / estructura existente | Estado v4 |
 |---|---|---|
-| Usuarios / perfil | `nursetrack_profiles` | Login conectado; identidad en integración |
+| Usuarios / perfil | `nursetrack_profiles` | Login conectado; identidad conectada |
 | Compañías | `nursetrack_companies`, `nursetrack_company_users` | Resolución de compañía conectada |
 | Pacientes | `nursetrack_patients_v2` | Búsqueda y expediente conectados |
 | Asignaciones | `nursetrack_patient_assignments` | Pendiente UI v4 |
-| Visitas | `nursetrack_visits`, `nursetrack_visit_sync_keys` | Historial básico conectado; nueva visita pendiente |
-| Vitales | `nursetrack_vitals` | Pendiente formulario v4 |
-| Registros clínicos | `nursetrack_clinical_records` | Pendiente formulario v4 |
+| Visitas | `nursetrack_visits`, `nursetrack_visit_sync_keys` | Historial y nueva visita de Enfermería conectados |
+| Vitales | `nursetrack_vitals` | Formulario v4 conectado mediante RPC existente |
+| Registros clínicos | `nursetrack_clinical_records` | Guardado de Enfermería conectado mediante RPC existente |
 | PHQ-9 | `nursetrack_phq9` | Pendiente formulario v4 |
 | Plantillas | `nursetrack_templates`, `nursetrack_template_versions` | Preservadas; editor pendiente |
 | Documentos | `nursetrack_documents`, `nursetrack_patient_documents` | Preservados; UI pendiente |
@@ -28,7 +28,7 @@
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
-| Enfermería | visitas + vitales + registros clínicos + plantillas | Pendiente formulario v4 |
+| Enfermería | visitas + vitales + registros clínicos + plantillas | **Conectado:** Evaluación inicial, Seguimiento, Reevaluación, Readmisión, vitales, narrativa, guardar abierto y guardar/cerrar |
 | Trabajo Social | plantillas + cloud modules + documentos | Pendiente UI v4 |
 | Medicina | `nursetrack_medical_encounters`, `nursetrack_medical_diagnoses`, `nursetrack_medical_procedures`, `nursetrack_medical_amendments`, `nursetrack_medical_favorites` | Pendiente UI v4 |
 | Recetas | `nursetrack_prescriptions`, `nursetrack_prescription_items` | Pendiente UI v4 |
