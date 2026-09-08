@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b63a8">
+  <title>NurseTrack Clinical v4 Beta</title>
+  <style>
+    :root{--bg:#f4f8f8;--panel:#fff;--text:#17343c;--muted:#6f858b;--line:#d8e6e8;--brand:#0b63a8;--accent:#397f88}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+    button,a,[role="button"]{cursor:pointer}
+    input,textarea,[contenteditable="true"]{cursor:text;caret-color:auto;user-select:text;-webkit-user-select:text}
+    input,textarea,select,button{font:inherit}
+    .hidden{display:none!important}
+    .center{min-height:100vh;display:grid;place-items:center;padding:20px}
+    .card{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 12px 40px rgba(21,61,69,.08)}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.mark{width:46px;height:46px;border-radius:14px;background:var(--brand);display:grid;place-items:center;color:#fff;font-weight:900}.brand h1{font-size:22px;margin:0}.brand small{color:var(--muted)}
+    label{display:block;font-weight:700;margin:14px 0 6px}
+    input{width:100%;padding:13px 14px;border:1px solid #c7d9dd;border-radius:12px;background:#fff;color:var(--text);outline:none}
+    input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(11,99,168,.12)}
+    .primary{width:100%;margin-top:18px;padding:13px 16px;border:0;border-radius:12px;background:var(--brand);color:#fff;font-weight:800}
+    .status{min-height:22px;margin-top:12px;color:var(--muted);font-size:14px}.status.error{color:#9b3d3d}.status.ok{color:#216b48}
+    .app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
+    aside{background:#fff;border-right:1px solid var(--line);padding:18px;position:sticky;top:0;height:100vh}
+    .nav{display:grid;gap:8px;margin-top:24px}.nav button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:10px;color:var(--text);font-weight:700}.nav button:hover,.nav button.active{background:#edf5f6}
+    main{padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:22px}.top h2{margin:0}.pill{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#fff;color:var(--muted)}
+    .search{display:flex;gap:10px;max-width:760px}.search input{flex:1}.search button{border:0;border-radius:12px;padding:0 18px;background:var(--accent);color:#fff;font-weight:800}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}.metric,.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}.metric strong{display:block;font-size:26px;margin-top:6px}.metric span,.panel p{color:var(--muted)}
+    .panel{margin-top:16px}.module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.module{border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px;text-align:left}.module strong{display:block;margin-bottom:4px}.module small{color:var(--muted)}
+    @media(max-width:850px){.app{grid-template-columns:1fr}aside{height:auto;position:static;border-right:0;border-bottom:1px solid var(--line)}.nav{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:540px){main{padding:16px}.grid,.module-grid{grid-template-columns:1fr}.search{display:grid}.search button{min-height:44px}.nav{grid-template-columns:1fr 1fr}}
+  </style>
+  <script src="../safe6-supabase-loader.js"></script>
+  <script src="../supabase-config.js"></script>
+</head>
+<body>
+  <section id="loginView" class="center">
+    <div class="card">
+      <div class="brand"><div class="mark">NT</div><div><h1>NurseTrack Clinical</h1><small>v4 Beta · arquitectura limpia</small></div></div>
+      <form id="loginForm" autocomplete="on">
+        <label for="loginName">Usuario</label>
+        <input id="loginName" name="username" autocomplete="username" inputmode="email" required>
+        <label for="loginPass">Contraseña</label>
+        <input id="loginPass" name="password" type="password" autocomplete="current-password" required>
+        <button class="primary" type="submit">Entrar</button>
+        <div id="loginStatus" class="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
+  <section id="appView" class="app hidden">
+    <aside>
+      <div class="brand"><div class="mark">NT</div><div><h1>NurseTrack</h1><small>v4 Beta</small></div></div>
+      <div class="nav">
+        <button class="active" data-view="home">Inicio</button>
+        <button data-view="patients">Pacientes</button>
+        <button data-view="modules">Módulos</button>
+        <button data-view="settings">Settings</button>
+        <button id="logoutBtn">Bloquear</button>
+      </div>
+    </aside>
+    <main>
+      <div class="top"><div><h2 id="pageTitle">Inicio</h2><div class="pill">Interacción nativa · sin iframe</div></div><div id="userLabel" class="pill"></div></div>
+      <div id="homePanel">
+        <div class="search"><input id="patientSearch" placeholder="Buscar paciente por nombre, DOB o expediente"><button id="searchBtn">Buscar</button></div>
+        <div class="grid">
+          <div class="metric"><span>Pacientes</span><strong>—</strong></div>
+          <div class="metric"><span>Visitas hoy</span><strong>—</strong></div>
+          <div class="metric"><span>PHQ-9 pendientes</span><strong>—</strong></div>
+          <div class="metric"><span>Alertas</span><strong>—</strong></div>
+        </div>
+        <div class="panel"><h3>Base v4 lista</h3><p>Esta versión elimina el iframe y la cadena de parches de cursor. Los módulos se conectarán directamente a Supabase y se cargarán bajo demanda.</p></div>
+      </div>
+      <div id="modulesPanel" class="panel hidden"><h3>Módulos clínicos</h3><div class="module-grid"><button class="module"><strong>Enfermería</strong><small>Evaluación, seguimiento y alta</small></button><button class="module"><strong>Trabajo Social</strong><small>Evaluación y seguimiento</small></button><button class="module"><strong>Medicina</strong><small>Diagnósticos, órdenes y recetas</small></button><button class="module"><strong>Laboratorios</strong><small>Órdenes y resultados</small></button><button class="module"><strong>Citas</strong><small>Agenda y seguimiento</small></button><button class="module"><strong>Facturación</strong><small>Cargos y reclamaciones</small></button></div></div>
+      <div id="placeholderPanel" class="panel hidden"><h3 id="placeholderTitle"></h3><p>Este módulo se conectará sin duplicar pantallas ni rutas antiguas.</p></div>
+    </main>
+  </section>
+
+<script>
+(async function(){
+  'use strict';
+  const loginView=document.getElementById('loginView'),appView=document.getElementById('appView'),form=document.getElementById('loginForm'),status=document.getElementById('loginStatus'),userLabel=document.getElementById('userLabel');
+  let sb=null;
+  function setStatus(text,type){status.textContent=text||'';status.className='status'+(type?' '+type:'')}
+  function showApp(user){loginView.classList.add('hidden');appView.classList.remove('hidden');userLabel.textContent=user&&user.email?user.email:'Sesión activa';setTimeout(()=>document.getElementById('patientSearch').focus(),0)}
+  function showLogin(){appView.classList.add('hidden');loginView.classList.remove('hidden');setTimeout(()=>document.getElementById('loginName').focus(),0)}
+  try{
+    if(typeof window.NT_loadSupabase!=='function') throw new Error('No se pudo cargar Supabase');
+    const lib=await window.NT_loadSupabase(),cfg=window.NURSETRACK_SUPABASE||{};
+    sb=lib.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true}});
+    const current=await sb.auth.getSession();
+    if(current.data&&current.data.session) showApp(current.data.session.user); else showLogin();
+  }catch(e){setStatus('No se pudo iniciar el acceso cloud.','error')}
+
+  form.addEventListener('submit',async function(e){
+    e.preventDefault();
+    const username=document.getElementById('loginName').value.trim(),password=document.getElementById('loginPass').value;
+    if(!username||!password) return setStatus('Completa usuario y contraseña.','error');
+    setStatus('Verificando acceso…');
+    try{
+      const cfg=window.NURSETRACK_SUPABASE||{};
+      const r=await fetch(cfg.url+'/functions/v1/nursetrack-username-login',{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.publishableKey},body:JSON.stringify({login:username,password})});
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok||!data.access_token||!data.refresh_token) throw new Error(data.error||'Usuario o contraseña incorrectos');
+      const result=await sb.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});
+      if(result.error) throw result.error;
+      setStatus('Acceso correcto.','ok');
+      showApp(result.data.user);
+    }catch(err){setStatus(err&&err.message?err.message:'No se pudo iniciar sesión.','error')}
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click',async()=>{try{await sb.auth.signOut({scope:'local'})}catch(_){}showLogin()});
+  document.querySelectorAll('.nav button[data-view]').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav button[data-view]').forEach(b=>b.classList.toggle('active',b===btn));
+    const v=btn.dataset.view;document.getElementById('homePanel').classList.toggle('hidden',v!=='home');document.getElementById('modulesPanel').classList.toggle('hidden',v!=='modules');document.getElementById('placeholderPanel').classList.toggle('hidden',v==='home'||v==='modules');document.getElementById('pageTitle').textContent=v==='home'?'Inicio':v==='patients'?'Pacientes':v==='modules'?'Módulos':'Settings';if(v!=='home'&&v!=='modules')document.getElementById('placeholderTitle').textContent=document.getElementById('pageTitle').textContent;
+  }));
+  document.getElementById('searchBtn').addEventListener('click',()=>{const q=document.getElementById('patientSearch').value.trim();if(q)alert('Búsqueda v4 preparada para conectar: '+q)});
+})();
+</script>
+</body>
+</html>
