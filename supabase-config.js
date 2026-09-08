@@ -9,6 +9,7 @@ window.NURSETRACK_SUPABASE = {
   if(window.__NT_V4_EXTENSIONS_LOADER__) return;
   window.__NT_V4_EXTENSIONS_LOADER__=true;
   [
+    'password-recovery.js?v=20260908-v4-password-recovery-1',
     'social-documents.js?v=20260908-v4-social-docs-1',
     'patient-tools.js?v=20260908-v4-patient-tools-1',
     'patient-registration.js?v=20260908-v4-patient-registration-1',
