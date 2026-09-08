@@ -13,6 +13,7 @@ window.NURSETRACK_SUPABASE = {
     'patient-tools.js?v=20260908-v4-patient-tools-1',
     'labs.js?v=20260908-v4-labs-1',
     'medicine.js?v=20260908-v4-medicine-1',
+    'medicine-advanced.js?v=20260908-v4-medicine-advanced-1',
     'nutrition-behavioral.js?v=20260908-v4-clinical-1',
     'vaccines-treatments-v4.js?v=20260908-v4-treatments-1',
     'reports-membership.js?v=20260908-v4-ops-1',
@@ -25,7 +26,7 @@ window.NURSETRACK_SUPABASE = {
     'audit-viewer.js?v=20260908-v4-audit-1',
     'admin-catalogs.js?v=20260908-v4-admin-catalogs-1',
     'storage-upload.js?v=20260908-v4-storage-1',
-    'navigation.js?v=20260908-v4-navigation-3'
+    'navigation.js?v=20260908-v4-navigation-4'
   ].forEach(function(src){
     var s=document.createElement('script');
     s.src=src;
