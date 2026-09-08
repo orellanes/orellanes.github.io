@@ -22,6 +22,7 @@ window.NURSETRACK_SUPABASE = {
     'revenue-safety.js?v=20260908-v4-revenue-safety-1',
     'personal-notifications.js?v=20260908-v4-personal-notifications-1',
     'assignments.js?v=20260908-v4-assignments-1',
+    'audit-viewer.js?v=20260908-v4-audit-1',
     'navigation.js?v=20260908-v4-navigation-2'
   ].forEach(function(src){
     var s=document.createElement('script');
