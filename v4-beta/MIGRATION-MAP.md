@@ -4,78 +4,77 @@
 
 - No borrar datos de Supabase durante la migración.
 - No crear tablas paralelas si ya existe una tabla canónica.
-- No duplicar pacientes, visitas, plantillas, órdenes, documentos, cargos, reclamaciones ni membresías.
-- v4 debe leer y escribir sobre las estructuras existentes, respetando `company_id`, RLS, permisos y RPCs canónicos.
+- No duplicar pacientes, visitas, plantillas, órdenes, documentos, cargos, reclamaciones, tareas ni membresías.
+- v4 lee y escribe sobre las estructuras existentes, respetando `company_id`, RLS, permisos y RPCs canónicos.
 - La versión actual permanece intacta hasta que v4 se pruebe y se apruebe.
-- Los módulos de v4 se cargan desde un solo loader en `supabase-config.js`; no se crean rutas duplicadas.
+- Todos los módulos de v4 se cargan desde un único loader en `supabase-config.js`.
 
 ## Núcleo
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
-| Usuarios / perfil | `nursetrack_profiles` | Login e identidad conectados |
-| Compañías | `nursetrack_companies`, `nursetrack_company_users` | Resolución de compañía conectada |
-| Pacientes | `nursetrack_patients_v2` | Búsqueda y expediente conectados |
-| Asignaciones | `nursetrack_patient_assignments` | Pendiente UI v4 |
-| Visitas | `nursetrack_visits`, `nursetrack_visit_sync_keys` | Historial y nueva visita de Enfermería conectados |
-| Vitales | `nursetrack_vitals` | Formulario conectado mediante RPC existente |
-| Registros clínicos | `nursetrack_clinical_records` | Enfermería, Nutrición, Salud Mental, Sustancias y Toxicología conectados |
-| PHQ-9 | `nursetrack_phq9` | Conectado: formulario, puntuación, pregunta 9, acción, notas, historial e impresión |
-| Plantillas | `nursetrack_templates`, `nursetrack_template_versions` | Lectura de plantillas publicadas conectada; editor administrativo pendiente |
-| Documentos | `nursetrack_documents`, `nursetrack_patient_documents` | Conectado: listado, borrador clínico, archivos y firma |
-| Firmas | `nursetrack_signature_profiles`, `nursetrack_sign_document()` | Firma de documentos conectada; editor de perfil de firma pendiente |
+| Usuarios / perfil | `nursetrack_profiles` | **Conectado:** login e identidad |
+| Compañías | `nursetrack_companies`, `nursetrack_company_users` | **Conectado:** compañía activa |
+| Pacientes | `nursetrack_patients_v2` | **Conectado:** búsqueda y expediente |
+| Asignaciones de pacientes | `nursetrack_patient_assignments` | Preservadas; UI específica pendiente |
+| Visitas | `nursetrack_visits`, `nursetrack_visit_sync_keys` | **Conectado:** historial y nueva visita de Enfermería con clave idempotente |
+| Vitales | `nursetrack_vitals` | **Conectado** mediante RPC existente |
+| Registros clínicos | `nursetrack_clinical_records` | **Conectado** para Enfermería, Nutrición, Salud Mental, Sustancias y Toxicología |
+| PHQ-9 | `nursetrack_phq9` | **Conectado:** formulario, puntuación, pregunta 9, acción, notas, historial e impresión |
+| Plantillas | `nursetrack_templates`, `nursetrack_template_versions` | **Conectado:** biblioteca, edición, borrador y publicación versionada |
+| Documentos | `nursetrack_documents`, `nursetrack_patient_documents` | **Conectado:** listado, borrador clínico, archivos y firma |
+| Firma profesional | `nursetrack_signature_profiles`, `nursetrack_sign_document()` | **Conectado:** perfil propio + firma de documentos |
 
 ## Disciplinas clínicas
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
-| Enfermería | visitas + vitales + registros clínicos + plantillas | **Conectado:** Inicial, Seguimiento, Reevaluación, Readmisión, vitales, narrativa, guardar abierto y cerrar sin duplicar visita |
-| Trabajo Social | `nursetrack_templates` + `nursetrack_documents` | **Conectado:** inicial, seguimiento, formulario desde `schema_json`, borrador único, firma e impresión |
-| Medicina | encuentros + diagnósticos + procedimientos | **Conectado núcleo:** borrador, HPI, assessment, plan, diagnósticos, procedimientos y firma; enmiendas/favoritos pendientes |
-| Recetas | `nursetrack_prescriptions`, `nursetrack_prescription_items`, RPC de receta | **Conectado:** receta firmada ligada al encuentro; impresión avanzada pendiente |
-| Nutrición | `nursetrack_clinical_records` (`module_type=nutrition`) | **Conectado:** conserva campos clínicos de la versión anterior; registro activo se actualiza y al completar se inicia seguimiento nuevo |
-| Salud Mental / Psiquiatría | `nursetrack_clinical_records` + catálogos MH + PHQ-9 | **Conectado núcleo:** evaluación mental y PHQ-9; catálogos/crosswalk avanzado pendiente |
-| Uso de sustancias | `nursetrack_clinical_records` (`module_type=substance_use`) | **Conectado:** sustancia, frecuencia, vía, último uso, sobredosis, buprenorfina, educación y plan |
-| Toxicología | `nursetrack_clinical_records` (`module_type=toxicology_monitoring`) | **Conectado:** orden/estado/fecha de resultado y seguimiento, sin interpretación automática |
+| Enfermería | visitas + vitales + registros clínicos + plantillas | **Conectado:** Inicial, Seguimiento, Reevaluación, Readmisión, vitales, narrativa, guardar y cerrar sin duplicar visita |
+| Trabajo Social | templates + documents | **Conectado:** inicial, seguimiento, formulario desde `schema_json`, borrador único, firma e impresión |
+| Medicina | encounters + diagnoses + procedures | **Conectado núcleo:** borrador, HPI, assessment, plan, diagnósticos, procedimientos y firma; enmiendas/favoritos avanzados pendientes |
+| Recetas | prescriptions + items + RPC de receta | **Conectado:** receta firmada ligada al encuentro; formato avanzado de impresión pendiente |
+| Nutrición | clinical records `module_type=nutrition` | **Conectado:** evaluación completa, antropometría, dieta, PES, plan, educación, seguimiento y alta |
+| Salud Mental / Psiquiatría | clinical records + PHQ-9 + catálogos MH | **Conectado núcleo:** evaluación mental y PHQ-9; crosswalk/catálogos avanzados pendientes |
+| Uso de sustancias | clinical records `module_type=substance_use` | **Conectado:** sustancia, frecuencia, vía, último uso, sobredosis, buprenorfina, educación y plan |
+| Toxicología | clinical records `module_type=toxicology_monitoring` | **Conectado:** orden/estado/fecha y seguimiento, sin interpretación automática |
 | Vacunas / Tratamientos | `nursetrack_vaccine_treatment_records` | **Conectado:** vacuna/tratamiento, dosis, vía, sitio, lote, expiración, fabricante, estado, observación, reacción, educación y orden |
-| Medicamentos / seguridad | `nursetrack_medication_reviews`, `nursetrack_medication_safety_rules` | Pendiente UI v4 |
-| Laboratorios | catálogo + órdenes + resultados | **Conectado:** catálogo, órdenes, diagnósticos, prioridad, profesional, instrucciones y resultados; `client_order_key` evita duplicados |
+| Medicamentos / seguridad | medication reviews + safety rules | **Conectado:** revisión profesional y reglas validadas cuando existan; actualmente no inventa alertas si el catálogo validado está vacío |
+| Laboratorios | lab catalog + orders + results | **Conectado:** catálogo, órdenes, diagnósticos, prioridad, profesional, instrucciones y resultados; `client_order_key` evita duplicados |
 
 ## Operación
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
 | Citas | `nursetrack_appointments` | **Conectado:** listado, nueva cita, proveedor, localidad, estado y preferencias SMS/email |
-| Recordatorios | `nursetrack_reminder_outbox` | Preferencias conectadas; envío/outbox pendiente |
-| Reportes | datos clínicos existentes | **Conectado núcleo:** rango de fechas, pacientes, visitas, citas, PHQ-9, laboratorios, vacunas/tratamientos, documentos y cargos |
-| Notificaciones | `nursetrack_notifications` | Pendiente UI v4 |
-| Tareas | `nursetrack_tasks`, `nursetrack_clinical_tasks` | Pendiente UI v4 |
-| Estaciones | `nursetrack_station_assignments` | Pendiente UI v4 |
-| Inventario | `nursetrack_inventory_items` | Pendiente UI v4 |
-| Departamentos | `nursetrack_departments` | Pendiente UI v4 |
-| Localidades | `nursetrack_locations` | Pendiente UI v4 |
+| Recordatorios | `nursetrack_reminder_outbox` | Preferencias conectadas; envío/outbox automático pendiente |
+| Reportes | datos clínicos existentes | **Conectado núcleo:** rango, pacientes, visitas, citas, PHQ-9, labs, tratamientos, documentos y cargos |
+| Tareas | `nursetrack_tasks` | **Conectado:** alta, actualización de tarea abierta equivalente y completar |
+| Estaciones | `nursetrack_station_assignments` | **Conectado:** Estaciones 1–3 con upsert por compañía/fecha/estación |
+| Inventario | `nursetrack_inventory_items` | **Conectado:** lista, alta y edición con RLS administrativa |
+| Notificaciones | `nursetrack_notifications` | Preservadas; UI v4 pendiente |
+| Departamentos / localidades | `nursetrack_departments`, `nursetrack_locations` | Preservados; UI avanzada pendiente |
 
 ## Facturación y clearinghouse
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
 | Catálogo HCPCS/CPT autorizado | `nursetrack_billing_codes` | **Conectado:** búsqueda solo de códigos activos/validados; no se afirma CPT completo |
-| Diagnósticos | `nursetrack_diagnosis_codes` | **Conectado:** búsqueda de ICD activo/validado |
-| Cargos | `nursetrack_service_billing_codes`, `nursetrack_save_service_charge()` | **Conectado:** cargo clínico con clave estable y reutilización sin duplicado |
+| Diagnósticos | `nursetrack_diagnosis_codes` | **Conectado:** búsqueda ICD activa/validada |
+| Cargos | `nursetrack_service_billing_codes`, `nursetrack_save_service_charge()` | **Conectado:** clave estable y reutilización sin duplicado |
 | Reclamaciones | claims + lines + events + transmissions | **Conectado núcleo:** borrador desde servicios, validar, marcar lista y enviar a cola |
-| Clearinghouse | conexiones + respuestas + payer transactions | **Conectado lectura:** respuestas/estado/referencia; procesamiento externo sigue usando infraestructura existente |
-| Elegibilidad | `nursetrack_eligibility_checks` | Pendiente UI v4 |
-| Autorizaciones | `nursetrack_authorizations` | Pendiente UI v4 |
-| Remesas 835 | `nursetrack_remittances`, `nursetrack_remittance_lines`, ingest 835 | Pendiente UI v4 |
+| Clearinghouse | connections + responses + payer transactions | **Conectado lectura:** respuestas, estado y referencia; transporte externo conserva infraestructura existente |
+| Elegibilidad | `nursetrack_eligibility_checks` | **Conectado lectura:** verificaciones reales registradas; no se simula verificación en vivo |
+| Autorizaciones | `nursetrack_authorizations` | **Conectado:** lista y guardar/actualizar autorización activa equivalente |
+| Remesas 835 | remittances + lines + RPC de aplicación | **Conectado:** visor, matching y aplicación mediante RPC existente |
 
 ## Membresía y pagos
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
 | Planes | `nursetrack_membership_plans` | **Conectado lectura** |
-| Membresías | `nursetrack_memberships` | **Conectado:** listado y alta mediante RPC existente |
-| Pagos | `nursetrack_membership_payments` | **Conectado:** registrar pago mediante RPC existente |
-| Renovaciones | `nursetrack_membership_renewals` | **Conectado:** renovación mediante RPC existente |
+| Membresías | `nursetrack_memberships` | **Conectado:** listado y alta mediante RPC |
+| Pagos | `nursetrack_membership_payments` | **Conectado:** registro de pago mediante RPC |
+| Renovaciones | `nursetrack_membership_renewals` | **Conectado:** renovación mediante RPC |
 | Suscripción por compañía | `nursetrack_company_subscriptions` y relacionadas | Preservada; UI v4 pendiente |
 | Suscripción por usuario | `nursetrack_user_subscriptions` y relacionadas | Preservada; UI v4 pendiente |
 | PayPal / proveedor | Edge Functions y settings existentes | Preservado; checkout v4 pendiente |
@@ -84,13 +83,13 @@
 
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
-| Súper Administrador | Edge Function `admin-users` | **Conectado:** listar/crear usuarios, activar/desactivar, ficha, contraseña temporal y permisos |
-| Roles | `nursetrack_roles` | Preservados; edición avanzada pendiente |
-| Permisos | catálogo + user permissions + historial | **Conectado desde Súper Administrador** |
-| Auditoría | `nursetrack_audit_events` | Preservada; visor v4 pendiente |
-| Backups | `nursetrack_backups`, `nursetrack_recovery_snapshots` | Preservados; visor/restauración UI pendiente |
-| Recuperación | códigos + Edge Functions existentes | Preservada |
-| Estado del sistema | health + releases + state | Preservado; panel v4 pendiente |
+| Súper Administrador | Edge Function `admin-users` | **Conectado:** listar/crear usuario, ficha, activar/desactivar, contraseña temporal y permisos; no permite segundo súper admin |
+| Roles | `nursetrack_roles` | Preservados; edición avanzada de catálogo pendiente |
+| Permisos | permissions + user permissions + history | **Conectado** desde Súper Administrador |
+| Auditoría | `nursetrack_audit_events` | Preservada; visor dedicado pendiente |
+| Backups | `nursetrack_backups`, `nursetrack_recovery_snapshots` | **Conectado lectura:** visor de respaldos; v4 no sobrescribe ni elimina respaldos |
+| Recuperación | recovery codes + Edge Functions | Preservada |
+| Estado del sistema | `nursetrack_system_health`, releases, state | **Conectado lectura:** panel de estado básico |
 | Cloud modules | `nursetrack_cloud_modules`, `nursetrack_modules` | Preservados |
 | Archivos personales | personal docs/files/excel | Preservados; UI v4 pendiente |
 
@@ -105,7 +104,23 @@
 - `v4-beta/vaccines-treatments-v4.js`
 - `v4-beta/reports-membership.js`
 - `v4-beta/billing-admin.js`
+- `v4-beta/operations-settings.js`
+- `v4-beta/templates-editor.js`
+- `v4-beta/revenue-safety.js`
 - `v4-beta/navigation.js`
+
+## Pendientes antes de convertir v4 en oficial
+
+1. Prueba visual/funcional real en navegador de escritorio, iPhone y iPad; todavía no se ha afirmado E2E visual.
+2. UI específica de asignación de pacientes.
+3. Envío real de recordatorios/outbox y notificaciones.
+4. Checkout PayPal / suscripciones por compañía y usuario.
+5. Archivos personales/Word/Excel en UI v4.
+6. Medicina avanzada: enmiendas, favoritos y algunas impresiones finales.
+7. Elegibilidad en vivo solo cuando exista integración/transacción real con clearinghouse.
+8. Catálogo CPT completo únicamente con fuente/licencia autorizada.
+9. Visor dedicado de auditoría y recuperación/restauración de backups.
+10. Validación final de permisos por rol y pruebas de no duplicación en un entorno seguro antes de publicar.
 
 ## Conteos de referencia previos a la migración
 
