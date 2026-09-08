@@ -16,7 +16,7 @@
 | Usuarios / perfil | `nursetrack_profiles` | **Conectado:** login e identidad |
 | Compañías | `nursetrack_companies`, `nursetrack_company_users` | **Conectado:** compañía activa |
 | Pacientes | `nursetrack_patients_v2` | **Conectado:** búsqueda y expediente |
-| Asignaciones de pacientes | `nursetrack_patient_assignments` | Preservadas; UI específica pendiente |
+| Asignaciones de pacientes | `nursetrack_patient_assignments` + RPC puente v4 | **Conectado:** listar/asignar/desasignar validando compañía, paciente, usuario y permisos; la UI no escribe directo en la tabla heredada |
 | Visitas | `nursetrack_visits`, `nursetrack_visit_sync_keys` | **Conectado:** historial y nueva visita de Enfermería con clave idempotente |
 | Vitales | `nursetrack_vitals` | **Conectado** mediante RPC existente |
 | Registros clínicos | `nursetrack_clinical_records` | **Conectado** para Enfermería, Nutrición, Salud Mental, Sustancias y Toxicología |
@@ -46,12 +46,12 @@
 | Área | Estructura existente | Estado v4 |
 |---|---|---|
 | Citas | `nursetrack_appointments` | **Conectado:** listado, nueva cita, proveedor, localidad, estado y preferencias SMS/email |
-| Recordatorios | `nursetrack_reminder_outbox` | Preferencias conectadas; envío/outbox automático pendiente |
+| Recordatorios | `nursetrack_reminder_outbox` + Edge Function `send-sms` | **Conectado:** cola por paciente/cita con protección contra duplicados; SMS inmediato usa proveedor real; email queda en cola y no se marca enviado sin proveedor configurado |
 | Reportes | datos clínicos existentes | **Conectado núcleo:** rango, pacientes, visitas, citas, PHQ-9, labs, tratamientos, documentos y cargos |
 | Tareas | `nursetrack_tasks` | **Conectado:** alta, actualización de tarea abierta equivalente y completar |
 | Estaciones | `nursetrack_station_assignments` | **Conectado:** Estaciones 1–3 con upsert por compañía/fecha/estación |
 | Inventario | `nursetrack_inventory_items` | **Conectado:** lista, alta y edición con RLS administrativa |
-| Notificaciones | `nursetrack_notifications` | Preservadas; UI v4 pendiente |
+| Notificaciones | `nursetrack_notifications` | **Conectado:** listado por compañía/usuario, marcar leída y resolver |
 | Departamentos / localidades | `nursetrack_departments`, `nursetrack_locations` | Preservados; UI avanzada pendiente |
 
 ## Facturación y clearinghouse
@@ -91,7 +91,7 @@
 | Recuperación | recovery codes + Edge Functions | Preservada |
 | Estado del sistema | `nursetrack_system_health`, releases, state | **Conectado lectura:** panel de estado básico |
 | Cloud modules | `nursetrack_cloud_modules`, `nursetrack_modules` | Preservados |
-| Archivos personales | personal docs/files/excel | Preservados; UI v4 pendiente |
+| Mis documentos | `nursetrack_personal_documents`, `nursetrack_personal_document_files`, `nursetrack_excel_documents` | **Conectado:** crear/editar documentos de texto y listar archivos/Excel existentes; carga binaria nueva pendiente de validar Storage/buckets |
 
 ## Archivos v4 cargados por un único loader
 
@@ -107,19 +107,21 @@
 - `v4-beta/operations-settings.js`
 - `v4-beta/templates-editor.js`
 - `v4-beta/revenue-safety.js`
+- `v4-beta/personal-notifications.js`
+- `v4-beta/assignments.js`
 - `v4-beta/navigation.js`
 
 ## Pendientes antes de convertir v4 en oficial
 
 1. Prueba visual/funcional real en navegador de escritorio, iPhone y iPad; todavía no se ha afirmado E2E visual.
-2. UI específica de asignación de pacientes.
-3. Envío real de recordatorios/outbox y notificaciones.
-4. Checkout PayPal / suscripciones por compañía y usuario.
-5. Archivos personales/Word/Excel en UI v4.
-6. Medicina avanzada: enmiendas, favoritos y algunas impresiones finales.
-7. Elegibilidad en vivo solo cuando exista integración/transacción real con clearinghouse.
-8. Catálogo CPT completo únicamente con fuente/licencia autorizada.
-9. Visor dedicado de auditoría y recuperación/restauración de backups.
+2. Entrega automática/programada de recordatorios y proveedor real de email; SMS manual ya usa la función real configurada.
+3. Checkout PayPal / suscripciones por compañía y usuario.
+4. Carga binaria nueva de archivos personales/Excel después de validar Storage y políticas del bucket.
+5. Medicina avanzada: enmiendas, favoritos y algunas impresiones finales.
+6. Elegibilidad en vivo solo cuando exista integración/transacción real con clearinghouse.
+7. Catálogo CPT completo únicamente con fuente/licencia autorizada.
+8. Visor dedicado de auditoría y recuperación/restauración de backups.
+9. Departamentos/localidades y algunos catálogos administrativos avanzados.
 10. Validación final de permisos por rol y pruebas de no duplicación en un entorno seguro antes de publicar.
 
 ## Conteos de referencia previos a la migración
