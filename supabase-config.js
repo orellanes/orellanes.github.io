@@ -8,8 +8,10 @@ window.NURSETRACK_SUPABASE = {
   if(!/\/v4-beta\//.test(location.pathname)) return;
   if(window.__NT_V4_EXTENSIONS_LOADER__) return;
   window.__NT_V4_EXTENSIONS_LOADER__=true;
-  var s=document.createElement('script');
-  s.src='social-documents.js?v=20260908-v4-social-docs-1';
-  s.defer=true;
-  (document.head||document.documentElement).appendChild(s);
+  ['social-documents.js?v=20260908-v4-social-docs-1','patient-tools.js?v=20260908-v4-patient-tools-1'].forEach(function(src){
+    var s=document.createElement('script');
+    s.src=src;
+    s.defer=true;
+    (document.head||document.documentElement).appendChild(s);
+  });
 })();
