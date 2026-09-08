@@ -20,6 +20,27 @@ jobs:
         run: |
           set -euo pipefail
           find v4-beta -maxdepth 1 -type f -name '*.js' -print0 | sort -z | xargs -0 -n1 node --check
+      - name: Check inline index JavaScript
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib,re,sys
+          html=pathlib.Path('v4-beta/index.html').read_text(encoding='utf-8')
+          scripts=re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>',html,re.S|re.I)
+          if not scripts:
+              print('No inline script found')
+              sys.exit(1)
+          for i,script in enumerate(scripts):
+              pathlib.Path(f'/tmp/v4-inline-{i}.js').write_text(script,encoding='utf-8')
+          print('Inline scripts:',len(scripts))
+          PY
+          for f in /tmp/v4-inline-*.js; do node --check "$f"; done
+      - name: Verify login contract
+        run: |
+          set -euo pipefail
+          grep -Fq "action:'login',username:u,password:p" v4-beta/index.html
+          ! grep -Fq "JSON.stringify({login:u,password:p})" v4-beta/index.html
+          grep -Fq "nursetrack-username-login" v4-beta/index.html
       - name: Verify loader files exist
         run: |
           set -euo pipefail
