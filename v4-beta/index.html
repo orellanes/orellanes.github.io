@@ -6,116 +6,88 @@
   <meta name="theme-color" content="#0b63a8">
   <title>NurseTrack Clinical v4 Beta</title>
   <style>
-    :root{--bg:#f4f8f8;--panel:#fff;--text:#17343c;--muted:#6f858b;--line:#d8e6e8;--brand:#0b63a8;--accent:#397f88}
+    :root{--bg:#f4f8f8;--panel:#fff;--text:#17343c;--muted:#6f858b;--line:#d8e6e8;--brand:#0b63a8;--accent:#397f88;--danger:#a23d3d}
     *{box-sizing:border-box}
     html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
-    button,a,[role="button"]{cursor:pointer}
-    input,textarea,[contenteditable="true"]{cursor:text;caret-color:auto;user-select:text;-webkit-user-select:text}
-    input,textarea,select,button{font:inherit}
-    .hidden{display:none!important}
-    .center{min-height:100vh;display:grid;place-items:center;padding:20px}
-    .card{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 12px 40px rgba(21,61,69,.08)}
+    button,a,[role="button"]{cursor:pointer} input,textarea,[contenteditable="true"]{cursor:text;caret-color:auto;user-select:text;-webkit-user-select:text}
+    input,textarea,select,button{font:inherit}.hidden{display:none!important}
+    .center{min-height:100vh;display:grid;place-items:center;padding:20px}.card{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 12px 40px rgba(21,61,69,.08)}
     .brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.mark{width:46px;height:46px;border-radius:14px;background:var(--brand);display:grid;place-items:center;color:#fff;font-weight:900}.brand h1{font-size:22px;margin:0}.brand small{color:var(--muted)}
-    label{display:block;font-weight:700;margin:14px 0 6px}
-    input{width:100%;padding:13px 14px;border:1px solid #c7d9dd;border-radius:12px;background:#fff;color:var(--text);outline:none}
-    input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(11,99,168,.12)}
-    .primary{width:100%;margin-top:18px;padding:13px 16px;border:0;border-radius:12px;background:var(--brand);color:#fff;font-weight:800}
-    .status{min-height:22px;margin-top:12px;color:var(--muted);font-size:14px}.status.error{color:#9b3d3d}.status.ok{color:#216b48}
-    .app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
-    aside{background:#fff;border-right:1px solid var(--line);padding:18px;position:sticky;top:0;height:100vh}
-    .nav{display:grid;gap:8px;margin-top:24px}.nav button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:10px;color:var(--text);font-weight:700}.nav button:hover,.nav button.active{background:#edf5f6}
+    label{display:block;font-weight:700;margin:14px 0 6px}input{width:100%;padding:13px 14px;border:1px solid #c7d9dd;border-radius:12px;background:#fff;color:var(--text);outline:none}input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(11,99,168,.12)}
+    .primary,.btn{border:0;border-radius:12px;background:var(--brand);color:#fff;font-weight:800;padding:12px 16px}.primary{width:100%;margin-top:18px}.btn.secondary{background:var(--accent)}.btn.light{background:#edf5f6;color:var(--text);border:1px solid var(--line)}
+    .status{min-height:22px;margin-top:12px;color:var(--muted);font-size:14px}.status.error{color:var(--danger)}.status.ok{color:#216b48}
+    .app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}aside{background:#fff;border-right:1px solid var(--line);padding:18px;position:sticky;top:0;height:100vh}.nav{display:grid;gap:8px;margin-top:24px}.nav button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:10px;color:var(--text);font-weight:700}.nav button:hover,.nav button.active{background:#edf5f6}
     main{padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:22px}.top h2{margin:0}.pill{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#fff;color:var(--muted)}
-    .search{display:flex;gap:10px;max-width:760px}.search input{flex:1}.search button{border:0;border-radius:12px;padding:0 18px;background:var(--accent);color:#fff;font-weight:800}
+    .search{display:flex;gap:10px;max-width:820px}.search input{flex:1}.search button{border:0;border-radius:12px;padding:0 18px;background:var(--accent);color:#fff;font-weight:800}
     .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}.metric,.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}.metric strong{display:block;font-size:26px;margin-top:6px}.metric span,.panel p{color:var(--muted)}
-    .panel{margin-top:16px}.module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.module{border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px;text-align:left}.module strong{display:block;margin-bottom:4px}.module small{color:var(--muted)}
-    @media(max-width:850px){.app{grid-template-columns:1fr}aside{height:auto;position:static;border-right:0;border-bottom:1px solid var(--line)}.nav{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-grid{grid-template-columns:1fr 1fr}}
-    @media(max-width:540px){main{padding:16px}.grid,.module-grid{grid-template-columns:1fr}.search{display:grid}.search button{min-height:44px}.nav{grid-template-columns:1fr 1fr}}
+    .panel{margin-top:16px}.module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.module{border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px;text-align:left}.module:hover{border-color:#9dc1c8;background:#fbfefe}.module strong{display:block;margin-bottom:4px}.module small{color:var(--muted)}
+    .results{display:grid;gap:9px;margin-top:14px}.patient-row{width:100%;display:grid;grid-template-columns:1.6fr .8fr .8fr;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:13px}.patient-row:hover{background:#f7fbfb}.patient-row strong{display:block}.patient-row span{color:var(--muted);font-size:13px}
+    .patient-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.patient-name{font-size:24px;margin:0}.demographics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}.demo{background:#f8fbfb;border:1px solid var(--line);border-radius:12px;padding:11px}.demo small{display:block;color:var(--muted);margin-bottom:4px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.history{width:100%;border-collapse:collapse;margin-top:12px}.history th,.history td{text-align:left;padding:9px;border-bottom:1px solid var(--line);font-size:13px}.history th{color:var(--muted)}
+    .notice{padding:12px 14px;border-radius:12px;background:#edf5f6;color:#31545b;margin-top:12px}
+    @media(max-width:950px){.app{grid-template-columns:1fr}aside{height:auto;position:static;border-right:0;border-bottom:1px solid var(--line)}.nav{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-grid{grid-template-columns:1fr 1fr}.demographics{grid-template-columns:1fr 1fr}}
+    @media(max-width:560px){main{padding:16px}.grid,.module-grid,.demographics{grid-template-columns:1fr}.search{display:grid}.search button{min-height:44px}.nav{grid-template-columns:1fr 1fr}.patient-row{grid-template-columns:1fr}.patient-head{display:block}}
   </style>
   <script src="../safe6-supabase-loader.js"></script>
   <script src="../supabase-config.js"></script>
 </head>
 <body>
-  <section id="loginView" class="center">
-    <div class="card">
-      <div class="brand"><div class="mark">NT</div><div><h1>NurseTrack Clinical</h1><small>v4 Beta · arquitectura limpia</small></div></div>
-      <form id="loginForm" autocomplete="on">
-        <label for="loginName">Usuario</label>
-        <input id="loginName" name="username" autocomplete="username" inputmode="email" required>
-        <label for="loginPass">Contraseña</label>
-        <input id="loginPass" name="password" type="password" autocomplete="current-password" required>
-        <button class="primary" type="submit">Entrar</button>
-        <div id="loginStatus" class="status" aria-live="polite"></div>
-      </form>
-    </div>
-  </section>
+<section id="loginView" class="center"><div class="card"><div class="brand"><div class="mark">NT</div><div><h1>NurseTrack Clinical</h1><small>v4 Beta · arquitectura limpia</small></div></div><form id="loginForm" autocomplete="on"><label for="loginName">Usuario</label><input id="loginName" name="username" autocomplete="username" required><label for="loginPass">Contraseña</label><input id="loginPass" name="password" type="password" autocomplete="current-password" required><button class="primary" type="submit">Entrar</button><div id="loginStatus" class="status" aria-live="polite"></div></form></div></section>
+<section id="appView" class="app hidden">
+  <aside><div class="brand"><div class="mark">NT</div><div><h1>NurseTrack</h1><small>v4 Beta</small></div></div><div class="nav"><button class="active" data-view="home">Inicio</button><button data-view="patients">Pacientes</button><button data-view="modules">Módulos</button><button data-view="settings">Settings</button><button id="logoutBtn">Bloquear</button></div></aside>
+  <main>
+    <div class="top"><div><h2 id="pageTitle">Inicio</h2><div class="pill">Interacción nativa · sin iframe · sin duplicar datos</div></div><div><span id="companyLabel" class="pill">Compañía</span> <span id="userLabel" class="pill"></span></div></div>
+    <section id="homePanel"><div class="search"><input id="patientSearch" placeholder="Buscar por nombre, fecha de nacimiento, teléfono o expediente"><button id="searchBtn">Buscar</button></div><div id="searchStatus" class="status"></div><div id="patientResults" class="results"></div><div class="grid"><div class="metric"><span>Pacientes activos</span><strong id="metricPatients">—</strong></div><div class="metric"><span>Visitas hoy</span><strong id="metricVisits">—</strong></div><div class="metric"><span>Plantillas</span><strong id="metricTemplates">—</strong></div><div class="metric"><span>PHQ-9</span><strong id="metricPhq">—</strong></div></div><div class="panel"><h3>Núcleo v4 conectado</h3><p>La v4 usa las tablas existentes de NurseTrack. No crea una segunda base de pacientes ni sustituye tu información actual.</p></div></section>
 
-  <section id="appView" class="app hidden">
-    <aside>
-      <div class="brand"><div class="mark">NT</div><div><h1>NurseTrack</h1><small>v4 Beta</small></div></div>
-      <div class="nav">
-        <button class="active" data-view="home">Inicio</button>
-        <button data-view="patients">Pacientes</button>
-        <button data-view="modules">Módulos</button>
-        <button data-view="settings">Settings</button>
-        <button id="logoutBtn">Bloquear</button>
-      </div>
-    </aside>
-    <main>
-      <div class="top"><div><h2 id="pageTitle">Inicio</h2><div class="pill">Interacción nativa · sin iframe</div></div><div id="userLabel" class="pill"></div></div>
-      <div id="homePanel">
-        <div class="search"><input id="patientSearch" placeholder="Buscar paciente por nombre, DOB o expediente"><button id="searchBtn">Buscar</button></div>
-        <div class="grid">
-          <div class="metric"><span>Pacientes</span><strong>—</strong></div>
-          <div class="metric"><span>Visitas hoy</span><strong>—</strong></div>
-          <div class="metric"><span>PHQ-9 pendientes</span><strong>—</strong></div>
-          <div class="metric"><span>Alertas</span><strong>—</strong></div>
-        </div>
-        <div class="panel"><h3>Base v4 lista</h3><p>Esta versión elimina el iframe y la cadena de parches de cursor. Los módulos se conectarán directamente a Supabase y se cargarán bajo demanda.</p></div>
-      </div>
-      <div id="modulesPanel" class="panel hidden"><h3>Módulos clínicos</h3><div class="module-grid"><button class="module"><strong>Enfermería</strong><small>Evaluación, seguimiento y alta</small></button><button class="module"><strong>Trabajo Social</strong><small>Evaluación y seguimiento</small></button><button class="module"><strong>Medicina</strong><small>Diagnósticos, órdenes y recetas</small></button><button class="module"><strong>Laboratorios</strong><small>Órdenes y resultados</small></button><button class="module"><strong>Citas</strong><small>Agenda y seguimiento</small></button><button class="module"><strong>Facturación</strong><small>Cargos y reclamaciones</small></button></div></div>
-      <div id="placeholderPanel" class="panel hidden"><h3 id="placeholderTitle"></h3><p>Este módulo se conectará sin duplicar pantallas ni rutas antiguas.</p></div>
-    </main>
-  </section>
+    <section id="patientPanel" class="hidden"><div class="panel"><div class="patient-head"><div><button id="backPatientBtn" class="btn light">← Volver</button><h3 id="patientName" class="patient-name"></h3><div id="patientMrn" class="pill"></div></div><button id="newVisitBtn" class="btn">+ Nueva visita</button></div><div id="patientDemographics" class="demographics"></div><div class="actions"><button class="btn secondary patient-action" data-action="history">Historial</button><button class="btn light patient-action" data-action="nursing">Enfermería</button><button class="btn light patient-action" data-action="social">Trabajo Social</button><button class="btn light patient-action" data-action="medical">Medicina</button><button class="btn light patient-action" data-action="phq9">PHQ‑9</button><button class="btn light patient-action" data-action="labs">Laboratorios</button><button class="btn light patient-action" data-action="documents">Documentos</button><button class="btn light patient-action" data-action="appointments">Citas</button></div><div id="patientActionArea"></div></div></section>
 
+    <section id="modulesPanel" class="panel hidden"><h3>Módulos conservados para v4</h3><p>Estos módulos se reconectarán a las tablas y datos que ya existen, uno por uno, sin duplicarlos.</p><div class="module-grid">
+      <button class="module" data-module="nursing"><strong>Enfermería</strong><small>Visitas, vitales, evaluación, educación, plan y alta</small></button>
+      <button class="module" data-module="social"><strong>Trabajo Social</strong><small>Evaluación inicial y seguimiento</small></button>
+      <button class="module" data-module="medical"><strong>Medicina</strong><small>Encuentros, diagnósticos, procedimientos y recetas</small></button>
+      <button class="module" data-module="nutrition"><strong>Nutrición</strong><small>Evaluaciones y seguimiento</small></button>
+      <button class="module" data-module="mental"><strong>Salud Mental / Psiquiatría</strong><small>PHQ‑9, catálogos y seguimiento</small></button>
+      <button class="module" data-module="substance"><strong>Uso de sustancias / Toxicología</strong><small>Evaluación y seguimiento</small></button>
+      <button class="module" data-module="vaccines"><strong>Vacunas / Tratamientos</strong><small>Administración y registros</small></button>
+      <button class="module" data-module="labs"><strong>Laboratorios</strong><small>Catálogo, órdenes y resultados</small></button>
+      <button class="module" data-module="documents"><strong>Documentos</strong><small>Plantillas, firmas, impresión y archivos</small></button>
+      <button class="module" data-module="appointments"><strong>Citas</strong><small>Agenda, llegada y recordatorios</small></button>
+      <button class="module" data-module="reports"><strong>Reportes</strong><small>Censo, ausentes, llegadas y actividad</small></button>
+      <button class="module" data-module="billing"><strong>Facturación</strong><small>Cargos, reclamaciones, remesas y clearinghouse</small></button>
+      <button class="module" data-module="membership"><strong>Membresía</strong><small>Planes, pagos, renovaciones y alertas</small></button>
+      <button class="module" data-module="templates"><strong>Plantillas</strong><small>Biblioteca, versiones y editor</small></button>
+      <button class="module" data-module="admin"><strong>Administración</strong><small>Usuarios, roles, permisos, compañías y Settings</small></button>
+      <button class="module" data-module="inventory"><strong>Inventario</strong><small>Artículos y control operativo</small></button>
+    </div><div id="moduleStatus" class="notice">Inventario preservado. La conexión funcional se hará por etapas sobre la misma data.</div></section>
+
+    <section id="placeholderPanel" class="panel hidden"><h3 id="placeholderTitle"></h3><p>Este espacio se conectará a la estructura existente sin crear rutas duplicadas.</p></section>
+  </main>
+</section>
 <script>
 (async function(){
-  'use strict';
-  const loginView=document.getElementById('loginView'),appView=document.getElementById('appView'),form=document.getElementById('loginForm'),status=document.getElementById('loginStatus'),userLabel=document.getElementById('userLabel');
-  let sb=null;
-  function setStatus(text,type){status.textContent=text||'';status.className='status'+(type?' '+type:'')}
-  function showApp(user){loginView.classList.add('hidden');appView.classList.remove('hidden');userLabel.textContent=user&&user.email?user.email:'Sesión activa';setTimeout(()=>document.getElementById('patientSearch').focus(),0)}
-  function showLogin(){appView.classList.add('hidden');loginView.classList.remove('hidden');setTimeout(()=>document.getElementById('loginName').focus(),0)}
-  try{
-    if(typeof window.NT_loadSupabase!=='function') throw new Error('No se pudo cargar Supabase');
-    const lib=await window.NT_loadSupabase(),cfg=window.NURSETRACK_SUPABASE||{};
-    sb=lib.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true}});
-    const current=await sb.auth.getSession();
-    if(current.data&&current.data.session) showApp(current.data.session.user); else showLogin();
-  }catch(e){setStatus('No se pudo iniciar el acceso cloud.','error')}
-
-  form.addEventListener('submit',async function(e){
-    e.preventDefault();
-    const username=document.getElementById('loginName').value.trim(),password=document.getElementById('loginPass').value;
-    if(!username||!password) return setStatus('Completa usuario y contraseña.','error');
-    setStatus('Verificando acceso…');
-    try{
-      const cfg=window.NURSETRACK_SUPABASE||{};
-      const r=await fetch(cfg.url+'/functions/v1/nursetrack-username-login',{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.publishableKey},body:JSON.stringify({login:username,password})});
-      const data=await r.json().catch(()=>({}));
-      if(!r.ok||!data.access_token||!data.refresh_token) throw new Error(data.error||'Usuario o contraseña incorrectos');
-      const result=await sb.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});
-      if(result.error) throw result.error;
-      setStatus('Acceso correcto.','ok');
-      showApp(result.data.user);
-    }catch(err){setStatus(err&&err.message?err.message:'No se pudo iniciar sesión.','error')}
-  });
-
-  document.getElementById('logoutBtn').addEventListener('click',async()=>{try{await sb.auth.signOut({scope:'local'})}catch(_){}showLogin()});
-  document.querySelectorAll('.nav button[data-view]').forEach(btn=>btn.addEventListener('click',()=>{
-    document.querySelectorAll('.nav button[data-view]').forEach(b=>b.classList.toggle('active',b===btn));
-    const v=btn.dataset.view;document.getElementById('homePanel').classList.toggle('hidden',v!=='home');document.getElementById('modulesPanel').classList.toggle('hidden',v!=='modules');document.getElementById('placeholderPanel').classList.toggle('hidden',v==='home'||v==='modules');document.getElementById('pageTitle').textContent=v==='home'?'Inicio':v==='patients'?'Pacientes':v==='modules'?'Módulos':'Settings';if(v!=='home'&&v!=='modules')document.getElementById('placeholderTitle').textContent=document.getElementById('pageTitle').textContent;
-  }));
-  document.getElementById('searchBtn').addEventListener('click',()=>{const q=document.getElementById('patientSearch').value.trim();if(q)alert('Búsqueda v4 preparada para conectar: '+q)});
+'use strict';
+const $=id=>document.getElementById(id);const loginView=$('loginView'),appView=$('appView'),form=$('loginForm'),status=$('loginStatus');let sb=null,currentUser=null,currentCompany=null,activePatient=null;
+function setStatus(el,text,type){el.textContent=text||'';el.className='status'+(type?' '+type:'')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function age(dob){if(!dob)return'';const d=new Date(dob+'T00:00:00');if(Number.isNaN(d.getTime()))return'';const n=new Date();let a=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))a--;return a>=0?a:''}
+async function resolveCompany(user){let r=await sb.from('nursetrack_company_users').select('company_id').eq('user_id',user.id).eq('active',true).limit(1);if(!r.error&&r.data&&r.data[0])return r.data[0].company_id;let m=await sb.from('nursetrack_account_memberships').select('company_id').eq('user_id',user.id).eq('status','active').limit(1);return(!m.error&&m.data&&m.data[0])?m.data[0].company_id:null}
+async function loadIdentity(user){currentUser=user;currentCompany=await resolveCompany(user);let p=await sb.from('nursetrack_profiles').select('full_name,username').eq('user_id',user.id).maybeSingle();$('userLabel').textContent=p.data?.full_name||p.data?.username||'Sesión activa';$('companyLabel').textContent=currentCompany?'Compañía activa':'Sin compañía';}
+async function loadMetrics(){if(!currentCompany)return;const today=new Date().toISOString().slice(0,10);const [p,v,t,h]=await Promise.all([
+ sb.from('nursetrack_patients_v2').select('id',{count:'exact',head:true}).eq('company_id',currentCompany).is('deleted_at',null),
+ sb.from('nursetrack_visits').select('id',{count:'exact',head:true}).eq('company_id',currentCompany).eq('visit_date',today).is('deleted_at',null),
+ sb.from('nursetrack_templates').select('id',{count:'exact',head:true}).eq('company_id',currentCompany).is('deleted_at',null),
+ sb.from('nursetrack_phq9').select('id',{count:'exact',head:true}).eq('company_id',currentCompany)
+]);$('metricPatients').textContent=p.count??'—';$('metricVisits').textContent=v.count??'—';$('metricTemplates').textContent=t.count??'—';$('metricPhq').textContent=h.count??'—';}
+function showApp(user){loginView.classList.add('hidden');appView.classList.remove('hidden');loadIdentity(user).then(loadMetrics);setTimeout(()=>$('patientSearch').focus(),0)}
+function showLogin(){appView.classList.add('hidden');loginView.classList.remove('hidden');setTimeout(()=>$('loginName').focus(),0)}
+async function searchPatients(){const q=$('patientSearch').value.trim(),out=$('patientResults'),st=$('searchStatus');out.innerHTML='';if(!currentCompany)return setStatus(st,'No hay una compañía activa para buscar pacientes.','error');if(!q)return setStatus(st,'Escribe nombre, DOB, teléfono o expediente.','error');setStatus(st,'Buscando…');let query=sb.from('nursetrack_patients_v2').select('id,company_id,mrn,first_name,middle_name,last_name,date_of_birth,phone,email,preferred_language,status,sex,city,residential_address,postal_address,education_level').eq('company_id',currentCompany).is('deleted_at',null).limit(25);if(/^\d{4}-\d{2}-\d{2}$/.test(q)){query=query.eq('date_of_birth',q)}else{const safe=q.replace(/[,%()]/g,' ').replace(/\s+/g,' ').trim();query=query.or(`mrn.ilike.%${safe}%,first_name.ilike.%${safe}%,last_name.ilike.%${safe}%,phone.ilike.%${safe}%`)}const r=await query.order('last_name',{ascending:true});if(r.error)return setStatus(st,'No se pudo completar la búsqueda: '+r.error.message,'error');if(!r.data?.length)return setStatus(st,'No se encontraron pacientes.');setStatus(st,`${r.data.length} resultado(s).`,'ok');out.innerHTML=r.data.map((p,i)=>`<button class="patient-row" data-patient-index="${i}"><div><strong>${esc([p.first_name,p.middle_name,p.last_name].filter(Boolean).join(' '))}</strong><span>Expediente: ${esc(p.mrn||'—')}</span></div><div><strong>${esc(p.date_of_birth||'—')}</strong><span>${age(p.date_of_birth)!==''?age(p.date_of_birth)+' años':'DOB'}</span></div><div><strong>${esc(p.phone||'—')}</strong><span>${esc(p.status||'')}</span></div></button>`).join('');out.querySelectorAll('[data-patient-index]').forEach(btn=>btn.addEventListener('click',()=>openPatient(r.data[Number(btn.dataset.patientIndex)])));}
+function demo(label,val){return `<div class="demo"><small>${esc(label)}</small><strong>${esc(val||'—')}</strong></div>`}
+async function openPatient(p){activePatient=p;$('homePanel').classList.add('hidden');$('modulesPanel').classList.add('hidden');$('placeholderPanel').classList.add('hidden');$('patientPanel').classList.remove('hidden');$('pageTitle').textContent='Expediente';$('patientName').textContent=[p.first_name,p.middle_name,p.last_name].filter(Boolean).join(' ');$('patientMrn').textContent='Expediente '+(p.mrn||'—');$('patientDemographics').innerHTML=demo('Fecha de nacimiento',p.date_of_birth)+(age(p.date_of_birth)!==''?demo('Edad',age(p.date_of_birth)+' años'):'')+demo('Sexo',p.sex)+demo('Teléfono',p.phone)+demo('Email',p.email)+demo('Idioma',p.preferred_language)+demo('Ciudad',p.city)+demo('Dirección residencial',p.residential_address)+demo('Dirección postal',p.postal_address)+demo('Educación',p.education_level)+demo('Estado',p.status);await loadPatientHistory();}
+async function loadPatientHistory(){if(!activePatient)return;const area=$('patientActionArea');area.innerHTML='<div class="notice">Cargando historial…</div>';const r=await sb.from('nursetrack_visits').select('id,visit_date,visit_type,status,provider_name,brief_nursing_note').eq('company_id',currentCompany).eq('patient_id',activePatient.id).is('deleted_at',null).order('visit_date',{ascending:false}).limit(10);if(r.error){area.innerHTML='<div class="notice">No se pudo cargar el historial todavía.</div>';return}if(!r.data?.length){area.innerHTML='<div class="notice">Este expediente no tiene visitas en la tabla clínica nueva.</div>';return}area.innerHTML='<h4>Visitas recientes</h4><table class="history"><thead><tr><th>Fecha</th><th>Tipo</th><th>Estado</th><th>Proveedor</th></tr></thead><tbody>'+r.data.map(v=>`<tr><td>${esc(v.visit_date)}</td><td>${esc(v.visit_type||'')}</td><td>${esc(v.status||'')}</td><td>${esc(v.provider_name||'')}</td></tr>`).join('')+'</tbody></table>';}
+function showModuleMessage(name){$('moduleStatus').textContent=name+' está preservado en el mapa v4 y se conectará a sus tablas existentes, sin duplicar información.'}
+try{if(typeof window.NT_loadSupabase!=='function')throw new Error('No se pudo cargar Supabase');const lib=await window.NT_loadSupabase(),cfg=window.NURSETRACK_SUPABASE||{};sb=lib.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true}});const current=await sb.auth.getSession();if(current.data?.session)showApp(current.data.session.user);else showLogin()}catch(e){setStatus(status,'No se pudo iniciar el acceso cloud.','error')}
+form.addEventListener('submit',async e=>{e.preventDefault();const username=$('loginName').value.trim(),password=$('loginPass').value;if(!username||!password)return setStatus(status,'Completa usuario y contraseña.','error');setStatus(status,'Verificando acceso…');try{const cfg=window.NURSETRACK_SUPABASE||{};const r=await fetch(cfg.url+'/functions/v1/nursetrack-username-login',{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.publishableKey},body:JSON.stringify({login:username,password})});const data=await r.json().catch(()=>({}));if(!r.ok||!data.access_token||!data.refresh_token)throw new Error(data.error||'Usuario o contraseña incorrectos');const result=await sb.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});if(result.error)throw result.error;setStatus(status,'Acceso correcto.','ok');showApp(result.data.user)}catch(err){setStatus(status,err?.message||'No se pudo iniciar sesión.','error')}});
+$('logoutBtn').addEventListener('click',async()=>{try{await sb.auth.signOut({scope:'local'})}catch(_){}showLogin()});$('searchBtn').addEventListener('click',searchPatients);$('patientSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchPatients()}});$('backPatientBtn').addEventListener('click',()=>{$('patientPanel').classList.add('hidden');$('homePanel').classList.remove('hidden');$('pageTitle').textContent='Inicio';setTimeout(()=>$('patientSearch').focus(),0)});$('newVisitBtn').addEventListener('click',()=>{$('patientActionArea').innerHTML='<div class="notice"><strong>Nueva visita</strong><br>Se conectará al mismo expediente con tipos: Evaluación inicial, Seguimiento, Reevaluación y Readmisión. No se creará una visita hasta abrir y guardar su plantilla.</div>'});document.querySelectorAll('.patient-action').forEach(b=>b.addEventListener('click',()=>{$('patientActionArea').innerHTML='<div class="notice">'+esc(b.textContent)+': conexión v4 en preparación sobre la data existente de este paciente.</div>'}));document.querySelectorAll('.module').forEach(b=>b.addEventListener('click',()=>showModuleMessage(b.querySelector('strong').textContent)));
+document.querySelectorAll('.nav button[data-view]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.nav button[data-view]').forEach(b=>b.classList.toggle('active',b===btn));const v=btn.dataset.view;$('patientPanel').classList.add('hidden');$('homePanel').classList.toggle('hidden',v!=='home'&&v!=='patients');$('modulesPanel').classList.toggle('hidden',v!=='modules');$('placeholderPanel').classList.toggle('hidden',v==='home'||v==='patients'||v==='modules');$('pageTitle').textContent=v==='home'?'Inicio':v==='patients'?'Pacientes':v==='modules'?'Módulos':'Settings';if(v==='patients'){setTimeout(()=>$('patientSearch').focus(),0)}if(v==='settings')$('placeholderTitle').textContent='Settings'}));
 })();
 </script>
 </body>
