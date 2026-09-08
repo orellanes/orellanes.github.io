@@ -29,7 +29,7 @@ window.NURSETRACK_SUPABASE = {
     'admin-catalogs.js?v=20260908-v4-admin-catalogs-1',
     'storage-upload.js?v=20260908-v4-storage-1',
     'logistics.js?v=20260908-v4-logistics-1',
-    'navigation.js?v=20260908-v4-navigation-6'
+    'navigation.js?v=20260908-v4-navigation-7'
   ].forEach(function(src){
     var s=document.createElement('script');
     s.src=src;
