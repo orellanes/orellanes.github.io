@@ -8,7 +8,11 @@ window.NURSETRACK_SUPABASE = {
   if(!/\/v4-beta\//.test(location.pathname)) return;
   if(window.__NT_V4_EXTENSIONS_LOADER__) return;
   window.__NT_V4_EXTENSIONS_LOADER__=true;
-  ['social-documents.js?v=20260908-v4-social-docs-1','patient-tools.js?v=20260908-v4-patient-tools-1'].forEach(function(src){
+  [
+    'social-documents.js?v=20260908-v4-social-docs-1',
+    'patient-tools.js?v=20260908-v4-patient-tools-1',
+    'labs.js?v=20260908-v4-labs-1'
+  ].forEach(function(src){
     var s=document.createElement('script');
     s.src=src;
     s.defer=true;
