@@ -1,6 +1,7 @@
 (function(){
 'use strict';
 if(window.__NT_V4_CURSOR_GUARD__)return;window.__NT_V4_CURSOR_GUARD__=true;
+function enable(el){if(!el)return;el.removeAttribute('inert');if(el.hasAttribute('disabled'))el.disabled=false}
 function install(){
   if(!document.getElementById('ntV4CursorGuardStyle')){
     const s=document.createElement('style');s.id='ntV4CursorGuardStyle';s.textContent=`
@@ -12,19 +13,12 @@ function install(){
     `;(document.head||document.documentElement).appendChild(s);
   }
   const focusables=()=>[...document.querySelectorAll('input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[contenteditable="true"]')].filter(el=>{const r=el.getBoundingClientRect(),cs=getComputedStyle(el);return r.width>0&&r.height>0&&cs.display!=='none'&&cs.visibility!=='hidden'});
-  function recoverFocus(e){
-    const x=e.clientX,y=e.clientY;if(typeof x!=='number'||typeof y!=='number')return;
-    let best=null,bestArea=Infinity;
-    for(const el of focusables()){
-      const r=el.getBoundingClientRect();if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom){const a=r.width*r.height;if(a<bestArea){best=el;bestArea=a}}
-    }
-    if(best&&document.activeElement!==best){try{best.focus({preventScroll:true})}catch(_){try{best.focus()}catch(__){}}}
-  }
+  function recoverFocus(e){const x=e.clientX,y=e.clientY;if(typeof x!=='number'||typeof y!=='number')return;let best=null,bestArea=Infinity;for(const el of focusables()){const r=el.getBoundingClientRect();if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom){const a=r.width*r.height;if(a<bestArea){best=el;bestArea=a}}}if(best&&document.activeElement!==best){try{best.focus({preventScroll:true})}catch(_){try{best.focus()}catch(__){}}}}
   document.addEventListener('pointerdown',recoverFocus,true);
   document.addEventListener('mousedown',recoverFocus,true);
   document.addEventListener('touchstart',e=>{const t=e.touches?.[0];if(t)recoverFocus({clientX:t.clientX,clientY:t.clientY})},{capture:true,passive:true});
-  ['loginName','loginPass','patientSearch'].forEach(id=>{const el=document.getElementById(id);if(el){el.removeAttribute('inert');el.disabled=false;el.style.pointerEvents='auto';el.style.cursor='text'}});
+  ['loginName','loginPass','patientSearch'].forEach(id=>enable(document.getElementById(id)));
+  new MutationObserver(()=>['loginName','loginPass','patientSearch'].forEach(id=>enable(document.getElementById(id)))).observe(document.documentElement,{subtree:true,childList:true});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
-new MutationObserver(()=>{['loginName','loginPass','patientSearch'].forEach(id=>{const el=document.getElementById(id);if(el){el.removeAttribute('inert');el.style.pointerEvents='auto';el.style.cursor='text'}})}).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','disabled','inert']});
 })();
