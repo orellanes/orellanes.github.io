@@ -9,7 +9,7 @@ window.NURSETRACK_SUPABASE = {
   if(window.__NT_V4_EXTENSIONS_LOADER__) return;
   window.__NT_V4_EXTENSIONS_LOADER__=true;
   [
-    'cursor-guard.js?v=20260908-v4-cursor-2',
+    'cursor-guard.js?v=20260908-v4-cursor-3',
     'password-recovery.js?v=20260908-v4-password-recovery-1',
     'social-documents.js?v=20260908-v4-social-docs-1',
     'patient-tools.js?v=20260908-v4-patient-tools-1',
@@ -29,7 +29,7 @@ window.NURSETRACK_SUPABASE = {
     'audit-viewer.js?v=20260908-v4-audit-1',
     'admin-catalogs.js?v=20260908-v4-admin-catalogs-1',
     'storage-upload.js?v=20260908-v4-storage-1',
-    'logistics.js?v=20260908-v4-logistics-1',
+    'logistics.js?v=20260908-v4-logistics-3',
     'navigation.js?v=20260908-v4-navigation-7'
   ].forEach(function(src){
     var s=document.createElement('script');
