@@ -1,0 +1,44 @@
+name: NurseTrack v4 Beta Check
+
+on:
+  push:
+    branches: [nursetrack-v4-beta]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          set -euo pipefail
+          find v4-beta -maxdepth 1 -type f -name '*.js' -print0 | sort -z | xargs -0 -n1 node --check
+      - name: Verify loader files exist
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib,re,sys
+          text=pathlib.Path('supabase-config.js').read_text(encoding='utf-8')
+          refs=re.findall(r"'([^']+\.js)\?v=", text)
+          missing=[x for x in refs if not pathlib.Path('v4-beta',x).exists()]
+          print('Loader JS:', len(refs))
+          if missing:
+              print('Missing:', *missing, sep='\n- ')
+              sys.exit(1)
+          PY
+      - name: Verify clean v4 architecture
+        run: |
+          set -euo pipefail
+          ! grep -qi '<iframe' v4-beta/index.html
+          ! grep -q 'device-compat-runtime.js' v4-beta/index.html
+          ! grep -q 'safe6-isolation.js' v4-beta/index.html
+          grep -q 'NurseTrack Clinical v4 Beta' v4-beta/index.html
+      - name: Summary
+        run: echo 'NurseTrack v4 beta integrity checks passed.'
