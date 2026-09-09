@@ -16,7 +16,7 @@ window.NURSETRACK_SUPABASE = {
   const loaded=new Set();
   const groups={
     patients:['patient-tools.js','patient-registration.js','patient-management.js'],
-    nursing:['smart-nursing.js'],
+    nursing:['smart-nursing.js','nursing-section-tabs.js'],
     social:['social-documents.js','smart-social-4page.js'],
     labs:['labs.js'],
     medical:['medicine.js','medicine-advanced.js'],
@@ -41,7 +41,7 @@ window.NURSETRACK_SUPABASE = {
       const existing=document.querySelector('script[data-nt-v4-module="'+src+'"]');
       if(existing){loaded.add(src);return resolve(src);}
       const s=document.createElement('script');
-      s.src=src+'?v=20260909-lazy-2';
+      s.src=src+'?v=20260909-lazy-3';
       s.defer=true;
       s.dataset.ntV4Module=src;
       s.onload=function(){loaded.add(src);resolve(src)};
