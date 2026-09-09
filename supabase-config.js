@@ -38,7 +38,8 @@ window.NURSETRACK_SUPABASE = {
     'boceto-ui.js?v=20260909-v4-boceto-ui-1',
     'smart-social-4page.js?v=20260909-smart-social-1',
     'print-image-fix.js?v=20260909-print-image-1',
-    'smart-nursing.js?v=20260909-smart-nursing-1'
+    'smart-nursing.js?v=20260909-smart-nursing-1',
+    'maintenance-entry.js?v=20260909-maintenance-direct-1'
   ].forEach(function(src){
     var s=document.createElement('script');
     s.src=src;
