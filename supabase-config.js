@@ -35,7 +35,8 @@ window.NURSETRACK_SUPABASE = {
     'navigation.js?v=20260908-v4-navigation-7',
     'direct-view.js?v=20260909-v4-direct-view-1',
     'boceto-ui.js?v=20260909-v4-boceto-ui-1',
-    'smart-social-4page.js?v=20260909-smart-social-1'
+    'smart-social-4page.js?v=20260909-smart-social-1',
+    'print-image-fix.js?v=20260909-print-image-1'
   ].forEach(function(src){
     var s=document.createElement('script');
     s.src=src;
