@@ -45,7 +45,7 @@ async function context(force){
 }
 function normalize(x){
   const src=x&&typeof x==='object'?x:{};
-  return {protected:src.protected!==false,features:{...DEFAULT_GUARD.features,...(src.features&&typeof src.features==='object'?src.features:{})}};
+  return {protected:true,features:{...DEFAULT_GUARD.features,...(src.features&&typeof src.features==='object'?src.features:{})}};
 }
 async function load(force){
   if(ready&&!force)return guard;
@@ -65,11 +65,9 @@ function isAllowed(feature){
   if(!ready)return false;
   if(!FEATURES[feature])return false;
   if(!ctx?.superAdmin)return false;
-  if(guard.protected===false)return true;
   return guard.features?.[feature]===true;
 }
-function safeMode(){return guard.protected!==false}
-function state(){return {ready,superAdmin:!!ctx?.superAdmin,company:ctx?.company||null,protected:safeMode(),features:{...guard.features}}}
+function state(){return {ready,superAdmin:!!ctx?.superAdmin,company:ctx?.company||null,protected:true,features:{...guard.features}}}
 function toast(msg){
   let t=$('ntV4PerfToast');if(!t){t=document.createElement('div');t.id='ntV4PerfToast';t.style.cssText='position:fixed;right:18px;bottom:18px;z-index:2147483647;max-width:390px;padding:12px 14px;border-radius:12px;background:#17343c;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.22);font:600 14px -apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif';document.body.appendChild(t)}
   t.textContent=msg;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3800);
@@ -102,25 +100,24 @@ function style(){
   `;(document.head||document.documentElement).appendChild(s);
 }
 function cardMarkup(){
-  const open=Object.values(guard.features||{}).some(Boolean)||guard.protected===false;
+  const open=Object.values(guard.features||{}).some(Boolean);
   return `<strong>🛡️ Rendimiento protegido</strong><small>${ctx?.superAdmin?'Control de funciones de alto consumo · solo Súper Administrador':'Funciones de alto consumo restringidas'}</small><span class="ntv4-perf-state">${open?'EXCEPCIONES ACTIVAS':'PROTEGIDO'}</span>`;
 }
 function ensureCard(){
   style();const grid=document.querySelector('#modulesPanel .module-grid');if(!grid)return;
   let b=$('ntV4PerformanceCard');if(!b){b=document.createElement('button');b.id='ntV4PerformanceCard';b.className='module ntv4-perf-card';b.type='button';b.addEventListener('click',openPanel);grid.appendChild(b)}
-  b.innerHTML=cardMarkup();b.dataset.open=(Object.values(guard.features||{}).some(Boolean)||guard.protected===false)?'1':'0';
+  b.innerHTML=cardMarkup();b.dataset.open=Object.values(guard.features||{}).some(Boolean)?'1':'0';
 }
-function updateCards(){ensureCard();const b=$('ntV4PerformanceCard');if(b){b.innerHTML=cardMarkup();b.dataset.open=(Object.values(guard.features||{}).some(Boolean)||guard.protected===false)?'1':'0'}}
+function updateCards(){ensureCard();const b=$('ntV4PerformanceCard');if(b){b.innerHTML=cardMarkup();b.dataset.open=Object.values(guard.features||{}).some(Boolean)?'1':'0'}}
 function featureRows(){return Object.entries(FEATURES).map(([key,f])=>`<div class="ntv4-perf-row"><div><strong>${esc(f.label)}</strong><small>${esc(f.desc)}</small></div>${ctx?.superAdmin?`<button class="ntv4-perf-toggle ${guard.features?.[key]?'on':''}" data-perf-feature="${key}">${guard.features?.[key]?'ACTIVADO':'BLOQUEADO'}</button>`:'<strong>Bloqueado</strong>'}</div>`).join('')}
 function openPanel(){
   style();let m=$('ntV4PerfModal');if(m)m.remove();m=document.createElement('div');m.id='ntV4PerfModal';m.className='ntv4-perf-modal';
   const exceptions=Object.values(guard.features||{}).filter(Boolean).length;
-  m.innerHTML=`<div class="ntv4-perf-box"><div class="ntv4-perf-head"><div><h3>🛡️ Rendimiento protegido</h3><div class="ntv4-perf-note">Evita que operaciones pesadas ralenticen NurseTrack.</div></div><button class="ntv4-perf-close" id="ntv4PerfClose">✕</button></div><div class="ntv4-perf-banner"><strong>Estado: ${guard.protected?'Protección activa':'Protección relajada'}</strong><br>${ctx?.superAdmin?`Tienes ${exceptions} excepción(es) de alto consumo activada(s).`:'Solo el Súper Administrador puede activar funciones de alto consumo.'}</div>${ctx?.superAdmin?`<div class="ntv4-perf-master"><button class="btn ${guard.protected?'secondary':'light'}" id="ntv4PerfProtect">${guard.protected?'Protección general ACTIVADA':'Activar protección general'}</button><button class="btn light" id="ntv4PerfLockAll">Bloquear todo lo pesado</button></div>`:''}<div class="ntv4-perf-list">${featureRows()}</div><div id="ntv4PerfStatus" class="status"></div></div>`;
+  m.innerHTML=`<div class="ntv4-perf-box"><div class="ntv4-perf-head"><div><h3>🛡️ Rendimiento protegido</h3><div class="ntv4-perf-note">La protección general permanece siempre activa. Solo puedes abrir excepciones específicas.</div></div><button class="ntv4-perf-close" id="ntv4PerfClose">✕</button></div><div class="ntv4-perf-banner"><strong>Estado: Protección activa</strong><br>${ctx?.superAdmin?`Tienes ${exceptions} excepción(es) de alto consumo activada(s).`:'Solo el Súper Administrador puede activar funciones de alto consumo.'}</div>${ctx?.superAdmin?`<div class="ntv4-perf-master"><button class="btn light" id="ntv4PerfLockAll">Bloquear nuevamente todo lo pesado</button></div>`:''}<div class="ntv4-perf-list">${featureRows()}</div><div id="ntv4PerfStatus" class="status"></div></div>`;
   document.body.appendChild(m);$('ntv4PerfClose').onclick=()=>m.remove();m.addEventListener('click',e=>{if(e.target===m)m.remove()});
   if(ctx?.superAdmin){
-    $('ntv4PerfProtect').onclick=async()=>{try{await save({...guard,protected:!guard.protected});openPanel()}catch(e){const st=$('ntv4PerfStatus');if(st){st.textContent=e.message||String(e);st.style.color='#933'}}};
     $('ntv4PerfLockAll').onclick=async()=>{try{await save({protected:true,features:{...DEFAULT_GUARD.features}});openPanel()}catch(e){const st=$('ntv4PerfStatus');if(st){st.textContent=e.message||String(e);st.style.color='#933'}}};
-    m.querySelectorAll('[data-perf-feature]').forEach(b=>b.onclick=async()=>{const k=b.dataset.perfFeature;try{await save({...guard,features:{...guard.features,[k]:!guard.features[k]}});openPanel()}catch(e){const st=$('ntv4PerfStatus');if(st){st.textContent=e.message||String(e);st.style.color='#933'}}});
+    m.querySelectorAll('[data-perf-feature]').forEach(b=>b.onclick=async()=>{const k=b.dataset.perfFeature;try{await save({protected:true,features:{...guard.features,[k]:!guard.features[k]}});openPanel()}catch(e){const st=$('ntv4PerfStatus');if(st){st.textContent=e.message||String(e);st.style.color='#933'}}});
   }
 }
 function markHeavy(selector,feature){document.querySelectorAll(selector).forEach(el=>el.dataset.ntHeavyFeature=feature)}
@@ -130,6 +127,6 @@ function boot(){
   load().catch(()=>{ready=true;guard=normalize(null);updateCards()});
   let n=0;const t=setInterval(()=>{ensureCard();if(++n>80)clearInterval(t)},250);
 }
-window.NT_V4_PERFORMANCE_GUARD={load,isAllowed,require:requireFeature,getState:state,open:openPanel,markHeavy,features:FEATURES,version:'1.0.0'};
+window.NT_V4_PERFORMANCE_GUARD={load,isAllowed,require:requireFeature,getState:state,open:openPanel,markHeavy,features:FEATURES,version:'1.1.0'};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
