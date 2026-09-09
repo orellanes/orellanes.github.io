@@ -30,14 +30,14 @@ window.NURSETRACK_SUPABASE = {
     'admin-catalogs.js?v=20260908-v4-admin-catalogs-1',
     'storage-upload.js?v=20260908-v4-storage-1',
     'capacity-settings.js?v=20260908-v4-capacity-1',
-    'appearance-settings.js?v=20260908-v4-appearance-1',
+    'appearance-settings.js?v=20260909-v4-appearance-2',
     'logistics.js?v=20260908-v4-logistics-3',
     'navigation.js?v=20260908-v4-navigation-7',
     'direct-view.js?v=20260909-v4-direct-view-1',
     'boceto-ui.js?v=20260909-v4-boceto-ui-1',
     'smart-social-4page.js?v=20260909-smart-social-1',
     'print-image-fix.js?v=20260909-print-image-1',
-    'maintenance.js?v=20260909-maintenance-1'
+    'maintenance.js?v=20260909-maintenance-2'
   ].forEach(function(src){
     var s=document.createElement('script');
     s.src=src;
