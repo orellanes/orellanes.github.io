@@ -4,7 +4,7 @@ if(window.__NT_V4_LOGISTICS_DEDUP__) return;
 window.__NT_V4_LOGISTICS_DEDUP__=true;
 
 const KEEP_CLINICAL=new Set(['tasks','reminders']);
-const KEEP_GLOBAL=new Set(['assignments','stations','inventory','catalogs','capacity']);
+const KEEP_GLOBAL=new Set(['assignments','inventory','catalogs','capacity']);
 
 function cleanLogistics(){
   const area=document.getElementById('patientActionArea');
@@ -38,7 +38,7 @@ function cleanLogistics(){
     const master=lines.find(x=>/Centro maestro de NurseTrack/i.test(x.textContent||''));
     if(master) master.textContent='Centro operacional de NurseTrack One';
     const notice=intro.querySelector('.notice');
-    if(notice) notice.textContent='Acceso único a funciones operacionales. Enfermería, Medicina, Trabajo Social, Laboratorios, Facturación, Reportes, Membresía y Administración permanecen en sus módulos principales.';
+    if(notice) notice.textContent='Acceso único a funciones operacionales. La tarjeta de Estaciones fue retirada; Enfermería, Medicina, Trabajo Social, Laboratorios, Facturación, Reportes, Membresía y Administración permanecen en sus módulos principales.';
   }
 }
 
