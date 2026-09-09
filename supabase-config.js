@@ -41,7 +41,7 @@ window.NURSETRACK_SUPABASE = {
       const existing=document.querySelector('script[data-nt-v4-module="'+src+'"]');
       if(existing){loaded.add(src);return resolve(src);}
       const s=document.createElement('script');
-      s.src=src+'?v=20260909-lazy-1';
+      s.src=src+'?v=20260909-lazy-2';
       s.defer=true;
       s.dataset.ntV4Module=src;
       s.onload=function(){loaded.add(src);resolve(src)};
@@ -62,7 +62,7 @@ window.NURSETRACK_SUPABASE = {
   };
 
   // Solo utilidades pequeñas necesarias para el inicio. El resto queda diferido.
-  ['cursor-guard.js','hide-stations-card.js'].forEach(function(src){
+  ['cursor-guard.js','hide-stations-card.js','record-nursing-templates.js'].forEach(function(src){
     setTimeout(function(){loadScript(src).catch(function(){})},0);
   });
 })();
