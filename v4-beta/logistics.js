@@ -15,7 +15,8 @@ const GLOBAL_OPS={
   assignments:['Asignaciones','Pacientes por usuario'],
   inventory:['Inventario','Control operativo'],
   catalogs:['Localidades / Departamentos','Catálogos operativos'],
-  capacity:['Capacidad / Memoria','Uso real del sistema']
+  capacity:['Capacidad / Memoria','Uso real del sistema'],
+  appearance:['Apariencia / Portadas','Logo, colores, tipografía y portadas']
 };
 
 function style(){
@@ -80,7 +81,7 @@ async function waitApi(getter,label,ms=5000){
 }
 
 function renderHub(out){
-  out.innerHTML=`<div class="ntv4-logcard"><div class="ntv4-loghead"><div><h3>🧭 Logística operacional</h3><div>Un solo acceso a funciones operacionales</div></div><div id="ntv4LogBadge" class="ntv4-logbadge">Verificando acceso…</div></div><div class="notice">Apariencia / Portadas, Administración, Reportes y módulos clínicos permanecen en sus áreas principales para evitar duplicados.</div></div><div class="ntv4-logcard"><h3>Seguimiento</h3><div class="ntv4-loggrid">${Object.entries(PATIENT_OPS).map(([k,x])=>card(k,x,'patient')).join('')}</div></div><div class="ntv4-logcard"><h3>Operación</h3><div class="ntv4-loggrid">${Object.entries(GLOBAL_OPS).map(([k,x])=>card(k,x,'global')).join('')}</div><div id="ntv4LogStatus" class="status"></div></div>`;
+  out.innerHTML=`<div class="ntv4-logcard"><div class="ntv4-loghead"><div><h3>🧭 Logística operacional</h3><div>Un solo acceso a funciones operacionales</div></div><div id="ntv4LogBadge" class="ntv4-logbadge">Verificando acceso…</div></div><div class="notice">Accesos operacionales y configuración visual. Los módulos clínicos permanecen en sus áreas principales para evitar duplicados.</div></div><div class="ntv4-logcard"><h3>Seguimiento</h3><div class="ntv4-loggrid">${Object.entries(PATIENT_OPS).map(([k,x])=>card(k,x,'patient')).join('')}</div></div><div class="ntv4-logcard"><h3>Operación y configuración</h3><div class="ntv4-loggrid">${Object.entries(GLOBAL_OPS).map(([k,x])=>card(k,x,'global')).join('')}</div><div id="ntv4LogStatus" class="status"></div></div>`;
   out.querySelectorAll('[data-log-patient]').forEach(b=>b.onclick=()=>choosePatient(b.dataset.logPatient));
   out.querySelectorAll('[data-log-global]').forEach(b=>b.onclick=()=>openGlobal(b.dataset.logGlobal));
 }
@@ -103,6 +104,10 @@ async function openGlobal(key){
   const st=$('ntv4LogStatus');
   if(st){st.textContent='Abriendo…';st.style.color=''}
   try{
+    if(key==='appearance'){
+      window.location.assign('appearance.html?v=20260909-appearance-logistics-1');
+      return;
+    }
     const specs={
       assignments:[()=>window.NT_V4_ASSIGNMENTS,'Asignaciones'],
       inventory:[()=>window.NT_V4_INVENTORY,'Inventario'],
@@ -181,7 +186,7 @@ function intercept(e){
 function init(){
   style();renameNav();
   document.addEventListener('click',intercept,true);
-  window.NT_V4_LOGISTICS={open,version:'2.0.0-operational'};
+  window.NT_V4_LOGISTICS={open,version:'2.1.0-appearance'};
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init,{once:true}); else init();
 })();
