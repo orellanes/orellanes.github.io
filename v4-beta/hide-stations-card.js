@@ -1,22 +1,24 @@
 (function(){
 'use strict';
-if(window.__NT_V4_HIDE_STATIONS_CARD__) return;
-window.__NT_V4_HIDE_STATIONS_CARD__=true;
+if(window.__NT_V4_HIDE_STATIONS_CARD_V2__) return;
+window.__NT_V4_HIDE_STATIONS_CARD_V2__=true;
+
+function installPermanentHide(){
+  let style=document.getElementById('ntv4HideStationsPermanent');
+  if(!style){
+    style=document.createElement('style');
+    style.id='ntv4HideStationsPermanent';
+    style.textContent='#ntv4StationsCard,[data-log-global="stations"]{display:none!important;visibility:hidden!important;pointer-events:none!important}';
+    (document.head||document.documentElement).appendChild(style);
+  }
+}
 
 function removeStationsCard(){
   document.getElementById('ntv4StationsCard')?.remove();
   document.querySelectorAll('[data-log-global="stations"]').forEach(el=>el.remove());
-  document.querySelectorAll('#modulesPanel .module').forEach(btn=>{
-    const title=(btn.querySelector('strong')?.textContent||'').trim().toLowerCase();
-    if(title==='estaciones') btn.remove();
-  });
 }
 
+installPermanentHide();
 removeStationsCard();
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',removeStationsCard,{once:true});
-let tries=0;
-const timer=setInterval(()=>{
-  removeStationsCard();
-  if(++tries>=40) clearInterval(timer);
-},250);
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{installPermanentHide();removeStationsCard()},{once:true});
 })();
