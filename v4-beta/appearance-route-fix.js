@@ -2,24 +2,63 @@
 'use strict';
 if(window.__NT_V4_APPEARANCE_ROUTE_FIX__) return;
 window.__NT_V4_APPEARANCE_ROUTE_FIX__=true;
-function routeToAppearance(e){
-  const b=e.target.closest?.('#ntmAppearance');
-  if(!b) return;
-  e.preventDefault();
-  e.stopImmediatePropagation();
+
+function isAppearanceTarget(target){
+  if(!target) return false;
+  if(target.closest?.('#ntmAppearance')) return true;
+  const card=target.closest?.('.ntm-tool');
+  if(!card) return false;
+  const title=(card.querySelector('h4')?.textContent||'').toLowerCase();
+  return title.includes('apariencia') && title.includes('portada');
+}
+
+function routeUrl(){
   const u=new URL(location.href);
   u.searchParams.set('view','appearance');
   u.searchParams.set('open','appearance');
-  u.searchParams.set('v','20260909-appearance-route-1');
-  location.assign(u.toString());
+  u.searchParams.set('v','20260909-appearance-route-2');
+  u.searchParams.set('refresh',Date.now());
+  return u.toString();
 }
-document.addEventListener('click',routeToAppearance,true);
+
+async function openAppearance(e){
+  if(!isAppearanceTarget(e.target)) return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  const status=document.getElementById('ntmStatus');
+  if(status){status.textContent='Abriendo Apariencia / Portadas…';status.style.color='#31545b'}
+  try{
+    if(window.NT_V4_APPEARANCE && typeof window.NT_V4_APPEARANCE.open==='function'){
+      await window.NT_V4_APPEARANCE.open();
+      const title=(document.getElementById('pageTitle')?.textContent||'').toLowerCase();
+      if(title.includes('apariencia')) return;
+    }
+  }catch(_){ }
+  location.assign(routeUrl());
+}
+
+document.addEventListener('click',openAppearance,true);
+
 function decorate(){
-  const b=document.getElementById('ntmAppearance');
-  if(!b||b.dataset.ntDirectRoute==='1') return;
-  b.dataset.ntDirectRoute='1';
-  b.title='Abrir Apariencia y Portadas';
+  const button=document.getElementById('ntmAppearance');
+  const card=button?.closest('.ntm-tool');
+  if(button){
+    button.dataset.ntDirectRoute='2';
+    button.title='Abrir Apariencia y Portadas';
+    button.textContent='Abrir Apariencia / Portadas';
+  }
+  if(card && card.dataset.ntAppearanceCard!=='1'){
+    card.dataset.ntAppearanceCard='1';
+    card.setAttribute('role','link');
+    card.setAttribute('tabindex','0');
+    card.style.cursor='pointer';
+    card.title='Abrir Apariencia y Portadas';
+    card.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click()}
+    });
+  }
 }
-let n=0;const t=setInterval(()=>{decorate();if(++n>120)clearInterval(t)},250);
+
+let n=0;const t=setInterval(()=>{decorate();if(++n>240)clearInterval(t)},250);
 new MutationObserver(decorate).observe(document.documentElement,{childList:true,subtree:true});
 })();
