@@ -33,7 +33,8 @@ window.NURSETRACK_SUPABASE = {
     'appearance-settings.js?v=20260908-v4-appearance-1',
     'logistics.js?v=20260908-v4-logistics-3',
     'navigation.js?v=20260908-v4-navigation-7',
-    'direct-view.js?v=20260909-v4-direct-view-1'
+    'direct-view.js?v=20260909-v4-direct-view-1',
+    'boceto-ui.js?v=20260909-v4-boceto-ui-1'
   ].forEach(function(src){
     var s=document.createElement('script');
     s.src=src;
