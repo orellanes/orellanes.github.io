@@ -9,10 +9,6 @@ window.NURSETRACK_SUPABASE = {
   if(window.__NT_V4_EXTENSIONS_LOADER__) return;
   window.__NT_V4_EXTENSIONS_LOADER__=true;
 
-  // NurseTrack One v4: NO cargar todos los módulos al iniciar.
-  // Antes esta lista inyectaba decenas de scripts de una vez y podía bloquear
-  // el hilo principal del navegador. Ahora cada módulo se carga solo cuando
-  // el usuario realmente lo abre.
   const loaded=new Set();
   const groups={
     patients:['patient-tools.js','patient-registration.js','patient-management.js'],
@@ -41,7 +37,7 @@ window.NURSETRACK_SUPABASE = {
       const existing=document.querySelector('script[data-nt-v4-module="'+src+'"]');
       if(existing){loaded.add(src);return resolve(src);}
       const s=document.createElement('script');
-      s.src=src+'?v=20260909-lazy-3';
+      s.src=src+'?v=20260909-lazy-4';
       s.defer=true;
       s.dataset.ntV4Module=src;
       s.onload=function(){loaded.add(src);resolve(src)};
@@ -61,8 +57,9 @@ window.NURSETRACK_SUPABASE = {
     isLoaded:function(src){return loaded.has(src)}
   };
 
-  // Solo utilidades pequeñas necesarias para el inicio. El resto queda diferido.
-  ['cursor-guard.js','hide-stations-card.js','record-nursing-templates.js'].forEach(function(src){
+  // Solo accesos ligeros al iniciar. Los módulos clínicos completos continúan
+  // cargándose al abrirlos, para mantener el sistema fluido.
+  ['cursor-guard.js','hide-stations-card.js','record-nursing-templates.js','admin-router.js'].forEach(function(src){
     setTimeout(function(){loadScript(src).catch(function(){})},0);
   });
 })();
