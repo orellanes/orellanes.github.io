@@ -8,47 +8,61 @@ window.NURSETRACK_SUPABASE = {
   if(!/\/v4-beta\//.test(location.pathname)) return;
   if(window.__NT_V4_EXTENSIONS_LOADER__) return;
   window.__NT_V4_EXTENSIONS_LOADER__=true;
-  [
-    'cursor-guard.js?v=20260908-v4-cursor-3',
-    'password-recovery.js?v=20260908-v4-password-recovery-1',
-    'social-documents.js?v=20260908-v4-social-docs-1',
-    'patient-tools.js?v=20260908-v4-patient-tools-1',
-    'patient-registration.js?v=20260909-v4-patient-registration-3',
-    'patient-management.js?v=20260909-patient-management-1',
-    'labs.js?v=20260908-v4-labs-1',
-    'medicine.js?v=20260908-v4-medicine-1',
-    'medicine-advanced.js?v=20260908-v4-medicine-advanced-1',
-    'nutrition-behavioral.js?v=20260908-v4-clinical-1',
-    'vaccines-treatments-v4.js?v=20260908-v4-treatments-1',
-    'reports-membership.js?v=20260908-v4-ops-1',
-    'billing-admin.js?v=20260908-v4-billing-admin-1',
-    'admin-delete-user.js?v=20260909-admin-delete-user-1',
-    'permission-admin-tools.js?v=20260909-permission-admin-1',
-    'operations-settings.js?v=20260908-v4-operations-1',
-    'templates-editor.js?v=20260908-v4-templates-1',
-    'revenue-safety.js?v=20260908-v4-revenue-safety-1',
-    'personal-notifications.js?v=20260908-v4-personal-notifications-1',
-    'assignments.js?v=20260908-v4-assignments-1',
-    'audit-viewer.js?v=20260908-v4-audit-1',
-    'admin-catalogs.js?v=20260908-v4-admin-catalogs-1',
-    'storage-upload.js?v=20260908-v4-storage-1',
-    'capacity-settings.js?v=20260908-v4-capacity-1',
-    'appearance-settings.js?v=20260909-appearance-panel-1',
-    'logistics.js?v=20260909-logistics-appearance-panel-1',
-    'hide-stations-card.js?v=20260909-hide-stations-2',
-    'navigation.js?v=20260908-v4-navigation-7',
-    'direct-view.js?v=20260909-v4-direct-view-2',
-    'boceto-ui.js?v=20260909-v4-boceto-ui-2',
-    'permission-menu-guard.js?v=20260909-permission-menu-1',
-    'language-settings.js?v=20260909-language-1',
-    'smart-social-4page.js?v=20260909-smart-social-1',
-    'print-image-fix.js?v=20260909-print-image-1',
-    'smart-nursing.js?v=20260909-smart-nursing-1',
-    'maintenance-entry.js?v=20260909-maintenance-direct-1'
-  ].forEach(function(src){
-    var s=document.createElement('script');
-    s.src=src;
-    s.defer=true;
-    (document.head||document.documentElement).appendChild(s);
+
+  // NurseTrack One v4: NO cargar todos los módulos al iniciar.
+  // Antes esta lista inyectaba decenas de scripts de una vez y podía bloquear
+  // el hilo principal del navegador. Ahora cada módulo se carga solo cuando
+  // el usuario realmente lo abre.
+  const loaded=new Set();
+  const groups={
+    patients:['patient-tools.js','patient-registration.js','patient-management.js'],
+    nursing:['smart-nursing.js'],
+    social:['social-documents.js','smart-social-4page.js'],
+    labs:['labs.js'],
+    medical:['medicine.js','medicine-advanced.js'],
+    clinical:['nutrition-behavioral.js','vaccines-treatments-v4.js'],
+    reports:['reports-membership.js'],
+    billing:['billing-admin.js','revenue-safety.js'],
+    admin:['admin-delete-user.js','permission-admin-tools.js','operations-settings.js','admin-catalogs.js','capacity-settings.js'],
+    templates:['templates-editor.js','print-image-fix.js'],
+    logistics:['assignments.js','logistics.js'],
+    audit:['audit-viewer.js'],
+    storage:['storage-upload.js'],
+    appearance:['appearance-settings.js','language-settings.js'],
+    maintenance:['maintenance-entry.js'],
+    navigation:['navigation.js','direct-view.js','boceto-ui.js','permission-menu-guard.js'],
+    notifications:['personal-notifications.js'],
+    recovery:['password-recovery.js']
+  };
+
+  function loadScript(src){
+    return new Promise(function(resolve,reject){
+      if(loaded.has(src)) return resolve(src);
+      const existing=document.querySelector('script[data-nt-v4-module="'+src+'"]');
+      if(existing){loaded.add(src);return resolve(src);}
+      const s=document.createElement('script');
+      s.src=src+'?v=20260909-lazy-1';
+      s.defer=true;
+      s.dataset.ntV4Module=src;
+      s.onload=function(){loaded.add(src);resolve(src)};
+      s.onerror=function(){reject(new Error('No se pudo cargar '+src))};
+      (document.head||document.documentElement).appendChild(s);
+    });
+  }
+
+  window.NT_V4_MODULES={
+    groups:groups,
+    load:async function(group){
+      const files=groups[group]||[];
+      for(const file of files) await loadScript(file);
+      return true;
+    },
+    loadFile:loadScript,
+    isLoaded:function(src){return loaded.has(src)}
+  };
+
+  // Solo utilidades pequeñas necesarias para el inicio. El resto queda diferido.
+  ['cursor-guard.js','hide-stations-card.js'].forEach(function(src){
+    setTimeout(function(){loadScript(src).catch(function(){})},0);
   });
 })();
