@@ -14,6 +14,7 @@ window.NURSETRACK_SUPABASE = {
     'social-documents.js?v=20260908-v4-social-docs-1',
     'patient-tools.js?v=20260908-v4-patient-tools-1',
     'patient-registration.js?v=20260908-v4-patient-registration-2',
+    'patient-management.js?v=20260909-patient-management-1',
     'labs.js?v=20260908-v4-labs-1',
     'medicine.js?v=20260908-v4-medicine-1',
     'medicine-advanced.js?v=20260908-v4-medicine-advanced-1',
