@@ -21,4 +21,16 @@ window.NT_loadSupabase=function(){
  pending=(async function(){let last=null;for(const src of SOURCES){try{return await loadOne(src)}catch(e){last=e}}throw last||new Error('supabase_sdk_unavailable')})().finally(function(){if(!ready())pending=null});
  return pending;
 };
+
+// NurseTrack One only: load the centralized performance guard without affecting BUILD 168.
+try{
+ const p=String(location.pathname||'');
+ if(p.includes('/v4-beta/')&&!window.__NT_V4_PERFORMANCE_GUARD_LOADER__){
+   window.__NT_V4_PERFORMANCE_GUARD_LOADER__=true;
+   const s=document.createElement('script');
+   s.src='./performance-guard.js?v=20260909-1';
+   s.defer=true;
+   (document.head||document.documentElement).appendChild(s);
+ }
+}catch(_){}
 })();
