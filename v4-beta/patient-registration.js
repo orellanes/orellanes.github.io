@@ -1,16 +1,151 @@
 (function(){
 'use strict';
-if(window.__NT_V4_PATIENT_REGISTRATION__)return;window.__NT_V4_PATIENT_REGISTRATION__=true;
+if(window.__NT_V4_PATIENT_REGISTRATION__)return;
+window.__NT_V4_PATIENT_REGISTRATION__=true;
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-let sb=null,busy=false;
-function style(){if($('ntV4PatientRegStyle'))return;const s=document.createElement('style');s.id='ntV4PatientRegStyle';s.textContent='.ntv4-regwrap{margin-top:14px}.ntv4-regcard{background:#fff;border:1px solid #d8e6e8;border-radius:16px;padding:18px}.ntv4-reggrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.ntv4-reggrid .full{grid-column:1/-1}.ntv4-reggrid .wide{grid-column:span 2}.ntv4-regactions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.ntv4-regnote{background:#edf5f6;border:1px solid #d8e6e8;border-radius:10px;padding:10px;color:#31545b;margin:10px 0}.ntv4-company-auto{background:#f7fbff;border:1px solid #cfe2f3;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px}.ntv4-company-auto strong{color:#0b63a8}@media(max-width:760px){.ntv4-reggrid{grid-template-columns:1fr}.ntv4-reggrid .full,.ntv4-reggrid .wide{grid-column:auto}}';(document.head||document.documentElement).appendChild(s)}
-async function client(){if(sb)return sb;if(typeof window.NT_loadSupabase!=='function')throw new Error('Supabase no disponible');const lib=await window.NT_loadSupabase(),cfg=window.NURSETRACK_SUPABASE||{};sb=lib.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true}});return sb}
-async function companyLabel(){try{await client();const ses=await sb.auth.getSession(),u=ses?.data?.session?.user;if(!u)return null;const r=await sb.from('nursetrack_company_users').select('company_id').eq('user_id',u.id).eq('active',true).limit(1);const company=r.data?.[0]?.company_id;if(!company)return null;const co=await sb.from('nursetrack_companies').select('display_name').eq('id',company).maybeSingle();return co.data?.display_name||'Compañía activa'}catch{return null}}
-function formHost(){let h=$('ntv4PatientRegistrationHost');if(!h){h=document.createElement('div');h.id='ntv4PatientRegistrationHost';h.className='ntv4-regwrap';const home=$('homePanel');if(home){const searchStatus=$('searchStatus');if(searchStatus?.parentNode)searchStatus.parentNode.insertBefore(h,searchStatus.nextSibling);else home.prepend(h)}}return h}
-function clearHost(){const h=$('ntv4PatientRegistrationHost');if(h)h.innerHTML=''}
-async function openForm(){style();const h=formHost();if(!h)return;h.innerHTML=`<div class="ntv4-regcard"><h3>+ Registrar paciente</h3><div id="ntv4CompanyInfo" class="ntv4-company-auto"><strong>Compañía:</strong> asignada automáticamente desde tu sesión.</div><div class="ntv4-regnote">No tienes que escribir ni seleccionar la compañía.</div><div class="ntv4-reggrid"><div><label>Expediente / MRN *</label><input id="ntv4RegMrn" autocomplete="off"></div><div><label>Nombre *</label><input id="ntv4RegFirst"></div><div><label>Segundo nombre</label><input id="ntv4RegMiddle"></div><div><label>Apellido *</label><input id="ntv4RegLast"></div><div><label>Fecha de nacimiento</label><input id="ntv4RegDob" type="date"></div><div><label>Sexo</label><select id="ntv4RegSex"><option value="">—</option><option>Femenino</option><option>Masculino</option><option>Otro</option><option>Prefiere no indicar</option></select></div><div><label>Teléfono</label><input id="ntv4RegPhone" inputmode="tel"></div><div><label>Email</label><input id="ntv4RegEmail" type="email"></div><div><label>Idioma</label><select id="ntv4RegLang"><option value="es">Español</option><option value="en">English</option></select></div><div><label>Ciudad</label><input id="ntv4RegCity"></div><div class="wide"><label>Dirección residencial</label><input id="ntv4RegResidential"></div><div class="wide"><label>Dirección postal</label><input id="ntv4RegPostal"></div><div><label><input id="ntv4RegSame" type="checkbox" style="width:auto"> Postal igual a residencial</label></div><div><label>Educación</label><input id="ntv4RegEducation" placeholder="Ej. Escuela superior, Bachillerato"></div></div><div class="ntv4-regactions"><button id="ntv4RegSave" class="btn">Guardar paciente</button><button id="ntv4RegCancel" class="btn light">Cancelar</button></div><div id="ntv4RegStatus" class="status"></div></div>`;$('ntv4RegSave').onclick=savePatient;$('ntv4RegCancel').onclick=clearHost;$('ntv4RegSame').onchange=()=>{if($('ntv4RegSame').checked){$('ntv4RegPostal').value=$('ntv4RegResidential').value;$('ntv4RegPostal').disabled=true}else $('ntv4RegPostal').disabled=false};$('ntv4RegResidential').oninput=()=>{if($('ntv4RegSame').checked)$('ntv4RegPostal').value=$('ntv4RegResidential').value};setTimeout(()=>$('ntv4RegMrn')?.focus(),0);const name=await companyLabel();if(name&&$('ntv4CompanyInfo'))$('ntv4CompanyInfo').innerHTML='<strong>Compañía:</strong> '+esc(name)+' · asignada automáticamente desde tu sesión.'}
-async function savePatient(){if(busy)return;busy=true;const st=$('ntv4RegStatus');try{await client();const mrn=$('ntv4RegMrn').value.trim(),first=$('ntv4RegFirst').value.trim(),last=$('ntv4RegLast').value.trim();if(!mrn||!first||!last)throw new Error('Completa expediente, nombre y apellido.');st.textContent='Guardando paciente…';st.style.color='';const params={p_mrn:mrn,p_first_name:first,p_last_name:last,p_middle_name:$('ntv4RegMiddle').value.trim()||null,p_date_of_birth:$('ntv4RegDob').value||null,p_phone:$('ntv4RegPhone').value.trim()||null,p_email:$('ntv4RegEmail').value.trim()||null,p_preferred_language:$('ntv4RegLang').value||'es',p_sex:$('ntv4RegSex').value||null,p_city:$('ntv4RegCity').value.trim()||null,p_residential_address:$('ntv4RegResidential').value.trim()||null,p_postal_address:($('ntv4RegSame').checked?$('ntv4RegResidential').value:$('ntv4RegPostal').value).trim()||null,p_postal_same_as_residential:!!$('ntv4RegSame').checked,p_education_level:$('ntv4RegEducation').value.trim()||null};const r=await sb.rpc('nursetrack_v4_register_patient',params);if(r.error)throw r.error;const d=r.data||{};if(d.ok===false)throw new Error(d.message||'No se pudo registrar el paciente.');st.textContent='Paciente registrado correctamente.';st.style.color='#216b48';const q=$('patientSearch');if(q)q.value=d.mrn||mrn;setTimeout(()=>{clearHost();$('searchBtn')?.click()},500)}catch(e){st.textContent=e.message||String(e);st.style.color='#9b3d3d'}finally{busy=false}}
-function addButton(){const search=$('homePanel')?.querySelector('.search');if(!search||$('ntv4RegisterPatientBtn'))return;const b=document.createElement('button');b.id='ntv4RegisterPatientBtn';b.textContent='+ Registrar paciente';b.style.background='#0b63a8';b.onclick=openForm;search.appendChild(b)}
-function boot(){style();addButton();new MutationObserver(addButton).observe(document.body,{childList:true,subtree:true});window.NT_V4_PATIENT_REGISTRATION={open:openForm,version:'1.2.0'}}
+let sb=null,busy=false,currentCompanyId=null;
+function style(){
+  if($('ntV4PatientRegStyle'))return;
+  const s=document.createElement('style');
+  s.id='ntV4PatientRegStyle';
+  s.textContent='.ntv4-regwrap{margin-top:14px}.ntv4-regcard{background:#fff;border:1px solid #d8e6e8;border-radius:16px;padding:18px}.ntv4-reghead{display:flex;justify-content:space-between;gap:12px;align-items:center}.ntv4-reghead h3{margin:0}.ntv4-reggrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.ntv4-reggrid .full{grid-column:1/-1}.ntv4-reggrid .wide{grid-column:span 2}.ntv4-regactions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.ntv4-company-auto{display:inline-flex;align-items:center;gap:6px;background:#f7fbff;border:1px solid #cfe2f3;border-radius:999px;padding:7px 10px;margin:10px 0 14px;font-size:13px;color:#31545b}.ntv4-company-auto strong{color:#0b63a8}.ntv4-duplicate{background:#fff8e8;border:1px solid #ecd9a4;border-radius:10px;padding:10px;color:#725400;margin:10px 0}@media(max-width:760px){.ntv4-reggrid{grid-template-columns:1fr}.ntv4-reggrid .full,.ntv4-reggrid .wide{grid-column:auto}.ntv4-reghead{align-items:flex-start}}';
+  (document.head||document.documentElement).appendChild(s);
+}
+async function client(){
+  if(sb)return sb;
+  if(typeof window.NT_loadSupabase!=='function')throw new Error('Supabase no disponible');
+  const lib=await window.NT_loadSupabase(),cfg=window.NURSETRACK_SUPABASE||{};
+  sb=lib.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true}});
+  return sb;
+}
+async function resolveCompany(){
+  await client();
+  const ses=await sb.auth.getSession(),u=ses?.data?.session?.user;
+  if(!u)return {id:null,name:null};
+  let r=await sb.from('nursetrack_company_users').select('company_id').eq('user_id',u.id).eq('active',true).limit(1);
+  let company=r.data?.[0]?.company_id||null;
+  if(!company){
+    r=await sb.from('nursetrack_account_memberships').select('company_id').eq('user_id',u.id).eq('status','active').limit(1);
+    company=r.data?.[0]?.company_id||null;
+  }
+  if(!company)return {id:null,name:null};
+  currentCompanyId=company;
+  const co=await sb.from('nursetrack_companies').select('display_name').eq('id',company).maybeSingle();
+  return {id:company,name:co.data?.display_name||'Compañía activa'};
+}
+function formHost(){
+  let h=$('ntv4PatientRegistrationHost');
+  if(!h){
+    h=document.createElement('div');
+    h.id='ntv4PatientRegistrationHost';
+    h.className='ntv4-regwrap';
+    const home=$('homePanel');
+    if(home){
+      const searchStatus=$('searchStatus');
+      if(searchStatus?.parentNode)searchStatus.parentNode.insertBefore(h,searchStatus.nextSibling);else home.prepend(h);
+    }
+  }
+  return h;
+}
+function clearHost(opts={}){
+  const h=$('ntv4PatientRegistrationHost');
+  if(h)h.innerHTML='';
+  if(opts.focus)$('patientSearch')?.focus();
+}
+function clearSearchArea(){
+  const out=$('patientResults'),st=$('searchStatus');
+  if(out)out.innerHTML='';
+  if(st){st.textContent='';st.className='status'}
+}
+async function openForm(){
+  style();
+  const h=formHost();
+  if(!h)return;
+  clearSearchArea();
+  h.innerHTML=`<div id="ntv4PatientRegistrationCard" class="ntv4-regcard"><div class="ntv4-reghead"><h3>+ Registrar paciente</h3><button id="ntv4RegCancelTop" class="btn light" type="button">Cerrar</button></div><div id="ntv4CompanyInfo" class="ntv4-company-auto"><strong>Compañía:</strong> verificando… 🔒</div><div class="ntv4-reggrid"><div><label>Expediente / MRN *</label><input id="ntv4RegMrn" autocomplete="off"></div><div><label>Nombre *</label><input id="ntv4RegFirst"></div><div><label>Segundo nombre</label><input id="ntv4RegMiddle"></div><div><label>Apellido *</label><input id="ntv4RegLast"></div><div><label>Fecha de nacimiento</label><input id="ntv4RegDob" type="date"></div><div><label>Sexo</label><select id="ntv4RegSex"><option value="">—</option><option>Femenino</option><option>Masculino</option><option>Otro</option><option>Prefiere no indicar</option></select></div><div><label>Teléfono</label><input id="ntv4RegPhone" inputmode="tel"></div><div><label>Email</label><input id="ntv4RegEmail" type="email"></div><div><label>Idioma</label><select id="ntv4RegLang"><option value="es">Español</option><option value="en">English</option></select></div><div><label>Ciudad</label><input id="ntv4RegCity"></div><div class="wide"><label>Dirección residencial</label><input id="ntv4RegResidential"></div><div class="wide"><label>Dirección postal</label><input id="ntv4RegPostal"></div><div><label><input id="ntv4RegSame" type="checkbox" style="width:auto"> Postal igual a residencial</label></div><div><label>Educación</label><input id="ntv4RegEducation" placeholder="Ej. Escuela superior, Bachillerato"></div></div><div class="ntv4-regactions"><button id="ntv4RegSave" class="btn" type="button">Guardar paciente</button><button id="ntv4RegCancel" class="btn light" type="button">Cancelar</button></div><div id="ntv4RegStatus" class="status"></div></div>`;
+  $('ntv4RegSave').onclick=savePatient;
+  $('ntv4RegCancel').onclick=()=>clearHost({focus:true});
+  $('ntv4RegCancelTop').onclick=()=>clearHost({focus:true});
+  $('ntv4RegSame').onchange=()=>{if($('ntv4RegSame').checked){$('ntv4RegPostal').value=$('ntv4RegResidential').value;$('ntv4RegPostal').disabled=true}else $('ntv4RegPostal').disabled=false};
+  $('ntv4RegResidential').oninput=()=>{if($('ntv4RegSame').checked)$('ntv4RegPostal').value=$('ntv4RegResidential').value};
+  setTimeout(()=>$('ntv4RegMrn')?.focus(),0);
+  try{
+    const company=await resolveCompany();
+    if($('ntv4CompanyInfo'))$('ntv4CompanyInfo').innerHTML='<strong>Compañía:</strong> '+esc(company.name||'Sin compañía')+' 🔒';
+  }catch(_){if($('ntv4CompanyInfo'))$('ntv4CompanyInfo').innerHTML='<strong>Compañía:</strong> no disponible 🔒'}
+}
+async function findDuplicate(mrn,first,last,dob){
+  const company=(await resolveCompany()).id;
+  if(!company)return null;
+  let r=await sb.from('nursetrack_patients_v2').select('id,mrn,first_name,last_name,date_of_birth').eq('company_id',company).is('deleted_at',null).eq('mrn',mrn).limit(1);
+  if(!r.error&&r.data?.[0])return {patient:r.data[0],reason:'expediente'};
+  if(dob){
+    r=await sb.from('nursetrack_patients_v2').select('id,mrn,first_name,last_name,date_of_birth').eq('company_id',company).is('deleted_at',null).ilike('first_name',first).ilike('last_name',last).eq('date_of_birth',dob).limit(1);
+    if(!r.error&&r.data?.[0])return {patient:r.data[0],reason:'nombre y fecha de nacimiento'};
+  }
+  return null;
+}
+function searchAndOpen(mrn){
+  const q=$('patientSearch');
+  if(q)q.value=mrn||'';
+  clearHost();
+  $('searchBtn')?.click();
+  let tries=0;
+  const timer=setInterval(()=>{
+    const rows=$('patientResults')?.querySelectorAll('.patient-row')||[];
+    if(rows.length===1){clearInterval(timer);rows[0].click();return}
+    if(++tries>30)clearInterval(timer);
+  },100);
+}
+async function savePatient(){
+  if(busy)return;
+  busy=true;
+  const st=$('ntv4RegStatus');
+  try{
+    await client();
+    const mrn=$('ntv4RegMrn').value.trim(),first=$('ntv4RegFirst').value.trim(),last=$('ntv4RegLast').value.trim(),dob=$('ntv4RegDob').value||null;
+    if(!mrn||!first||!last)throw new Error('Completa expediente, nombre y apellido.');
+    st.textContent='Verificando duplicados…';st.style.color='';
+    const dup=await findDuplicate(mrn,first,last,dob);
+    if(dup){
+      st.innerHTML='<div class="ntv4-duplicate">Ya existe un paciente con el mismo '+esc(dup.reason)+'. Se abrirá el expediente existente para evitar un duplicado.</div>';
+      setTimeout(()=>searchAndOpen(dup.patient.mrn||mrn),550);
+      return;
+    }
+    st.textContent='Guardando paciente…';
+    const params={p_mrn:mrn,p_first_name:first,p_last_name:last,p_middle_name:$('ntv4RegMiddle').value.trim()||null,p_date_of_birth:dob,p_phone:$('ntv4RegPhone').value.trim()||null,p_email:$('ntv4RegEmail').value.trim()||null,p_preferred_language:$('ntv4RegLang').value||'es',p_sex:$('ntv4RegSex').value||null,p_city:$('ntv4RegCity').value.trim()||null,p_residential_address:$('ntv4RegResidential').value.trim()||null,p_postal_address:($('ntv4RegSame').checked?$('ntv4RegResidential').value:$('ntv4RegPostal').value).trim()||null,p_postal_same_as_residential:!!$('ntv4RegSame').checked,p_education_level:$('ntv4RegEducation').value.trim()||null};
+    const r=await sb.rpc('nursetrack_v4_register_patient',params);
+    if(r.error)throw r.error;
+    const d=r.data||{};
+    if(d.ok===false)throw new Error(d.message||'No se pudo registrar el paciente.');
+    st.textContent='Paciente registrado correctamente. Abriendo expediente…';st.style.color='#216b48';
+    setTimeout(()=>searchAndOpen(d.mrn||mrn),350);
+  }catch(e){st.textContent=e.message||String(e);st.style.color='#9b3d3d'}finally{busy=false}
+}
+function addButton(){
+  const search=$('homePanel')?.querySelector('.search');
+  if(!search||$('ntv4RegisterPatientBtn'))return;
+  const b=document.createElement('button');
+  b.id='ntv4RegisterPatientBtn';
+  b.textContent='+ Registrar paciente';
+  b.style.background='#0b63a8';
+  b.type='button';
+  b.onclick=openForm;
+  search.appendChild(b);
+}
+function wireExclusiveFlow(){
+  if(document.documentElement.dataset.ntv4RegExclusive==='1')return;
+  document.documentElement.dataset.ntv4RegExclusive='1';
+  document.addEventListener('click',e=>{
+    const t=e.target?.closest?.('#searchBtn,.patient-row,.nav button,.nt-boceto-nav');
+    if(t&&!t.closest('#ntv4PatientRegistrationHost'))clearHost();
+  },true);
+  document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target?.id==='patientSearch')clearHost()},true);
+}
+function boot(){
+  style();addButton();wireExclusiveFlow();
+  new MutationObserver(addButton).observe(document.body,{childList:true,subtree:true});
+  window.NT_V4_PATIENT_REGISTRATION={open:openForm,close:clearHost,isOpen:()=>!!$('ntv4PatientRegistrationCard'),version:'1.3.0'};
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
