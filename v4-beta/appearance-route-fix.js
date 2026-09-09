@@ -11,54 +11,25 @@ function isAppearanceTarget(target){
   const title=(card.querySelector('h4')?.textContent||'').toLowerCase();
   return title.includes('apariencia') && title.includes('portada');
 }
-
-function routeUrl(){
-  const u=new URL(location.href);
-  u.searchParams.set('view','appearance');
-  u.searchParams.set('open','appearance');
-  u.searchParams.set('v','20260909-appearance-route-2');
-  u.searchParams.set('refresh',Date.now());
-  return u.toString();
-}
-
-async function openAppearance(e){
+function routeUrl(){return 'appearance.html?v=20260909-appearance-direct-1&r='+Date.now()}
+function openAppearance(e){
   if(!isAppearanceTarget(e.target)) return;
   e.preventDefault();
   e.stopImmediatePropagation();
   const status=document.getElementById('ntmStatus');
   if(status){status.textContent='Abriendo Apariencia / Portadas…';status.style.color='#31545b'}
-  try{
-    if(window.NT_V4_APPEARANCE && typeof window.NT_V4_APPEARANCE.open==='function'){
-      await window.NT_V4_APPEARANCE.open();
-      const title=(document.getElementById('pageTitle')?.textContent||'').toLowerCase();
-      if(title.includes('apariencia')) return;
-    }
-  }catch(_){ }
   location.assign(routeUrl());
 }
-
 document.addEventListener('click',openAppearance,true);
-
 function decorate(){
   const button=document.getElementById('ntmAppearance');
   const card=button?.closest('.ntm-tool');
-  if(button){
-    button.dataset.ntDirectRoute='2';
-    button.title='Abrir Apariencia y Portadas';
-    button.textContent='Abrir Apariencia / Portadas';
-  }
+  if(button){button.dataset.ntDirectRoute='3';button.title='Abrir Apariencia y Portadas';button.textContent='Abrir Apariencia / Portadas'}
   if(card && card.dataset.ntAppearanceCard!=='1'){
-    card.dataset.ntAppearanceCard='1';
-    card.setAttribute('role','link');
-    card.setAttribute('tabindex','0');
-    card.style.cursor='pointer';
-    card.title='Abrir Apariencia y Portadas';
-    card.addEventListener('keydown',e=>{
-      if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click()}
-    });
+    card.dataset.ntAppearanceCard='1';card.setAttribute('role','link');card.setAttribute('tabindex','0');card.style.cursor='pointer';card.title='Abrir Apariencia y Portadas';
+    card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();location.assign(routeUrl())}});
   }
 }
-
 let n=0;const t=setInterval(()=>{decorate();if(++n>240)clearInterval(t)},250);
 new MutationObserver(decorate).observe(document.documentElement,{childList:true,subtree:true});
 })();
