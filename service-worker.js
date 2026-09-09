@@ -1,4 +1,4 @@
-const NT_SW_VERSION='20260908-canonical-nav167';
+const NT_SW_VERSION='20260909-clinical-audit168';
 const STATIC_CACHE='nursetrack-static-'+NT_SW_VERSION;
 self.addEventListener('install',event=>{self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const names=await caches.keys();await Promise.all(names.filter(n=>n.startsWith('nursetrack-')&&n!==STATIC_CACHE).map(n=>caches.delete(n)));await self.clients.claim()})())});
