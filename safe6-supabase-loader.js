@@ -76,7 +76,7 @@ try{
  if(p.includes('/v4-beta/')&&!window.__NT_V4_PERFORMANCE_GUARD_LOADER__){
    window.__NT_V4_PERFORMANCE_GUARD_LOADER__=true;
    const s=document.createElement('script');
-   s.src='./performance-guard.js?v=20260909-3';
+   s.src='./performance-guard.js?v=20260909-4';
    s.defer=true;
    (document.head||document.documentElement).appendChild(s);
  }
