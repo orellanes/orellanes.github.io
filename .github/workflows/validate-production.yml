@@ -1,0 +1,52 @@
+name: Validate NurseTrack Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-production:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate production JavaScript
+        shell: bash
+        run: |
+          node --check module-v3-clinical-auditor-safe168.js
+          node --check module-v3-on-demand-features-safe37.js
+          node --check safe6-superadmin-master-center.js
+
+      - name: Validate inline JavaScript
+        shell: python
+        run: |
+          import pathlib, re, subprocess, tempfile
+          for filename in ['index.html', 'login-safe6.html', 'app-safe6.html']:
+              text = pathlib.Path(filename).read_text(encoding='utf-8')
+              scripts = re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>', text, flags=re.I|re.S)
+              for script in scripts:
+                  with tempfile.NamedTemporaryFile('w', suffix='.js', encoding='utf-8', delete=False) as f:
+                      f.write(script)
+                      path=f.name
+                  subprocess.run(['node','--check',path], check=True)
+              print(f'{filename}: {len(scripts)} inline script(s) valid')
+
+      - name: Validate production manifest
+        shell: bash
+        run: |
+          python -m json.tool nursetrack-version.json >/dev/null
+          grep -q '20260909-clinical-audit168' nursetrack-version.json
+          grep -q 'clinical_audit' module-v3-on-demand-features-safe37.js
+          grep -q 'module-v3-clinical-auditor-safe168.js' module-v3-on-demand-features-safe37.js
+          grep -q 'BUILD 168' index.html
+
+      - name: Confirm review-only safety language
+        shell: bash
+        run: |
+          grep -q 'no modifica' module-v3-clinical-auditor-safe168.js
+          grep -q 'no se insertará automáticamente' module-v3-clinical-auditor-safe168.js
