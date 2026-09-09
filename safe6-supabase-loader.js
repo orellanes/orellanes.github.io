@@ -1,4 +1,52 @@
 (function(){'use strict';
+const NT_PATH=String(location.pathname||'');
+
+// Stable 173: intercept the legacy clinical HTML and remove exact duplicate
+// inline scripts/styles before app-safe6 executes it. This changes only the
+// in-memory copy delivered to the iframe; the clinical source file is untouched.
+try{
+ if(!window.__NT_STABLE_FETCH_DEDUPE__ && /(?:^|\/)(?:app-safe6|login-safe6)\.html$/i.test(NT_PATH)){
+  window.__NT_STABLE_FETCH_DEDUPE__=true;
+  const nativeFetch=window.fetch.bind(window);
+  function dedupeLegacyHtml(text){
+   const seenInline=new Set(),seenExternal=new Set(),seenStyles=new Set();
+   const removed={inlineScripts:0,externalScripts:0,styles:0};
+   text=text.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi,function(all,attrs,body){
+    const m=attrs.match(/\bsrc\s*=\s*(["'])(.*?)\1/i);
+    if(m){
+     const key=m[2];
+     if(seenExternal.has(key)){removed.externalScripts++;return '<!-- NT stable173 duplicate external script removed -->';}
+     seenExternal.add(key);return all;
+    }
+    const key=body.trim();
+    if(key.length>120&&seenInline.has(key)){removed.inlineScripts++;return '<!-- NT stable173 duplicate inline script removed -->';}
+    if(key.length>120)seenInline.add(key);
+    return all;
+   });
+   text=text.replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi,function(all,body){
+    const key=body.trim();
+    if(key.length>120&&seenStyles.has(key)){removed.styles++;return '<!-- NT stable173 duplicate style removed -->';}
+    if(key.length>120)seenStyles.add(key);
+    return all;
+   });
+   return {text:text,removed:removed};
+  }
+  window.fetch=async function(input,init){
+   const response=await nativeFetch(input,init);
+   try{
+    const url=typeof input==='string'?input:((input&&input.url)||'');
+    if(/(?:^|\/)index\.html\.html(?:[?#]|$)/i.test(url)&&response&&response.ok){
+     const raw=await response.clone().text();
+     const cleaned=dedupeLegacyHtml(raw);
+     window.__NT_STABLE_DEDUPE_LAST__=cleaned.removed;
+     return new Response(cleaned.text,{status:response.status,statusText:response.statusText,headers:response.headers});
+    }
+   }catch(e){window.__NT_STABLE_DEDUPE_ERROR__=String(e&&e.message||e);}
+   return response;
+  };
+ }
+}catch(_){}
+
 if(window.NT_loadSupabase)return;
 const SOURCES=[
  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js',
@@ -22,7 +70,7 @@ window.NT_loadSupabase=function(){
  return pending;
 };
 
-// NurseTrack One only: load the centralized performance guard without affecting BUILD 168.
+// NurseTrack One only: load the centralized performance guard without affecting stable BUILD.
 try{
  const p=String(location.pathname||'');
  if(p.includes('/v4-beta/')&&!window.__NT_V4_PERFORMANCE_GUARD_LOADER__){
