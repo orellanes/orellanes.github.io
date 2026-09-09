@@ -22,6 +22,7 @@ window.NURSETRACK_SUPABASE = {
     'vaccines-treatments-v4.js?v=20260908-v4-treatments-1',
     'reports-membership.js?v=20260908-v4-ops-1',
     'billing-admin.js?v=20260908-v4-billing-admin-1',
+    'admin-delete-user.js?v=20260909-admin-delete-user-1',
     'operations-settings.js?v=20260908-v4-operations-1',
     'templates-editor.js?v=20260908-v4-templates-1',
     'revenue-safety.js?v=20260908-v4-revenue-safety-1',
