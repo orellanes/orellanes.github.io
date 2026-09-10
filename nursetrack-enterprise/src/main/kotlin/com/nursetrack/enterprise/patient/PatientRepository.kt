@@ -6,4 +6,5 @@ import java.util.UUID
 interface PatientRepository : JpaRepository<Patient, UUID> {
     fun findByCompanyIdAndMrnIgnoreCase(companyId: UUID, mrn: String): Patient?
     fun findTop50ByCompanyIdAndLastNameContainingIgnoreCaseOrderByLastNameAsc(companyId: UUID, lastName: String): List<Patient>
+    fun countByCompanyIdAndStatusIgnoreCase(companyId: UUID, status: String): Long
 }
