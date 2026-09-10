@@ -9,17 +9,20 @@ window.NURSETRACK_SUPABASE = {
   if(window.__NT_V4_EXTENSIONS_LOADER__) return;
   window.__NT_V4_EXTENSIONS_LOADER__=true;
 
+  // Modo estable: cero extensiones se cargan al inicio.
+  // Cada módulo se descarga solamente cuando el usuario lo abre.
   const loaded=new Set();
+  const loading=new Map();
   const groups={
     patients:['patient-tools.js','patient-registration.js','patient-management.js'],
-    nursing:['smart-nursing.js','nursing-section-tabs.js'],
+    nursing:['record-nursing-templates.js','smart-nursing.js','nursing-section-tabs.js'],
     social:['social-documents.js','smart-social-4page.js'],
     labs:['labs.js'],
     medical:['medicine.js','medicine-advanced.js'],
     clinical:['nutrition-behavioral.js','vaccines-treatments-v4.js'],
     reports:['reports-membership.js'],
     billing:['billing-admin.js','revenue-safety.js'],
-    admin:['admin-delete-user.js','permission-admin-tools.js','operations-settings.js','admin-catalogs.js','capacity-settings.js'],
+    admin:['billing-admin.js','admin-delete-user.js','permission-admin-tools.js','operations-settings.js','admin-catalogs.js','capacity-settings.js'],
     templates:['templates-editor.js','print-image-fix.js'],
     logistics:['assignments.js','logistics.js'],
     audit:['audit-viewer.js'],
@@ -32,18 +35,21 @@ window.NURSETRACK_SUPABASE = {
   };
 
   function loadScript(src){
-    return new Promise(function(resolve,reject){
-      if(loaded.has(src)) return resolve(src);
+    if(loaded.has(src)) return Promise.resolve(src);
+    if(loading.has(src)) return loading.get(src);
+    const p=new Promise(function(resolve,reject){
       const existing=document.querySelector('script[data-nt-v4-module="'+src+'"]');
-      if(existing){loaded.add(src);return resolve(src);}
+      if(existing){loaded.add(src);resolve(src);return;}
       const s=document.createElement('script');
-      s.src=src+'?v=20260909-lazy-4';
-      s.defer=true;
+      s.src=src+'?v=20260909-stable-1';
+      s.async=true;
       s.dataset.ntV4Module=src;
-      s.onload=function(){loaded.add(src);resolve(src)};
-      s.onerror=function(){reject(new Error('No se pudo cargar '+src))};
+      s.onload=function(){loaded.add(src);loading.delete(src);resolve(src)};
+      s.onerror=function(){loading.delete(src);reject(new Error('No se pudo cargar '+src))};
       (document.head||document.documentElement).appendChild(s);
     });
+    loading.set(src,p);
+    return p;
   }
 
   window.NT_V4_MODULES={
@@ -57,9 +63,5 @@ window.NURSETRACK_SUPABASE = {
     isLoaded:function(src){return loaded.has(src)}
   };
 
-  // Solo accesos ligeros al iniciar. Los módulos clínicos completos continúan
-  // cargándose al abrirlos, para mantener el sistema fluido.
-  ['cursor-guard.js','hide-stations-card.js','record-nursing-templates.js','admin-router.js'].forEach(function(src){
-    setTimeout(function(){loadScript(src).catch(function(){})},0);
-  });
+  // IMPORTANTE: no hay setTimeout, intervalos, observadores ni scripts automáticos aquí.
 })();
