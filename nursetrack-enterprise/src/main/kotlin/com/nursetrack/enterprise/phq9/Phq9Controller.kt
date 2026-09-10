@@ -1,6 +1,7 @@
 package com.nursetrack.enterprise.phq9
 
 import com.nursetrack.enterprise.encounter.AccessDeniedException
+import com.nursetrack.enterprise.encounter.EncounterWriteGuard
 import com.nursetrack.enterprise.patient.PatientRepository
 import com.nursetrack.enterprise.security.CurrentUser
 import jakarta.validation.Valid
@@ -21,7 +22,8 @@ import java.util.UUID
 class Phq9Controller(
     private val repository: Phq9Repository,
     private val patients: PatientRepository,
-    private val currentUser: CurrentUser
+    private val currentUser: CurrentUser,
+    private val encounterWriteGuard: EncounterWriteGuard
 ) {
     data class SavePhq9Request(
         val encounterId: UUID? = null,
@@ -56,6 +58,8 @@ class Phq9Controller(
     ): Phq9Assessment {
         val patient = patients.findById(patientId).orElseThrow { IllegalArgumentException("Paciente no encontrado") }
         if (!currentUser.canAccessCompany(authentication, patient.companyId)) throw AccessDeniedException()
+        encounterWriteGuard.requireOpen(patient.companyId, patientId, request.encounterId)
+
         if (request.q9 > 0 && request.actionTaken.isNullOrBlank()) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "PHQ-9 pregunta 9 positiva: documente la acción clínica tomada")
         }
@@ -98,6 +102,8 @@ class Phq9Controller(
         val row = repository.findById(assessmentId).orElseThrow { IllegalArgumentException("PHQ-9 no encontrado") }
         if (row.patientId != patientId || !currentUser.canAccessCompany(authentication, row.companyId)) throw AccessDeniedException()
         if (row.status == "SIGNED") return row
+        encounterWriteGuard.requireOpen(row.companyId, patientId, row.encounterId)
+
         val user = currentUser.require(authentication)
         row.status = "SIGNED"
         row.signedByUserId = user.id
