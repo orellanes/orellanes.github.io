@@ -1,5 +1,6 @@
 package com.nursetrack.enterprise.security
 
+import com.nursetrack.enterprise.audit.ClinicalAuditFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
@@ -7,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.access.intercept.AuthorizationFilter
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository
 
 @Configuration
@@ -17,7 +19,7 @@ class SecurityConfig {
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(12)
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(http: HttpSecurity, clinicalAuditFilter: ClinicalAuditFilter): SecurityFilterChain {
         http
             .csrf { csrf ->
                 csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -58,6 +60,7 @@ class SecurityConfig {
                     csp.policyDirectives("default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'")
                 }
             }
+            .addFilterAfter(clinicalAuditFilter, AuthorizationFilter::class.java)
 
         return http.build()
     }
