@@ -5,4 +5,5 @@ import java.util.UUID
 
 interface EncounterRepository : JpaRepository<Encounter, UUID> {
     fun findAllByCompanyIdAndPatientIdOrderByStartedAtDesc(companyId: UUID, patientId: UUID): List<Encounter>
+    fun countByCompanyIdAndStatusIn(companyId: UUID, statuses: Collection<String>): Long
 }
