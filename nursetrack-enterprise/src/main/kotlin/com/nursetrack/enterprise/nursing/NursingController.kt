@@ -3,6 +3,7 @@ package com.nursetrack.enterprise.nursing
 import com.nursetrack.enterprise.patient.PatientRepository
 import com.nursetrack.enterprise.security.CurrentUser
 import com.nursetrack.enterprise.encounter.AccessDeniedException
+import com.nursetrack.enterprise.vitals.VitalsService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import org.springframework.http.HttpStatus
@@ -17,7 +18,8 @@ import java.util.UUID
 class NursingController(
     private val notes: NursingNoteRepository,
     private val patients: PatientRepository,
-    private val currentUser: CurrentUser
+    private val currentUser: CurrentUser,
+    private val vitalsService: VitalsService
 ) {
     data class SaveNursingRequest(
         val encounterId: UUID? = null,
@@ -55,7 +57,18 @@ class NursingController(
         val patient = patients.findById(patientId).orElseThrow { IllegalArgumentException("Paciente no encontrado") }
         if (!currentUser.canAccessCompany(authentication, patient.companyId)) throw AccessDeniedException()
         val user = currentUser.require(authentication)
-        return notes.save(fromRequest(patient.companyId, patientId, user.id ?: error("Usuario sin id"), request))
+        val userId = user.id ?: error("Usuario sin id")
+
+        val note = request.encounterId?.let { encounterId ->
+            notes.findFirstByCompanyIdAndPatientIdAndEncounterIdAndStatusOrderByCreatedAtDesc(
+                patient.companyId, patientId, encounterId, "DRAFT"
+            )
+        } ?: fromRequest(patient.companyId, patientId, userId, request)
+
+        if (note.id != null) applyRequest(note, request)
+        val saved = notes.save(note)
+        syncVitals(patient.companyId, patientId, userId, request)
+        return saved
     }
 
     @PutMapping("/{noteId}")
@@ -70,7 +83,10 @@ class NursingController(
         if (note.patientId != patientId || !currentUser.canAccessCompany(authentication, note.companyId)) throw AccessDeniedException()
         if (note.status == "SIGNED") throw SignedDocumentLockedException()
         applyRequest(note, request)
-        return notes.save(note)
+        val user = currentUser.require(authentication)
+        val saved = notes.save(note)
+        syncVitals(note.companyId, patientId, user.id ?: error("Usuario sin id"), request)
+        return saved
     }
 
     @PostMapping("/{noteId}/sign")
@@ -121,6 +137,22 @@ class NursingController(
         note.interventionsJson = request.interventionsJson
         note.plan = request.plan?.trim()
         note.dischargeNote = request.dischargeNote?.trim()
+    }
+
+    private fun syncVitals(companyId: UUID, patientId: UUID, userId: UUID, request: SaveNursingRequest) {
+        vitalsService.saveFromNursing(
+            companyId = companyId,
+            patientId = patientId,
+            encounterId = request.encounterId,
+            userId = userId,
+            bloodPressure = request.bloodPressure,
+            pulse = request.pulse,
+            respirations = request.respirations,
+            temperatureF = request.temperatureF,
+            spo2 = request.spo2,
+            weightLb = request.weightLb,
+            heightIn = request.heightIn
+        )
     }
 
     private fun calculateBmi(weightLb: Double?, heightIn: Double?): Double? {
