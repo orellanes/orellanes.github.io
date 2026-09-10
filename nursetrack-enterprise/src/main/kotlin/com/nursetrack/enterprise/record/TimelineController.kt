@@ -2,6 +2,7 @@ package com.nursetrack.enterprise.record
 
 import com.nursetrack.enterprise.encounter.AccessDeniedException
 import com.nursetrack.enterprise.encounter.EncounterRepository
+import com.nursetrack.enterprise.medical.MedicalNoteRepository
 import com.nursetrack.enterprise.nursing.NursingNoteRepository
 import com.nursetrack.enterprise.patient.PatientRepository
 import com.nursetrack.enterprise.security.CurrentUser
@@ -21,6 +22,7 @@ class TimelineController(
     private val encounters: EncounterRepository,
     private val nursing: NursingNoteRepository,
     private val social: SocialWorkAssessmentRepository,
+    private val medical: MedicalNoteRepository,
     private val currentUser: CurrentUser
 ) {
     data class TimelineItem(
@@ -42,7 +44,9 @@ class TimelineController(
             .map { TimelineItem(it.id, "NURSING", "Enfermería — ${it.visitType}", it.status, it.createdAt) }
         val socialItems = social.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(patient.companyId, patientId)
             .map { TimelineItem(it.id, "SOCIAL_WORK", "Trabajo Social — Entrevista / Manejo de Casos", it.status, it.createdAt) }
+        val medicalItems = medical.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(patient.companyId, patientId)
+            .map { TimelineItem(it.id, "MEDICAL", "Medicina — ${it.providerName}", it.status, it.createdAt) }
 
-        return (encounterItems + nursingItems + socialItems).sortedByDescending { it.occurredAt }
+        return (encounterItems + nursingItems + socialItems + medicalItems).sortedByDescending { it.occurredAt }
     }
 }
