@@ -39,6 +39,7 @@ try{
   load('ntV4SmartNursingLoader','smart-nursing.js?v=20260910-age-core-2');
   load('ntV4PatientEditorLoader','patient-editor.js?v=20260910-edit-core-2');
   load('ntV4BocetoUiLoader','boceto-ui.js?v=20260910-core-2');
+  load('ntV4PatientRowOpenFixLoader','patient-row-open-fix.js?v=20260910-open-1');
  }
 }catch(_){}
 })();
