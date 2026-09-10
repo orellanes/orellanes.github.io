@@ -1,12 +1,16 @@
 package com.nursetrack.enterprise.vitals
 
+import com.nursetrack.enterprise.encounter.EncounterWriteGuard
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.UUID
 import kotlin.math.round
 
 @Service
-class VitalsService(private val repository: VitalSetRepository) {
+class VitalsService(
+    private val repository: VitalSetRepository,
+    private val encounterWriteGuard: EncounterWriteGuard
+) {
 
     data class Input(
         val encounterId: UUID? = null,
@@ -24,6 +28,8 @@ class VitalsService(private val repository: VitalSetRepository) {
     )
 
     fun save(companyId: UUID, patientId: UUID, userId: UUID, input: Input): VitalSet? {
+        encounterWriteGuard.requireOpen(companyId, patientId, input.encounterId)
+
         val hasAny = listOf(
             input.systolic, input.diastolic, input.heartRate, input.respiratoryRate,
             input.temperatureF, input.spo2, input.weightLb, input.heightIn, input.painScore
