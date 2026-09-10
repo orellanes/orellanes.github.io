@@ -11,4 +11,5 @@ interface NursingNoteRepository : JpaRepository<NursingNote, UUID> {
         encounterId: UUID,
         status: String
     ): NursingNote?
+    fun countByCompanyIdAndStatusIgnoreCase(companyId: UUID, status: String): Long
 }
