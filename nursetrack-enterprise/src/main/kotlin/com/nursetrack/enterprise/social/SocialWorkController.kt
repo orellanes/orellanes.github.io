@@ -1,9 +1,10 @@
 package com.nursetrack.enterprise.social
 
 import com.nursetrack.enterprise.encounter.AccessDeniedException
+import com.nursetrack.enterprise.encounter.EncounterWriteGuard
+import com.nursetrack.enterprise.nursing.SignedDocumentLockedException
 import com.nursetrack.enterprise.patient.PatientRepository
 import com.nursetrack.enterprise.security.CurrentUser
-import com.nursetrack.enterprise.nursing.SignedDocumentLockedException
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -17,7 +18,8 @@ import java.util.UUID
 class SocialWorkController(
     private val assessments: SocialWorkAssessmentRepository,
     private val patients: PatientRepository,
-    private val currentUser: CurrentUser
+    private val currentUser: CurrentUser,
+    private val encounterWriteGuard: EncounterWriteGuard
 ) {
     data class SaveAssessmentRequest(
         val encounterId: UUID? = null,
@@ -45,6 +47,8 @@ class SocialWorkController(
     ): SocialWorkAssessment {
         val patient = patients.findById(patientId).orElseThrow { IllegalArgumentException("Paciente no encontrado") }
         if (!currentUser.canAccessCompany(authentication, patient.companyId)) throw AccessDeniedException()
+        encounterWriteGuard.requireOpen(patient.companyId, patientId, request.encounterId)
+
         val user = currentUser.require(authentication)
         return assessments.save(
             SocialWorkAssessment(
@@ -72,6 +76,8 @@ class SocialWorkController(
         val row = assessments.findById(assessmentId).orElseThrow { IllegalArgumentException("Evaluación no encontrada") }
         if (row.patientId != patientId || !currentUser.canAccessCompany(authentication, row.companyId)) throw AccessDeniedException()
         if (row.status == "SIGNED") throw SignedDocumentLockedException()
+        encounterWriteGuard.requireOpen(row.companyId, patientId, request.encounterId ?: row.encounterId)
+
         row.encounterId = request.encounterId
         row.page1Json = request.page1Json
         row.page2Json = request.page2Json
@@ -91,6 +97,8 @@ class SocialWorkController(
         val row = assessments.findById(assessmentId).orElseThrow { IllegalArgumentException("Evaluación no encontrada") }
         if (row.patientId != patientId || !currentUser.canAccessCompany(authentication, row.companyId)) throw AccessDeniedException()
         if (row.status == "SIGNED") return row
+        encounterWriteGuard.requireOpen(row.companyId, patientId, row.encounterId)
+
         val user = currentUser.require(authentication)
         row.status = "SIGNED"
         row.signedByUserId = user.id
