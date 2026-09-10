@@ -34,10 +34,10 @@ class EncounterCompletionServiceTest {
 
     @BeforeEach
     fun emptyRepositories() {
-        Mockito.`when`(nursing.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(companyId, patientId)).thenReturn(emptyList())
-        Mockito.`when`(social.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(companyId, patientId)).thenReturn(emptyList())
-        Mockito.`when`(medical.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(companyId, patientId)).thenReturn(emptyList())
-        Mockito.`when`(phq9.findAllByCompanyIdAndPatientIdOrderByScreeningDateDescCreatedAtDesc(companyId, patientId)).thenReturn(emptyList())
+        Mockito.`when`(nursing.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByCreatedAtDesc(companyId, patientId, encounterId)).thenReturn(emptyList())
+        Mockito.`when`(social.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByCreatedAtDesc(companyId, patientId, encounterId)).thenReturn(emptyList())
+        Mockito.`when`(medical.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByCreatedAtDesc(companyId, patientId, encounterId)).thenReturn(emptyList())
+        Mockito.`when`(phq9.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByScreeningDateDescCreatedAtDesc(companyId, patientId, encounterId)).thenReturn(emptyList())
         Mockito.`when`(vitals.findByCompanyIdAndPatientIdAndEncounterId(companyId, patientId, encounterId)).thenReturn(null)
     }
 
@@ -60,7 +60,7 @@ class EncounterCompletionServiceTest {
             createdByUserId = userId,
             status = "DRAFT"
         )
-        Mockito.`when`(nursing.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(companyId, patientId)).thenReturn(listOf(note))
+        Mockito.`when`(nursing.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByCreatedAtDesc(companyId, patientId, encounterId)).thenReturn(listOf(note))
 
         val result = service.readiness(encounter)
         assertThat(result.canClose).isFalse()
@@ -79,7 +79,7 @@ class EncounterCompletionServiceTest {
             createdByUserId = userId,
             status = "SIGNED"
         )
-        Mockito.`when`(nursing.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(companyId, patientId)).thenReturn(listOf(note))
+        Mockito.`when`(nursing.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByCreatedAtDesc(companyId, patientId, encounterId)).thenReturn(listOf(note))
 
         val result = service.readiness(encounter)
         assertThat(result.canClose).isTrue()

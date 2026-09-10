@@ -5,6 +5,11 @@ import java.util.UUID
 
 interface NursingNoteRepository : JpaRepository<NursingNote, UUID> {
     fun findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(companyId: UUID, patientId: UUID): List<NursingNote>
+    fun findAllByCompanyIdAndPatientIdAndEncounterIdOrderByCreatedAtDesc(
+        companyId: UUID,
+        patientId: UUID,
+        encounterId: UUID
+    ): List<NursingNote>
     fun findFirstByCompanyIdAndPatientIdAndEncounterIdAndStatusOrderByCreatedAtDesc(
         companyId: UUID,
         patientId: UUID,

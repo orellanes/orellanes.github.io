@@ -28,14 +28,18 @@ class EncounterCompletionService(
 
     fun readiness(encounter: Encounter): Readiness {
         val encounterId = encounter.id ?: error("Encuentro sin id")
-        val nursingRows = nursing.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(encounter.companyId, encounter.patientId)
-            .filter { it.encounterId == encounterId }
-        val socialRows = social.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(encounter.companyId, encounter.patientId)
-            .filter { it.encounterId == encounterId }
-        val medicalRows = medical.findAllByCompanyIdAndPatientIdOrderByCreatedAtDesc(encounter.companyId, encounter.patientId)
-            .filter { it.encounterId == encounterId }
-        val phqRows = phq9.findAllByCompanyIdAndPatientIdOrderByScreeningDateDescCreatedAtDesc(encounter.companyId, encounter.patientId)
-            .filter { it.encounterId == encounterId }
+        val nursingRows = nursing.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByCreatedAtDesc(
+            encounter.companyId, encounter.patientId, encounterId
+        )
+        val socialRows = social.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByCreatedAtDesc(
+            encounter.companyId, encounter.patientId, encounterId
+        )
+        val medicalRows = medical.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByCreatedAtDesc(
+            encounter.companyId, encounter.patientId, encounterId
+        )
+        val phqRows = phq9.findAllByCompanyIdAndPatientIdAndEncounterIdOrderByScreeningDateDescCreatedAtDesc(
+            encounter.companyId, encounter.patientId, encounterId
+        )
         val vital = vitals.findByCompanyIdAndPatientIdAndEncounterId(encounter.companyId, encounter.patientId, encounterId)
 
         val blockers = mutableListOf<String>()
