@@ -56,6 +56,8 @@
           <button class="tab active" data-tab="summary">Resumen</button>
           <button class="tab" data-tab="timeline">Cronología</button>
           <button class="tab" data-tab="nursing">Enfermería</button>
+          <button class="tab" data-tab="phq9">PHQ-9</button>
+          <button class="tab" data-tab="vitals">Signos vitales</button>
           <button class="tab" data-tab="social">Trabajo Social</button>
           <button class="tab" data-tab="medical">Medicina</button>
           <button class="tab" data-tab="documents">Documentos</button>
@@ -73,21 +75,30 @@
           <div id="nursingBody" class="card"><span class="muted">La plantilla de Enfermería se carga solo al abrir esta pestaña.</span></div>
         </section>
 
+        <section class="tab-panel" id="tab-phq9">
+          <div id="phq9Body" class="card"><span class="muted">PHQ-9 se carga solo al abrir esta pestaña.</span></div>
+        </section>
+
+        <section class="tab-panel" id="tab-vitals">
+          <div id="vitalsBody" class="card"><span class="muted">Los signos vitales y tendencias se cargan solo al abrir esta pestaña.</span></div>
+        </section>
+
         <section class="tab-panel" id="tab-social">
           <div id="socialBody" class="card"><span class="muted">La plantilla de Trabajo Social de cuatro páginas se carga solo al abrir esta pestaña.</span></div>
         </section>
 
         <section class="tab-panel" id="tab-medical">
-          <div class="card"><h3>Medicina</h3><p class="muted">La nota médica se carga solo al abrir esta pestaña.</p></div>
+          <div id="medicalBody" class="card"><h3>Medicina</h3><p class="muted">La nota médica se carga solo al abrir esta pestaña.</p></div>
         </section>
 
         <section class="tab-panel" id="tab-documents">
-          <div class="card"><h3>Documentos</h3><p class="muted">Documentos clínicos firmados, borradores e impresiones se organizarán aquí sin mezclar disciplinas.</p></div>
+          <div class="card"><h3>Documentos</h3><p class="muted">Documentos clínicos firmados, borradores e impresiones se organizan aquí sin mezclar disciplinas.</p></div>
         </section>
       </section>
     </main>
   </div>
   <script src="/app.js"></script>
   <script src="/medical.js"></script>
+  <script src="/clinical-extras.js"></script>
 </body>
 </html>
