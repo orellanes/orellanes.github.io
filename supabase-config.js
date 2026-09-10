@@ -9,8 +9,8 @@ window.NURSETRACK_SUPABASE = {
   if(window.__NT_V4_EXTENSIONS_LOADER__) return;
   window.__NT_V4_EXTENSIONS_LOADER__=true;
 
-  // Modo estable: cero extensiones se cargan al inicio.
-  // Cada módulo se descarga solamente cuando el usuario lo abre.
+  // Modo estable: solo el router clínico ultraligero se carga al inicio.
+  // Los módulos completos se descargan únicamente cuando el usuario los abre.
   const loaded=new Set();
   const loading=new Map();
   const groups={
@@ -41,7 +41,7 @@ window.NURSETRACK_SUPABASE = {
       const existing=document.querySelector('script[data-nt-v4-module="'+src+'"]');
       if(existing){loaded.add(src);resolve(src);return;}
       const s=document.createElement('script');
-      s.src=src+'?v=20260909-stable-1';
+      s.src=src+'?v=20260909-stable-2';
       s.async=true;
       s.dataset.ntV4Module=src;
       s.onload=function(){loaded.add(src);loading.delete(src);resolve(src)};
@@ -63,5 +63,7 @@ window.NURSETRACK_SUPABASE = {
     isLoaded:function(src){return loaded.has(src)}
   };
 
-  // IMPORTANTE: no hay setTimeout, intervalos, observadores ni scripts automáticos aquí.
+  // Router mínimo: no consulta la nube, no usa observadores ni intervalos.
+  // Solo intercepta Enfermería/Trabajo Social y entonces carga el módulo completo.
+  loadScript('clinical-router-lite.js').catch(function(){});
 })();
