@@ -1,6 +1,7 @@
 package com.nursetrack.enterprise.medical
 
 import com.nursetrack.enterprise.encounter.AccessDeniedException
+import com.nursetrack.enterprise.encounter.EncounterWriteGuard
 import com.nursetrack.enterprise.nursing.SignedDocumentLockedException
 import com.nursetrack.enterprise.patient.PatientRepository
 import com.nursetrack.enterprise.security.CurrentUser
@@ -21,7 +22,8 @@ class MedicalController(
     private val diagnoses: MedicalDiagnosisRepository,
     private val procedures: MedicalProcedureRepository,
     private val patients: PatientRepository,
-    private val currentUser: CurrentUser
+    private val currentUser: CurrentUser,
+    private val encounterWriteGuard: EncounterWriteGuard
 ) {
     data class DiagnosisInput(val code: String, val description: String? = null, val primary: Boolean = false)
     data class ProcedureInput(val codeSystem: String = "CPT", val code: String, val label: String? = null, val units: Double = 1.0)
@@ -59,6 +61,8 @@ class MedicalController(
     ): MedicalView {
         val patient = patients.findById(patientId).orElseThrow { IllegalArgumentException("Paciente no encontrado") }
         if (!currentUser.canAccessCompany(authentication, patient.companyId)) throw AccessDeniedException()
+        encounterWriteGuard.requireOpen(patient.companyId, patientId, request.encounterId)
+
         val user = currentUser.require(authentication)
         val note = notes.save(
             MedicalNote(
@@ -90,6 +94,8 @@ class MedicalController(
         val note = notes.findById(noteId).orElseThrow { IllegalArgumentException("Nota médica no encontrada") }
         if (note.patientId != patientId || !currentUser.canAccessCompany(authentication, note.companyId)) throw AccessDeniedException()
         if (note.status == "SIGNED") throw SignedDocumentLockedException()
+        encounterWriteGuard.requireOpen(note.companyId, patientId, request.encounterId ?: note.encounterId)
+
         note.encounterId = request.encounterId
         note.chiefComplaint = request.chiefComplaint?.trim()
         note.hpi = request.hpi?.trim()
@@ -112,6 +118,8 @@ class MedicalController(
         val note = notes.findById(noteId).orElseThrow { IllegalArgumentException("Nota médica no encontrada") }
         if (note.patientId != patientId || !currentUser.canAccessCompany(authentication, note.companyId)) throw AccessDeniedException()
         if (note.status == "SIGNED") return view(note)
+        encounterWriteGuard.requireOpen(note.companyId, patientId, note.encounterId)
+
         val currentDiagnoses = diagnoses.findAllByMedicalNoteIdOrderByPrimaryDiagnosisDescCreatedAtAsc(noteId)
         val currentProcedures = procedures.findAllByMedicalNoteIdOrderByCreatedAtAsc(noteId)
         note.status = "SIGNED"
