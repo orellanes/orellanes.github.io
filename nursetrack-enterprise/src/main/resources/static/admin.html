@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NurseTrack Enterprise — Administración</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="brandmark">NT</div><div><h1>Centro de Administración</h1><small>Súper Administrador</small></div></div>
+    <div class="top-actions"><a class="btn" href="/">← Expediente</a></div>
+  </header>
+  <main class="main" style="max-width:1200px;margin:0 auto">
+    <section class="card">
+      <h3>Identidad de la clínica / compañía</h3>
+      <div class="grid2">
+        <div><label>Compañía</label><select id="companySelect"></select></div>
+        <div><label>Nombre visible</label><input id="cName"></div>
+        <div><label>Nombre legal</label><input id="cLegalName"></div>
+        <div><label>Teléfono</label><input id="cPhone"></div>
+        <div><label>Dirección</label><input id="cAddress1"></div>
+        <div><label>Dirección 2</label><input id="cAddress2"></div>
+        <div><label>Ciudad</label><input id="cCity"></div>
+        <div><label>Estado</label><input id="cState" value="PR"></div>
+        <div><label>Código postal</label><input id="cPostal"></div>
+        <div><label>Logo (URL)</label><input id="cLogo"></div>
+      </div>
+      <div class="toolbar"><button class="btn primary" id="saveCompany">Guardar identidad</button></div>
+      <div id="companyStatus" class="status"></div>
+    </section>
+
+    <section class="card">
+      <h3>Usuarios y permisos</h3>
+      <div id="usersBody" class="timeline"></div>
+      <div class="section-title">Crear usuario</div>
+      <div class="grid2">
+        <input id="uName" placeholder="Nombre del usuario">
+        <input id="uEmail" type="email" placeholder="Correo">
+        <select id="uRole"><option>ADMIN</option><option>NURSE</option><option>SOCIAL_WORK</option><option>PHYSICIAN</option><option>BILLING</option><option>READ_ONLY</option></select>
+        <input id="uPassword" type="password" placeholder="Contraseña temporal (12+ caracteres)">
+      </div>
+      <div class="toolbar"><button class="btn secondary" id="createUser">Crear usuario</button></div>
+      <div id="userStatus" class="status"></div>
+    </section>
+
+    <section class="card">
+      <h3>Mantenimiento y diagnóstico</h3>
+      <p class="muted">Este panel verifica el núcleo y la base de datos sin ejecutar operaciones destructivas.</p>
+      <div id="maintenanceBody" class="grid2"></div>
+      <div class="toolbar"><button class="btn" id="refreshMaintenance">Actualizar diagnóstico</button></div>
+      <div id="maintenanceStatus" class="status"></div>
+    </section>
+  </main>
+  <script src="/admin.js"></script>
+</body>
+</html>

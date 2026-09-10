@@ -25,8 +25,10 @@ class SecurityConfig {
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers(
                     "/login.html",
-                    "/css/**",
-                    "/js/**",
+                    "/login.js",
+                    "/styles.css",
+                    "/favicon.ico",
+                    "/api/public/**",
                     "/actuator/health",
                     "/actuator/health/**"
                 ).permitAll()
@@ -52,7 +54,9 @@ class SecurityConfig {
             }
             .headers { headers ->
                 headers.frameOptions { frame -> frame.deny() }
-                headers.contentTypeOptions { }
+                headers.contentSecurityPolicy { csp ->
+                    csp.policyDirectives("default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'")
+                }
             }
 
         return http.build()

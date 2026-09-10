@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NurseTrack Enterprise</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brandmark">NT</div>
+      <div><h1 id="companyName">NurseTrack Enterprise</h1><small>Expediente clínico web</small></div>
+    </div>
+    <div class="top-actions">
+      <span id="userBadge" class="muted"></span>
+      <a id="adminLink" class="btn hidden" href="/admin.html">Administración</a>
+      <form id="logoutForm" method="post" action="/logout"><input type="hidden" id="logoutCsrf" name="_csrf"><button class="btn" type="submit">Salir</button></form>
+    </div>
+  </header>
+
+  <div class="app">
+    <aside class="sidebar">
+      <h2>Buscar paciente</h2>
+      <div class="searchrow">
+        <input id="patientSearch" placeholder="Apellido o MRN" autocomplete="off">
+        <button class="btn primary" id="searchBtn">Buscar</button>
+      </div>
+      <div id="searchStatus" class="status"></div>
+      <div id="patientResults" class="results"></div>
+    </aside>
+
+    <main class="main">
+      <section id="emptyState" class="empty">
+        <h2 style="margin-top:0">Expediente clínico único</h2>
+        <p>Busca un paciente para abrir su expediente. Cada disciplina carga solamente cuando seleccionas su pestaña.</p>
+      </section>
+
+      <section id="record" class="record">
+        <div class="patient-head">
+          <div class="patient-title">
+            <div>
+              <h2 id="patientName">—</h2>
+              <div class="patient-meta">
+                <span id="patientMrn">MRN —</span>
+                <span id="patientDob">Nacimiento —</span>
+                <span id="patientPhone">Tel. —</span>
+                <span id="patientStatus">Estado —</span>
+              </div>
+            </div>
+            <button id="newEncounterBtn" class="btn secondary">+ Nueva visita</button>
+          </div>
+        </div>
+
+        <nav class="tabs" aria-label="Secciones del expediente">
+          <button class="tab active" data-tab="summary">Resumen</button>
+          <button class="tab" data-tab="timeline">Cronología</button>
+          <button class="tab" data-tab="nursing">Enfermería</button>
+          <button class="tab" data-tab="social">Trabajo Social</button>
+          <button class="tab" data-tab="medical">Medicina</button>
+          <button class="tab" data-tab="documents">Documentos</button>
+        </nav>
+
+        <section class="tab-panel active" id="tab-summary">
+          <div class="card"><h3>Resumen del paciente</h3><div id="summaryBody" class="grid2"></div></div>
+        </section>
+
+        <section class="tab-panel" id="tab-timeline">
+          <div class="card"><h3>Cronología clínica</h3><div id="timelineBody" class="timeline"><span class="muted">Seleccione esta pestaña para cargar la cronología.</span></div></div>
+        </section>
+
+        <section class="tab-panel" id="tab-nursing">
+          <div id="nursingBody" class="card"><span class="muted">La plantilla de Enfermería se carga solo al abrir esta pestaña.</span></div>
+        </section>
+
+        <section class="tab-panel" id="tab-social">
+          <div id="socialBody" class="card"><span class="muted">La plantilla de Trabajo Social de cuatro páginas se carga solo al abrir esta pestaña.</span></div>
+        </section>
+
+        <section class="tab-panel" id="tab-medical">
+          <div class="card"><h3>Medicina</h3><p class="muted">Módulo preparado para integrar evaluación médica, diagnósticos, CPT, recetas y órdenes.</p></div>
+        </section>
+
+        <section class="tab-panel" id="tab-documents">
+          <div class="card"><h3>Documentos</h3><p class="muted">Documentos clínicos firmados, borradores e impresiones se organizarán aquí sin mezclar disciplinas.</p></div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

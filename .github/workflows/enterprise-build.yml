@@ -1,0 +1,27 @@
+name: NurseTrack Enterprise Build
+
+on:
+  push:
+    branches:
+      - nursetrack-enterprise-foundation
+    paths:
+      - 'nursetrack-enterprise/**'
+      - '.github/workflows/enterprise-build.yml'
+  pull_request:
+    paths:
+      - 'nursetrack-enterprise/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+      - name: Compile and test
+        run: gradle -p nursetrack-enterprise clean test --no-daemon

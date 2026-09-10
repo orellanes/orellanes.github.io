@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NurseTrack Enterprise — Acceso</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="login-shell">
+    <section class="login-card">
+      <div class="brand" style="margin-bottom:18px">
+        <div class="brandmark">NT</div>
+        <div><h1>NurseTrack Enterprise</h1><small>Portal clínico seguro</small></div>
+      </div>
+      <p>Acceso exclusivo para personal autorizado.</p>
+      <form id="loginForm" method="post" action="/login">
+        <input type="hidden" id="csrfField" name="_csrf" value="">
+        <label>Correo electrónico<input name="username" type="email" autocomplete="username" required></label>
+        <label>Contraseña<input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn primary" type="submit">Entrar</button>
+      </form>
+      <div id="loginMessage" class="login-msg"></div>
+    </section>
+  </main>
+  <script src="/login.js"></script>
+</body>
+</html>
