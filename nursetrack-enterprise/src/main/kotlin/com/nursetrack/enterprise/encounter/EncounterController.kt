@@ -16,7 +16,8 @@ import java.util.UUID
 class EncounterController(
     private val encounters: EncounterRepository,
     private val patients: PatientRepository,
-    private val currentUser: CurrentUser
+    private val currentUser: CurrentUser,
+    private val completion: EncounterCompletionService
 ) {
     data class CreateEncounterRequest(@field:NotBlank val encounterType: String)
 
@@ -27,8 +28,15 @@ class EncounterController(
         return encounters.findAllByCompanyIdAndPatientIdOrderByStartedAtDesc(patient.companyId, patientId)
     }
 
+    @GetMapping("/active")
+    fun active(@PathVariable patientId: UUID, authentication: Authentication): Encounter? {
+        val patient = patients.findById(patientId).orElseThrow { IllegalArgumentException("Paciente no encontrado") }
+        if (!currentUser.canAccessCompany(authentication, patient.companyId)) throw AccessDeniedException()
+        return encounters.findAllByCompanyIdAndPatientIdOrderByStartedAtDesc(patient.companyId, patientId)
+            .firstOrNull { it.status.equals("OPEN", ignoreCase = true) }
+    }
+
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('SUPERADMIN','ADMIN','NURSE','SOCIAL_WORK','PHYSICIAN')")
     fun create(
         @PathVariable patientId: UUID,
@@ -37,6 +45,12 @@ class EncounterController(
     ): Encounter {
         val patient = patients.findById(patientId).orElseThrow { IllegalArgumentException("Paciente no encontrado") }
         if (!currentUser.canAccessCompany(authentication, patient.companyId)) throw AccessDeniedException()
+
+        // A patient can have only one active visit. Reuse it instead of creating duplicate visits.
+        encounters.findAllByCompanyIdAndPatientIdOrderByStartedAtDesc(patient.companyId, patientId)
+            .firstOrNull { it.status.equals("OPEN", ignoreCase = true) }
+            ?.let { return it }
+
         val user = currentUser.require(authentication)
         return encounters.save(
             Encounter(
@@ -48,6 +62,16 @@ class EncounterController(
         )
     }
 
+    @GetMapping("/{encounterId}/readiness")
+    fun readiness(
+        @PathVariable patientId: UUID,
+        @PathVariable encounterId: UUID,
+        authentication: Authentication
+    ): EncounterCompletionService.Readiness {
+        val encounter = requireEncounter(patientId, encounterId, authentication)
+        return completion.readiness(encounter)
+    }
+
     @PostMapping("/{encounterId}/close")
     @PreAuthorize("hasAnyRole('SUPERADMIN','ADMIN','NURSE','SOCIAL_WORK','PHYSICIAN')")
     fun close(
@@ -55,11 +79,19 @@ class EncounterController(
         @PathVariable encounterId: UUID,
         authentication: Authentication
     ): Encounter {
-        val encounter = encounters.findById(encounterId).orElseThrow { IllegalArgumentException("Encuentro no encontrado") }
-        if (encounter.patientId != patientId || !currentUser.canAccessCompany(authentication, encounter.companyId)) throw AccessDeniedException()
+        val encounter = requireEncounter(patientId, encounterId, authentication)
+        if (encounter.status.equals("CLOSED", ignoreCase = true)) return encounter
+
+        completion.requireReady(encounter)
         encounter.status = "CLOSED"
         encounter.closedAt = Instant.now()
         return encounters.save(encounter)
+    }
+
+    private fun requireEncounter(patientId: UUID, encounterId: UUID, authentication: Authentication): Encounter {
+        val encounter = encounters.findById(encounterId).orElseThrow { IllegalArgumentException("Encuentro no encontrado") }
+        if (encounter.patientId != patientId || !currentUser.canAccessCompany(authentication, encounter.companyId)) throw AccessDeniedException()
+        return encounter
     }
 }
 
