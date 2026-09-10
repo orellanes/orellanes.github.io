@@ -29,7 +29,7 @@ function addNav(){
   const nav=$('.nav');
   if(!nav||document.getElementById('ntBocetoNavStart'))return;
   const anchor=nav.querySelector('[data-view="settings"]')||nav.querySelector('#logoutBtn');
-  const items=[['Expediente','patient'],['Enfermería','Enfermería'],['Trabajo Social','Trabajo Social'],['Médico','Medicina'],['Laboratorios','Laboratorios'],['Documentos','Documentos'],['Facturación','Facturación'],['Membresía','membership'],['Reportes','reports'],['Administración','admin']];
+  const items=[['Registro nuevo','registration'],['Expediente','patient'],['Enfermería','Enfermería'],['Trabajo Social','Trabajo Social'],['Médico','Medicina'],['Laboratorios','Laboratorios'],['Documentos','Documentos'],['Facturación','Facturación'],['Membresía','membership'],['Reportes','reports'],['Administración','admin']];
   items.forEach(([label,key],i)=>{
     const b=document.createElement('button');
     b.className='nt-boceto-nav';
@@ -37,6 +37,10 @@ function addNav(){
     b.textContent=label;
     b.onclick=()=>{
       window.NT_V4_PATIENT_REGISTRATION?.close?.({focus:false});
+      if(key==='registration'){
+        window.NT_V4_PATIENT_REGISTRATION?.open?.();
+        return;
+      }
       if(key==='patient'){
         const home=document.getElementById('homePanel');
         home?.classList.remove('hidden');
