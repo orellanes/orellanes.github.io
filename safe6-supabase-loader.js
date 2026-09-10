@@ -31,15 +31,15 @@ if(!window.NT_loadSupabase){
  window.NT_loadSupabase=function(){if(ready())return Promise.resolve(window.supabase);if(pending)return pending;pending=(async function(){let last=null;for(const src of SOURCES){try{return await loadOne(src)}catch(e){last=e}}throw last||new Error('supabase_sdk_unavailable')})().finally(function(){if(!ready())pending=null});return pending;};
 }
 
-// NurseTrack One: carga única y explícita de los módulos esenciales de v4.
+// NurseTrack One: carga única y explícita de los módulos esenciales.
 try{
- if(/\/v4-beta\//i.test(NT_PATH)){
+ if(/\/(?:v4-beta|nursetrack-one)\//i.test(NT_PATH)){
   const load=function(id,src){if(document.getElementById(id))return;const s=document.createElement('script');s.id=id;s.src=src;s.defer=true;(document.head||document.documentElement).appendChild(s)};
-  load('ntV4PatientRegistrationLoader','patient-registration.js?v=20260910-core-2');
-  load('ntV4SmartNursingLoader','smart-nursing.js?v=20260910-age-core-2');
-  load('ntV4PatientEditorLoader','patient-editor.js?v=20260910-edit-core-2');
-  load('ntV4BocetoUiLoader','boceto-ui.js?v=20260910-core-2');
-  load('ntV4PatientRowOpenFixLoader','patient-row-open-fix.js?v=20260910-open-1');
+  load('ntV4PatientRegistrationLoader','patient-registration.js?v=20260910-reg-4');
+  load('ntV4SmartNursingLoader','smart-nursing.js?v=20260910-age-4');
+  load('ntV4PatientEditorLoader','patient-editor.js?v=20260910-edit-4');
+  load('ntV4BocetoUiLoader','boceto-ui.js?v=20260910-ui-4');
+  load('ntV4PatientRowOpenFixLoader','patient-row-open-fix.js?v=20260910-open-4');
  }
 }catch(_){}
 })();
