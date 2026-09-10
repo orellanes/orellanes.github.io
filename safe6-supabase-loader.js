@@ -70,15 +70,6 @@ window.NT_loadSupabase=function(){
  return pending;
 };
 
-// NurseTrack One only: load the centralized performance guard without affecting stable BUILD.
-try{
- const p=String(location.pathname||'');
- if(p.includes('/v4-beta/')&&!window.__NT_V4_PERFORMANCE_GUARD_LOADER__){
-   window.__NT_V4_PERFORMANCE_GUARD_LOADER__=true;
-   const s=document.createElement('script');
-   s.src='./performance-guard.js?v=20260909-4';
-   s.defer=true;
-   (document.head||document.documentElement).appendChild(s);
- }
-}catch(_){}
+// v4 Beta: no se inyecta ningún guard o módulo automáticamente al arrancar.
+// Los módulos clínicos se cargan bajo demanda desde NT_V4_MODULES.
 })();
